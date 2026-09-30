@@ -36,11 +36,11 @@ Zasady demo:
 - Po kroku 2 przywracamy 0,57 (albo pracujemy na kopii `params_065.csv`).
 - Wyniki wszystkich trzech kroków zapisane wcześniej w `demo_backup/` — gdyby coś padło, pokazujemy pliki.
 
-### Warunki, żeby demo wyglądało dobrze (sprawdzone 11:53, ponownie 11:55 na `tor-b-wykonalnosc` + `devel`)
+### Warunki, żeby demo wyglądało dobrze (sprawdzone 11:57 na `devel`: wszystkie 3 kroki demo i błąd brakującego pliku)
 
 | # | Stan | Kto |
 |---|---|---|
-| 1 | komunikat końcowy po angielsku (`Vans on the shortlist: 3`, `Output written to: …`) | B — gotowe na `tor-b-wykonalnosc` (64b3964), czeka na scalenie do `devel` |
+| 1 | komunikat końcowy po angielsku (`Vans on the shortlist: 3`, `Output written to: …`) | B — gotowe, na `devel` od 11:55 (556f9af) |
 | 2 | raport, `WARNING` i liczby kontrolne na ekranie — to pokazujemy w krokach 1 i 3 | B — gotowe, jw. |
 | 3 | brakujący plik: `ERROR: Trips file not found: …`, kod 1, bez śladu stosu | B — gotowe, jw. |
 | 4 | `fresh_trips.csv` istnieje i działa | A — gotowe |
