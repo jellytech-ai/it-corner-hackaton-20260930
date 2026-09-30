@@ -111,7 +111,8 @@ class AssessBasicFilters(unittest.TestCase):
         for exp in read(os.path.join(FX, "feasibility.csv")):
             if exp["van_id"] not in single:
                 continue
-            r = got[exp["van_id"]]
+            r = dict(got[exp["van_id"]])
+            r["reject_reason"] = r["reject_reason"].split("; near threshold")[0]
             self.assertEqual(
                 {k: str(r[k]) for k in exp if k != "range_check_km"},
                 {k: v for k, v in exp.items() if k != "range_check_km"}, exp["van_id"])
@@ -139,12 +140,64 @@ class AssessBasicFilters(unittest.TestCase):
         r = self.assess()
         self.assertEqual(r["P-26"]["ev_model"], "Volta Cargo S")
         self.assertEqual(r["P-14"]["ev_model"], "Volta Cargo S")
-        self.assertEqual(r["P-08"]["ev_model"], "Volta Cargo L")  # bez doladowania S nie starcza
+        self.assertEqual(r["P-08"]["ev_model"], "Volta Cargo S")  # z doladowaniem miedzy trasami (B6)
+        r = self.assess(midday_connect_minutes="100000")  # doladowanie niemozliwe
+        self.assertEqual(r["P-08"]["ev_model"], "Volta Cargo L")
 
     def test_model_order_follows_price_param(self):
         r = self.assess(**{"ev.Volta Cargo L.price_pln": "100000",
                              "ev.Volta Cargo L.payload_kg": "1100"})
         self.assertEqual(r["P-26"]["ev_model"], "Volta Cargo L")
+
+
+class MiddayCharging(unittest.TestCase):
+    """B6 / A16: doladowanie w bazie miedzy trasami; oczekiwane liczby z HANDOFF sekcja 8."""
+
+    @classmethod
+    def setUpClass(cls):
+        import feasibility
+        cls.f = feasibility
+        cls.params = ev_shortlist._stub_load_params(os.path.join(ROOT, "params.csv"))
+        cls.trips, cls.profile, _ = ev_shortlist._stub_load_and_clean(
+            os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"), cls.params)
+        cls.models = feasibility.ev_models(cls.params)
+        cls.got = {r["van_id"]: r for r in feasibility.assess(cls.profile, cls.trips, cls.params)}
+
+    def failed(self, van_id, model):
+        days = self.f.van_days(self.trips, van_id)
+        return len(self.f.failed_days(days, self.models["Volta Cargo " + model], self.params))
+
+    def test_failed_days_match_handoff(self):
+        expected = {("P-08", "S"): 0, ("P-12", "S"): 0, ("P-09", "S"): 26, ("P-09", "L"): 2,
+                    ("P-36", "S"): 11, ("P-36", "L"): 0, ("P-24", "S"): 43, ("P-24", "L"): 9}
+        for (van, model), n in expected.items():
+            self.assertEqual(self.failed(van, model), n, (van, model))
+
+    def test_p08_goes_to_cargo_s_with_midday_charging(self):
+        r = self.got["P-08"]
+        self.assertEqual((r["feasible"], r["ev_model"], r["midday_charging"]),
+                         ("yes", "Volta Cargo S", "yes"))
+        self.assertGreater(r["day_tariff_share"], 0)
+        self.assertLess(r["day_tariff_share"], 1)
+
+    def test_p12_fits_cargo_s_but_south_has_no_chargers(self):
+        r = self.got["P-12"]
+        self.assertEqual((r["ev_model"], r["midday_charging"], r["reject_reason"]),
+                         ("Volta Cargo S", "yes", "no chargers at depot"))
+
+    def test_p09_and_p24_rejected_on_range(self):
+        for van in ("P-09", "P-24"):
+            self.assertEqual(self.got[van]["reject_reason"].split("; near")[0], "range", van)
+            self.assertEqual(self.got[van]["ev_model"], "", van)
+
+    def test_range_check_is_longer_route_of_worst_day(self):
+        days = self.f.van_days(self.trips, "P-08")
+        worst = max(days, key=lambda d: sum(t["km"] for t in d))
+        self.assertAlmostEqual(self.got["P-08"]["range_check_km"], max(t["km"] for t in worst))
+
+    def test_single_shift_vans_have_no_midday_charging(self):
+        self.assertEqual(self.got["P-26"]["midday_charging"], "no")
+        self.assertEqual(self.got["P-26"]["day_tariff_share"], 0)
 
 
 class Sensitivity(unittest.TestCase):
@@ -172,6 +225,44 @@ class Sensitivity(unittest.TestCase):
 
     def test_fit_ignoring_chargers_includes_south(self):
         self.assertIn("P-25", self.rows[0.57]["fit_vans"].split())
+
+
+class NearThreshold(unittest.TestCase):
+    """B9: do 10% ponad zasieg albo 1-3 dni ponad ladownosc."""
+
+    @classmethod
+    def setUpClass(cls):
+        import feasibility
+        params = ev_shortlist._stub_load_params(os.path.join(ROOT, "params.csv"))
+        trips, profile, _ = ev_shortlist._stub_load_and_clean(
+            os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"), params)
+        cls.got = {r["van_id"]: r for r in feasibility.assess(profile, trips, params)}
+
+    def test_range_just_over_is_near(self):
+        self.assertIn("near threshold: Volta Cargo S range +1.8%", self.got["P-04"]["reject_reason"])
+        self.assertIn("near threshold", self.got["P-13"]["reject_reason"])
+
+    def test_two_shift_failing_few_days_is_near(self):
+        self.assertIn("Volta Cargo L range fails 2 days", self.got["P-09"]["reject_reason"])
+
+    def test_far_vans_are_not_near(self):
+        for van in ("P-01", "P-24", "P-38"):
+            self.assertNotIn("near threshold", self.got[van]["reject_reason"], van)
+
+    def test_refrigerated_not_near(self):
+        self.assertNotIn("near threshold", self.got["P-19"]["reject_reason"])
+
+    def test_feasible_reason_marks_threshold(self):
+        self.assertIn("at threshold", self.got["P-14"]["reason"])
+        self.assertNotIn("at threshold", self.got["P-26"]["reason"])
+        self.assertIn("midday charging", self.got["P-08"]["reason"])
+
+    def test_shortlist_reason_comes_from_assess(self):
+        with tempfile.TemporaryDirectory() as out:
+            ev_shortlist.run(os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"),
+                             os.path.join(ROOT, "params.csv"), out)
+            rows = {r["van_id"]: r for r in read(os.path.join(out, "shortlist.csv"))}
+        self.assertIn("at threshold", rows["P-14"]["reason"])
 
 
 class Cli(unittest.TestCase):

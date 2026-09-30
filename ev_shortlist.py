@@ -126,7 +126,7 @@ def run(trips_path, vans_path, params_path, out_dir):
     econ = economics(profile, feas, params, period_days(trips))
 
     ranked = rank(feas, econ, int(params.get("max_evs_grant", 10)))
-    shortlist = [{**r, "rank": i + 1, "reason": r.get("reject_reason", ""),
+    shortlist = [{**r, "rank": i + 1, "reason": r.get("reason", r.get("reject_reason", "")),
                  "range_check_km": "%.1f" % r["range_check_km"]}
                  for i, r in enumerate(ranked)]
 
