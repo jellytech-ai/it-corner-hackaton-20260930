@@ -158,23 +158,27 @@ Każde założenie ma godzinę przyjęcia; Ewa chce wiedzieć „co i mniej wię
 | # | Kiedy (30.09) | Założenie | Status |
 |---|---|---|---|
 | A1 | 10:15 | Pełne duplikaty wierszy usuwamy | przyjęte |
-| A2 | 10:42 | P-17 i P-17B to ten sam van; łączymy pod `P-17B`. Dowody: ta sama trasa (S-R06, nikt inny jej nie jeździ), ten sam kierowca, P-17 kończy się 31.07, P-17B zaczyna 03.08, średni dystans 112 i 111 km, rejestr ma 38 vanów jak w liście Ewy | przyjęte (nie pytamy Ewy) |
-| A3 | 10:15 | Dystans = `odometer_km`; GPS tylko pomocniczo | przyjęte |
-| A4 | 10:15 | Test zasięgu na **najgorszym dniu** (suma kursów dnia), nie na średniej | przyjęte (wymóg Witolda) |
+| A2 | 10:42 | P-17 i P-17B to ten sam van; łączymy pod `P-17B`. Dowody: ta sama trasa (S-R06, nikt inny jej nie jeździ), ten sam kierowca, P-17 kończy się 31.07, P-17B zaczyna 03.08, średni dystans 112 i 111 km, rejestr ma 38 vanów jak w liście Ewy | przyjęte; **potwierdzone przez Ewę** (P-17 skasowany pod koniec lipca, P-17B przejął trasy) |
+| A3 | 10:15 | Dystans = `odometer_km`; GPS tylko pomocniczo | przyjęte; **potwierdzone przez Ewę** („Trust the odometer”) |
+| A4 | 10:15 | Test zasięgu na **najgorszym dniu** (suma kursów dnia), nie na średniej | **zmienione → A19** (reguła Ewy: 95. percentyl dnia) |
 | A5 | 10:15 / 11:25 | Wiersz P-27 z 13.08 (−208,6 km) jest błędem; liczymy go z `gps_km` (90,3 km). Reguła ogólna: licznik ≤ 0 lub pusty → GPS, z ostrzeżeniem w raporcie | przyjęte (tor A, D8) |
-| A6 | 10:30 | Zasięg zimowy = **0,57 × WLTP** (Cargo S ok. 148 km, Cargo L ok. 217 km); warianty 0,50 i 0,65 | przyjęte jako bazowe; pyt. 3 |
+| A6 | 10:30 | Zasięg zimowy = **0,57 × WLTP** (Cargo S ok. 148 km, Cargo L ok. 217 km); warianty 0,50 i 0,65 | **zmienione → A19** (reguła Ewy: 0,60 × WLTP) |
 | A7 | 10:30 | Po 5 latach (koniec leasingu EV) dodatkowo × 0,87 → 0,49 × WLTP (S ok. 128 km, L ok. 187 km) | pokazujemy w notatce jako test odporności |
 | A8 | 10:30 | Zużycie energii: liczby dealera + 10% rocznie na zimę | przyjęte |
 | A9 | 10:30 | Ładowność: maks. zaobserwowany `max_load_kg` vana ≤ ładowność EV; bez narzutu sezonowego (brak źródła) | przyjęte; decyzja D3 |
-| A10 | 10:42 | Chłodnie (P-03, P-07, P-19, P-23, P-34, P-35) wykluczone z pierwszej tury | decyzja D1 (nie pytamy Ewy) |
+| A10 | 10:42 | Chłodnie (P-03, P-07, P-19, P-23, P-34, P-35) wykluczone z pierwszej tury | decyzja D1; **potwierdzone przez Ewę** („out for year 1”) |
 | A11 | 10:30 | Ewa nie ma danych z zimy ani innych danych — nie pytamy o nie | potwierdzone |
 | A12 | 10:50 | Sezonowość: trasy i ładunki są takie same przez cały rok. Roczne km = km z 13 tygodni × 4; zimowy najgorszy dzień i maks. ładunek = letnie z danych. Przesłanki: każdy van jeździ jedną stałą trasą (dwuzmianowe — dwiema), średni dystans kursu jest płaski przez 4 miesiące (122–125 km), Witold pisze o utrzymaniu tras bez zmian. Ryzyko: szczyt przedświąteczny — sprawdzi to ponowne uruchomienie narzędzia na eksporcie za IV kwartał | przyjęte (nie pytamy Ewy) |
 | A13 | — | Ładowanie nocne w taryfie 0,58 PLN/kWh; jeden punkt = jeden van | do potwierdzenia (vany dwuzmianowe wracają ok. 20:40, startują ok. 04:30) |
-| A14 | — | Limit EV w North = 6 (liczba punktów), South = 0 | czeka na Ewę (pyt. 1) |
-| A16 | 10:50 | Vany dwuzmianowe (świt + popołudnie: P-08, P-09, P-12, P-24, P-36) doładowują się w bazie między trasami z punktu 22 kW. Zimą daje to ok. 58 km zasięgu na godzinę ładowania dla Cargo S i ok. 51 km dla Cargo L; odliczamy 15 min na podłączenie. Test: pierwsza trasa ≤ zasięg zimowy oraz stan po doładowaniu ≥ druga trasa, dla każdego dnia z danych. Wymaga: powrotu do bazy między trasami, wolnego punktu w dzień, energii w taryfie dziennej (0,92 PLN/kWh) | przyjęte; skutki w sekcji 8 |
+| A14 | — | Limit EV w North = 6 (liczba punktów), South = 0 | **zmienione → A20** (odpowiedź Ewy) |
+| A16 | 10:50 | Vany dwuzmianowe (świt + popołudnie: P-08, P-09, P-12, P-24, P-36) doładowują się w bazie między trasami z punktu 22 kW. Zimą daje to ok. 58 km zasięgu na godzinę ładowania dla Cargo S i ok. 51 km dla Cargo L; odliczamy 15 min na podłączenie. Test: pierwsza trasa ≤ zasięg zimowy oraz stan po doładowaniu ≥ druga trasa, dla każdego dnia z danych. Wymaga: powrotu do bazy między trasami, wolnego punktu w dzień, energii w taryfie dziennej (0,92 PLN/kWh) | **zmienione → A21** (Ewa: brak czasu na ładowanie) |
 | A17 | 11:13 | Analityk Ewy jest osobą techniczną i ma Pythona 3; uruchamia skrypt z wiersza poleceń i edytuje `params.csv` | przyjęte (niepotwierdzone przez Ewę); **do wpisania w odpowiedzi dla Ewy** — sekcja 7 |
 | A18 | 12:12 | Struktura danych się nie zmieni: kolejny eksport ma te same pliki (`trips.csv`, `vans.csv`) i te same nazwy kolumn co dzisiejszy. Zmieniają się tylko wiersze i okres. Gdy kolumny brakuje, narzędzie zatrzymuje się z komunikatem `ERROR: … missing column(s) …` | przyjęte; **do wpisania w odpowiedzi dla Ewy** — sekcja 7 |
-| A15 | 11:26 | Podstawa `saving_pln` = **wariant 1, tylko eksploatacja, rocznie**: (koszt diesla − koszt ładowania) + (serwis diesla − serwis EV), z `params.csv`. Nie wliczamy raty leasingu ani ceny zakupu EV, rat diesla ani dotacji. Serwis: diesel 0,34 PLN/km (dane firmy, jedna stawka niezależnie od rocznika), EV 0,14 PLN/km (**szacunek dealera**); w `vans.csv` brak kosztów serwisu per van. `annual_fuel_saving_pln` zostaje czystą różnicą paliwo − ładowanie | przyjęte (decyzja D7) |
+| A15 | 11:26 | Podstawa `saving_pln` = **wariant 1, tylko eksploatacja, rocznie**: (koszt diesla − koszt ładowania) + (serwis diesla − serwis EV), z `params.csv`. Nie wliczamy raty leasingu ani ceny zakupu EV, rat diesla ani dotacji. Serwis: diesel 0,34 PLN/km (dane firmy, jedna stawka niezależnie od rocznika), EV 0,14 PLN/km (**szacunek dealera**); w `vans.csv` brak kosztów serwisu per van. `annual_fuel_saving_pln` zostaje czystą różnicą paliwo − ładowanie | **zmienione → D13** (reguła Ewy: 5 lat) |
+| A19 | 12:15 | **Reguła zasięgu Ewy:** van przechodzi, jeśli jego dzień z 95. percentyla (percentyl dziennych sum km, interpolacja liniowa jak `PERCENTILE.INC`) mieści się w **0,60 × WLTP** (Cargo S 156 km, Cargo L 228 km). Zastępuje A4 i A6; nasz rozkład 0,57 zostaje w notatce jako uzasadnienie, że 0,60 to rozsądny kompromis | potwierdzone przez Ewę |
+| A20 | 12:15 | Ładowanie: North 10 punktów (6 + 4 zamówione, gotowe przed dostawą EV), jeden EV na punkt; South bez ładowarek w pierwszym roku; do 3 vanów z South może stacjonować w North, trasy bez zmian, bez doliczania dojazdu | potwierdzone przez Ewę |
+| A21 | 12:15 | Vany dwuzmianowe nie ładują się między trasami („only come back for a driver change”); cały dzień na jednym ładowaniu nocnym | potwierdzone przez Ewę |
+| A22 | 12:17 | Wcześniejsze wyjście z leasingu diesla = 3 raty; leasing kończący się w ciągu 12 miesięcy od `lease_reference_date` (dziś 2026-09-30) — bez opłaty (nie odnawiamy). Granica „w ciągu 12 miesięcy” liczona włącznie (koniec 2027-09-30 = bez opłaty) | reguła potwierdzona przez Ewę; granica włącznie — nasza decyzja |
 
 ### Skąd 0,57 × WLTP (A6–A8)
 
@@ -445,19 +449,27 @@ Demo w trzech krokach:
 | D10 | 11:25 | `vans_assessed` = vany z rejestru z co najmniej jednym kursem; van bez kursów dostaje ostrzeżenie | liczba kontrolna musi odpowiadać temu, co naprawdę oceniliśmy |
 | D11 | 11:35 | Raport i komunikaty narzędzia są po angielsku | czyta je analityk Ewy |
 | D12 | 11:50 | Wspólne zasady języka, błędów, liczb, CSV i gita w `KONSTYTUCJA.md` (m.in. angielski dla analityka, `ERROR:` bez śladu stosu, `WARNING:` w raporcie, liczby kontrolne na ekranie, słownik pojęć). Pierwszeństwo: README Ewy > konstytucja > `KONTRAKT.md`. 11:44 tor C dopisał: każdy nowy komunikat ma wiersz w `RERUN.md` | analityk ma naprawić problem bez czytania kodu i bez nas (A17); dokumenty mają wyglądać jak dzieło jednego zespołu |
+| D13 | 12:17 | `saving_pln` = 5 × (paliwo − ładowanie + różnica serwisu) − cena zakupu EV × (1 − 30% dotacji) − opłata za wyjście z leasingu; bez rat diesla i wartości odsprzedaży. Zastępuje D7. `annual_fuel_saving_pln` bez zmian | Ewa: „The board looks at five years: what we save on running the van, minus what the EV costs us after the grant, minus any lease exit fee … Leave our diesel lease payments and resale values out”. Dotacja tylko przy zakupie, więc liczymy zakup (leasing EV: 60 × 2900 = 174 000 PLN > 105 000 PLN po dotacji) |
+| D14 | 12:17 | Model EV dla vana: spośród modeli, które przechodzą zasięg i ładowność, ten z wyższym `saving_pln` w 5 lat (`economics.saving_for_model`); wybiera tor B | Ewa: „take whichever EV model works out better over the five years” |
 | D6 | 11:20 | Korekta D5: narzędzie to jeden katalog i jedno polecenie, ale cztery pliki `.py` (`data.py`, `feasibility.py`, `economics.py`, `ev_shortlist.py`) | trzy osoby nie mogą równolegle edytować jednego pliku; do wątku trafia zip |
 
 ### Otwarte
 
-- Czy ładowność sprawdzamy na maksimum, czy na wysokim percentylu.
-- Czy rekomendujemy mniej niż 6 aut, jeśli tyle wychodzi z ostrych filtrów, czy pokazujemy warianty.
-- Zakup czy leasing EV.
+- Czy na shortlistę trafiają vany z ujemnym `saving_pln` (tor B; propozycja: nie — pokazujemy je w `all_vans.csv` i w notatce).
+- Kolejność rankingu: największy `saving_pln` (Ewa zostawiła nam wybór zespołom, które pytały).
+- Które 3 vany z South przenosimy do North, gdy pasuje więcej (propozycja: te z najwyższym `saving_pln`).
 
 ### Odpowiedzi Ewy
 
 | Kiedy | Pytanie | Odpowiedź |
 |---|---|---|
 | przed 10:29 | Czy są inne dane (np. z zimy)? | Nie, więcej danych nie ma. |
+| ok. 12:00 (Discussions, wątek „9”; zweryfikowane przez tor A o 12:08) | 1. Ładowanie | „North has 6 charging points today. Four more are ordered … so 10. One EV per point overnight. South gets no chargers in year 1. Up to 3 South vans can be based at North and keep their routes … don't add anything for getting there.” → A20 |
+| jw. | 2. Dotacja | „The grant pays 30% of the purchase price, for at most 10 EVs, and only if we buy them. Leased EVs get nothing. Any other grant rules: choose and write it down.” → D13 |
+| jw. | 3. Zasięg zimowy | „a van qualifies if its 95th-percentile day fits within 60% of the EV's WLTP range. That's our 'January plus a margin' rule. On the dealer's side, I've sent you everything I have today.” → A19 |
+| jw. | 4. Leasing diesli | „Leases that end within the next 12 months are the easy ones: we just don't renew. Ending a lease early costs us 3 monthly fees.” → A22 |
+| jw. (odpowiedzi dla innych zespołów, obowiązują wszystkich) | 5. Podstawa oszczędności i model | „The board looks at five years: what we save on running the van, minus what the EV costs us after the grant, minus any lease exit fee. 'Fuel saving' is just the CFO's shorthand. Leave our diesel lease payments and resale values out” · „For each van, take whichever EV model works out better over the five years. It has to carry the heaviest load that van carried.” · „Double-shift vans only come back for a driver change; there's no time to charge. Count their whole day.” · „Refrigerated vans are out for year 1.” · „Trust the odometer … P-17B took over its routes and drivers.” → D13, D14, A21, A10, A2, A3 |
+| 12:03 | Pytanie Ewy do nas | „my analyst will rerun this next quarter without you. What will they open, and what will they type?” — szkic odpowiedzi w sekcji 7 (A17, A18) |
 
 ### Dziennik
 
@@ -484,3 +496,4 @@ Demo w trzech krokach:
 | 11:40 | `handoff-wstepna-analiza` (A + B) scalone do `tor-c`; pełny potok na `trips.csv`: shortlista P-08, P-26, P-14; `saving_pln` razem 64 552 PLN/rok |
 | 11:42 | `tor-c` scalone do `handoff-wstepna-analiza`; `KONSTYTUCJA.md` (D12) zastępuje szkic sekcji 10 w `KONTRAKT.md` |
 | 11:44 | Tor C: uzupełnienie `KONSTYTUCJA.md` (komunikaty → `RERUN.md`), dokumenty EN zgodne ze słownikiem (check figures, near miss) |
+| 12:17 | Tor C: `saving_pln` według D13 (`ac53902`), `saving_for_model` dla wyboru modelu (D14); odpowiedzi Ewy przeniesione do rejestru (A19–A22, D13, D14). Kontrola na prawdziwych danych zgodna z podglądem toru A: 15 vanów pasuje, 9 dodatnich, 8 wybranych = 95 637 PLN w 5 lat |
