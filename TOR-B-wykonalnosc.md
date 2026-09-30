@@ -129,6 +129,18 @@ Near miss przy 0,60: ładunek — P-02, P-06, P-18 (1 dzień), P-22, P-27 (2), P
 | `range_check_percentile` 100 (najgorszy dzień, reguła Witolda) | 8: bez P-30, P-21 | 187 632 |
 | `max_south_vans_at_north` 0 | 8: tylko North | 171 305 |
 
+| 12:19 | Scalony `devel` d941b2e (tor C: D13 — `saving_pln` w 5 lat, D14 — `saving_for_model`). `choose_models` używa teraz `economics.saving_for_model`. **B10: ranking końcowy** na surowych danych: 8 vanów — P-12 (L, z South), P-30, P-21, P-08 (L), P-05 (z South), P-25 (z South), P-13, P-04; `saving_pln` razem **95 637 PLN w 5 lat**, `annual_fuel_saving_pln` 136 092 PLN/rok — zgodne z kontrolą toru C. Poza listą z notatką: P-14, P-26, P-10, P-20, P-28, P-32 (wynik w 5 lat ≤ 0), P-31 (+1 589 PLN, ale limit 3 vanów z South). Lista i suma przypięte w teście `PipelineOnSourceData` — zmiana wymaga wpisu tutaj (jak liczby kontrolne). Formalne zamrożenie o 14:45 |
+| 12:19 | Demo po D13 (zastępuje tabelę powyżej): świeży eksport — kod 0, 7 vanów, 96 359 PLN. Zmiana jednego parametru na surowych danych: |
+
+| Zmiana w `params.csv` | Shortlista | `saving_pln` (5 lat) |
+|---|---|---|
+| bez zmian | 8: P-12, P-30, P-21, P-08, P-05, P-25, P-13, P-04 | 95 637 |
+| `winter_range_factor` 0,65 | bez zmian | 95 637 |
+| `winter_range_factor` 0,55 | 3: P-12, P-08, P-05 | 47 897 |
+| `winter_range_factor` 0,50 | 1: P-08 | 15 270 |
+| `range_check_percentile` 100 (najgorszy dzień) | 6: bez P-30, P-21 | 59 482 |
+| `max_south_vans_at_north` 0 | 5: P-30, P-21, P-08, P-13, P-04 | 56 414 |
+
 
 ## Pytania na koniec pracy
 
@@ -152,8 +164,8 @@ Near miss przy 0,60: ładunek — P-02, P-06, P-18 (1 dzień), P-22, P-27 (2), P
 | Q16 | Scalenie B5 do `devel` (dawniej `handoff-wstepna-analiza`) i push — wymaga zgody (gałąź wspólna) | czeka na 12:20 |
 | Q17 | KONSTYTUCJA 12 poz. 1–4, 6, 9: tor B zrobił swoją część — właściciel konstytucji ma zaktualizować status w tabeli | do C |
 | Q18 | Kolumna `reason` jest w `feasibility`, `all_vans.csv` i `shortlist.csv`, ale nie ma jej w KONTRAKT 6 (tabela `feasibility`) — KONSTYTUCJA 5 wymaga kolejności kolumn „dokładnie jak w KONTRAKT” | dopisać do KONTRAKT 6 (tor A) |
-| Q19 | Tor C: `saving_pln` nadal roczny (D7) — po zmianie na 5 lat z ceną EV, dotacją i opłatą za leasing shortlista się zmieni (podgląd A: P-26 i P-14 na minus). `choose_models` i ranking działają bez zmian w B | czeka na C |
+| Q19 | ~~rozwiązane 12:19 przez D13~~ Tor C: `saving_pln` nadal roczny (D7) — po zmianie na 5 lat z ceną EV, dotacją i opłatą za leasing shortlista się zmieni (podgląd A: P-26 i P-14 na minus). `choose_models` i ranking działają bez zmian w B | czeka na C |
 | Q20 | Dotacja tylko przy zakupie: czy `saving_pln` liczy zakup dla wszystkich vanów z listy? Wtedy limit 10 z dotacji = limit listy; przy leasingu limit dotacji nie dotyczy | do C (podstawa `saving_basis`) |
 | Q21 | Kolumny `fit_models`, `shortlisted`, `shortlist_note` i `range_day_km` w `all_vans.csv` — dopisać do KONTRAKT 6/7 | do A |
 | Q22 | Które vany z South trafiają do North: teraz trzy z najwyższym `saving_pln`. Alternatywa: najbliższe końca leasingu. Zapisać w założeniach | do C |
-| Q23 | Demo krok 2 (`PREZENTACJA.md`, plik toru C): zamienić 0,57 → 0,65 na `range_check_percentile` 95 → 100 („najgorszy dzień zamiast 95. percentyla: 10 → 8 vanów”) albo `winter_range_factor` 0,60 → 0,55 (10 → 7). Liczby do przeliczenia po zmianie ekonomii C na 5 lat | do C |
+| Q23 | Demo krok 2 (`PREZENTACJA.md`, plik toru C): zamienić 0,57 → 0,65 na `range_check_percentile` 95 → 100 („najgorszy dzień zamiast 95. percentyla: 10 → 8 vanów”) albo `winter_range_factor` 0,60 → 0,55. Po D13: percentyl 100 daje 8 → 6 vanów (95 637 → 59 482 PLN); 0,55 daje 8 → 3 | do C |
