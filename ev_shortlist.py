@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
-"""Punkt wejscia: A (dane) -> B (wykonalnosc) -> C (ekonomia) -> pliki wynikowe.
+"""Entry point: clean data (data.py) -> feasibility -> economics -> output files.
 
-Uzycie:
-    python3 ev_shortlist.py --trips T --vans V --params params.csv --out wyniki/
+Usage:
+    python3 ev_shortlist.py --trips trips.csv --vans vans.csv --params params.csv --out wyniki/
 
-Dopoki brakuje modulow innych torow (data.py, economics.py) lub feasibility.py,
-uzywane sa zaslepki pracujace na plikach testowych z fixtures/ w formacie
-kontraktu: --trips = clean_trips.csv, --vans = van_profile.csv.
+With --fixtures, --trips and --vans are clean_trips.csv and van_profile.csv
+(format of fixtures/), and the cleaning step is skipped.
 """
 import argparse
 import csv
+import math
 import os
-from datetime import date
+import sys
+
+import data
+import economics as econ_mod
+import feasibility as feas_mod
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -25,7 +29,7 @@ INT_COLS = {"annual_km", "annual_fuel_saving_pln", "saving_pln"}
 
 
 def export_format(row):
-    """KONTRAKT 7: range_check_km z 1 miejscem, km i kwoty jako liczby calkowite."""
+    """Return a copy of the row with range_check_km to 1 decimal and km and money as integers."""
     out = dict(row)
     for k in INT_COLS & set(out):
         if out[k] != "":
@@ -35,9 +39,13 @@ def export_format(row):
     return out
 
 
-def read_csv(path):
-    with open(path, newline="", encoding="utf-8") as f:
-        return list(csv.DictReader(f))
+def read_csv(path, label):
+    """Return the rows of a CSV file as a list of dicts."""
+    try:
+        with open(path, newline="", encoding="utf-8-sig") as f:
+            return list(csv.DictReader(f))
+    except FileNotFoundError:
+        raise FileNotFoundError("%s file not found: %s" % (label, path)) from None
 
 
 def write_csv(path, cols, rows):
@@ -51,78 +59,24 @@ def _num(v):
     return float(v) if v not in ("", None) else ""
 
 
-# --- zaslepki (do czasu scalenia torow) ------------------------------------
-
-def _stub_load_params(path):
-    return {r["parameter"]: r["value"] for r in read_csv(path)}
-
-
-def _stub_load_and_clean(trips_path, vans_path, params):
-    trips = read_csv(trips_path)
-    for t in trips:
-        t["km"] = float(t["km"])
-    profile = read_csv(vans_path)
-    for p in profile:
-        for k in NUMERIC_PROFILE & set(p):
-            p[k] = _num(p[k])
-    return trips, profile, ["Tryb testowy: dane z fixtures/, bez czyszczenia (brak data.py)."]
-
-
-def _stub_build_van_profile(trips, vans):
-    return vans  # w trybie testowym --vans jest juz van_profile
-
-
-def _stub_control_figures(trips, profile):
-    return {"vans_assessed": len(profile), "trips_counted": len(trips),
-            "total_km": round(sum(t["km"] for t in trips))}
-
-
-def _stub_period_days(trips):
-    ds = sorted(date.fromisoformat(t["date"]) for t in trips)
-    return (ds[-1] - ds[0]).days + 1
-
-
-def _stub_assess(profile, trips, params):
-    by_id = {r["van_id"]: r for r in read_csv(os.path.join(HERE, "fixtures", "feasibility.csv"))}
-    for r in by_id.values():
-        r["range_check_km"] = float(r["range_check_km"])
-    return [by_id[p["van_id"]] for p in profile]
-
-
-def _stub_economics(profile, feasibility, params, period_days):
-    days_per_year = float(params.get("days_per_year", 365))
-    return [{"van_id": p["van_id"],
-             "annual_km": round(p["km_period"] / period_days * days_per_year),
-             "annual_fuel_saving_pln": 0, "saving_pln": 0}
-            for p in profile]
-
-
-def _stub_saving_basis(params):
-    return "zaslepka: ekonomia toru C jeszcze nie podlaczona"
-
-
-def _pick(module, name, stub):
-    if not module:
-        return stub
-    try:
-        return getattr(__import__(module), name)
-    except (ImportError, AttributeError):
-        return stub
+def load_fixtures(trips_path, profile_path):
+    """Return (clean_trips, van_profile, report) read from files already in the contract format."""
+    trips = [{**t, "km": float(t["km"])} for t in read_csv(trips_path, "Trips")]
+    profile = [{**p, **{k: _num(p[k]) for k in NUMERIC_PROFILE & set(p)}}
+               for p in read_csv(profile_path, "Van profile")]
+    return trips, profile, ["Fixture mode: clean trips and van profile read as given, no cleaning"]
 
 
 # --- ranking ----------------------------------------------------------------
 
 def depot_limits(params):
-    """{baza: liczba punktow} z kluczy chargers.<baza> (decyzja 4: jeden punkt na van)."""
+    """Return {depot: number of charging points} from the chargers.<depot> keys (one point per van)."""
     return {k.split(".", 1)[1]: int(float(v)) for k, v in params.items()
             if k.startswith("chargers.")}
 
 
 def rank(feasibility, economics, limit, depot_limits=None):
-    """Wykonalne vany malejaco po saving_pln, remis malejaco po annual_km.
-
-    Ucinane do limitu dotacji i do liczby punktow ladowania w bazie vana.
-    """
+    """Return feasible vans by saving_pln then annual_km, descending, cut by grant and depot limits."""
     econ = {e["van_id"]: e for e in economics}
     rows = [{**f, **econ.get(f["van_id"], {})} for f in feasibility if f["feasible"] == "yes"]
     rows.sort(key=lambda r: (-r.get("saving_pln", 0), -r.get("annual_km", 0), r["van_id"]))
@@ -138,40 +92,38 @@ def rank(feasibility, economics, limit, depot_limits=None):
     return rows[:limit]
 
 
-# --- potok ------------------------------------------------------------------
+# --- pipeline ---------------------------------------------------------------
 
 def run(trips_path, vans_path, params_path, out_dir, fixture_mode=False):
-    """fixture_mode: wejscie to juz clean_trips + van_profile (fixtures/), bez czyszczenia A."""
-    data = "" if fixture_mode else "data"
-    load_params = _pick(data, "load_params", _stub_load_params)
-    load_and_clean = _pick(data, "load_and_clean", _stub_load_and_clean)
-    build_van_profile = _pick(data, "build_van_profile", _stub_build_van_profile)
-    control_figures = _pick(data, "control_figures", _stub_control_figures)
-    period_days = _pick(data, "period_days", _stub_period_days)
-    assess = _pick("feasibility", "assess", _stub_assess)
-    economics = _pick("economics", "economics", _stub_economics)
-    saving_basis = _pick("economics", "saving_basis", _stub_saving_basis)
+    """Run the whole pipeline, write the four output files and return shortlist, summary and report."""
+    params = data.load_params(params_path)
+    if fixture_mode:
+        trips, vans, report = load_fixtures(trips_path, vans_path)
+        profile = vans
+    else:
+        trips, vans, report = data.load_and_clean(trips_path, vans_path, params)
+        profile = data.build_van_profile(trips, vans)
+    if not trips:
+        raise ValueError("Trips file %s: no usable trip rows; nothing written. "
+                         "Check that it is the telematics export" % trips_path)
+    figures = data.control_figures(trips, profile)
+    feas = feas_mod.assess(profile, trips, params)
+    econ = econ_mod.economics(profile, feas, params, data.period_days(trips))
 
-    params = load_params(params_path)
-    trips, vans, report = load_and_clean(trips_path, vans_path, params)
-    profile = build_van_profile(trips, vans)
-    figures = control_figures(trips, profile)
-    feas = assess(profile, trips, params)
-    econ = economics(profile, feas, params, period_days(trips))
-
-    ranked = rank(feas, econ, int(params["max_evs_grant"]), depot_limits(params))
-    shortlist = [export_format({**r, "rank": i + 1,
-                                "reason": r.get("reason", r.get("reject_reason", ""))})
+    limit = int(feas_mod.param(params, "max_evs_grant"))
+    ranked = rank(feas, econ, limit, depot_limits(params))
+    shortlist = [export_format({**r, "rank": i + 1, "reason": r.get("reason", "")})
                  for i, r in enumerate(ranked)]
 
     summary = [
         ("vans_assessed", figures["vans_assessed"]),
         ("trips_counted", figures["trips_counted"]),
         ("total_km", figures["total_km"]),
-        ("recommended_count", len(ranked)),
-        ("annual_fuel_saving_pln", round(sum(r["annual_fuel_saving_pln"] for r in ranked))),
-        ("saving_pln", round(sum(r["saving_pln"] for r in ranked))),
-        ("saving_basis", saving_basis(params)),
+        ("recommended_count", len(shortlist)),
+        # sums of the rounded shortlist rows, so the CFO gets the same total by adding the column
+        ("annual_fuel_saving_pln", round(math.fsum(r["annual_fuel_saving_pln"] for r in shortlist))),
+        ("saving_pln", round(math.fsum(r["saving_pln"] for r in shortlist))),
+        ("saving_basis", econ_mod.saving_basis(params)),
     ]
 
     feas_by = {f["van_id"]: f for f in feas}
@@ -188,21 +140,34 @@ def run(trips_path, vans_path, params_path, out_dir, fixture_mode=False):
     write_csv(os.path.join(out_dir, "all_vans.csv"), all_cols, all_rows)
     with open(os.path.join(out_dir, "data_report.txt"), "w", encoding="utf-8") as f:
         f.write("\n".join(report) + "\n")
-    return {"shortlist": shortlist, "summary": dict(summary)}
+    return {"shortlist": shortlist, "summary": dict(summary), "report": report}
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Ktore vany przechodza na elektryczne")
-    ap.add_argument("--trips", required=True)
-    ap.add_argument("--vans", required=True)
-    ap.add_argument("--params", default=os.path.join(HERE, "params.csv"))
-    ap.add_argument("--out", default="wyniki")
+    ap = argparse.ArgumentParser(
+        description="Rank the vans that can be replaced by an EV and write the shortlist files.")
+    ap.add_argument("--trips", required=True, help="telematics export (trips.csv)")
+    ap.add_argument("--vans", required=True, help="van register (vans.csv)")
+    ap.add_argument("--params", default=os.path.join(HERE, "params.csv"),
+                    help="parameter file (default: params.csv next to this script)")
+    ap.add_argument("--out", default="wyniki", help="output folder (default: wyniki)")
     ap.add_argument("--fixtures", action="store_true",
-                    help="--trips/--vans to clean_trips.csv/van_profile.csv z fixtures/")
+                    help="--trips and --vans are clean_trips.csv and van_profile.csv from fixtures/")
     a = ap.parse_args(argv)
-    res = run(a.trips, a.vans, a.params, a.out, fixture_mode=a.fixtures)
-    print("Zapisano do %s: %d vanow na shortliscie" % (a.out, len(res["shortlist"])))
+    try:
+        res = run(a.trips, a.vans, a.params, a.out, fixture_mode=a.fixtures)
+    except (FileNotFoundError, ValueError) as err:
+        print("ERROR: %s" % err, file=sys.stderr)
+        return 1
+    s = res["summary"]
+    print("\n".join(res["report"]))
+    print("\nCheck figures")
+    for name in ("vans_assessed", "trips_counted", "total_km"):
+        print("  %s: %s" % (name, s[name]))
+    print("\nVans on the shortlist: %d" % len(res["shortlist"]))
+    print("Output written to: %s" % a.out)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
