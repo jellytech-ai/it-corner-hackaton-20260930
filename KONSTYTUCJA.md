@@ -144,12 +144,12 @@ W tekstach po polsku liczby piszemy z przecinkiem dziesiętnym i spacją jako se
 
 | # | Gdzie | Co | Właściciel |
 |---|---|---|---|
-| 1 | `ev_shortlist.py` | komunikat końcowy po polsku bez polskich znaków („Zapisano do …: 3 vanow na shortliscie”) — ma być po angielsku | B |
-| 2 | `ev_shortlist.py` | brak obsługi błędów: brakujący plik daje ślad stosu zamiast `ERROR: …` i kodu 1 | B |
-| 3 | `ev_shortlist.py` | nie wypisuje raportu ani liczb kontrolnych na ekran | B |
-| 4 | `ev_shortlist.py`, `--help` | opis i pomoc po polsku | B |
+| 1 | `ev_shortlist.py` | komunikat końcowy po polsku bez polskich znaków („Zapisano do …: 3 vanow na shortliscie”) — ma być po angielsku | B — rozwiązane (B, 11:48; sprawdzone przez C 12:29) |
+| 2 | `ev_shortlist.py` | brak obsługi błędów: brakujący plik daje ślad stosu zamiast `ERROR: …` i kodu 1 | B — rozwiązane (B, 11:48; sprawdzone przez C 12:29) |
+| 3 | `ev_shortlist.py` | nie wypisuje raportu ani liczb kontrolnych na ekran | B — rozwiązane (B, 11:48; sprawdzone przez C 12:29) |
+| 4 | `ev_shortlist.py`, `--help` | opis i pomoc po polsku | B — rozwiązane (B, 11:48; sprawdzone przez C 12:29) |
 | 5 | `ev_shortlist.py` | `saving_basis` z tekstem „zaslepka…” trafia do `summary.csv`, dopóki tor C nie jest scalony | B + C — rozwiązane 11:42 (scalenie `tor-c`: prawdziwe `economics.py`) |
-| 6 | `feasibility.py` | docstringi po polsku bez polskich znaków | B |
+| 6 | `feasibility.py` | docstringi po polsku bez polskich znaków | B — rozwiązane (B, 11:48; sprawdzone przez C 12:29) |
 | 7 | `tests/test_a.py` | zmienna `HACKATHON_DATA` zamiast wspólnej `EV_SOURCE_DIR` | A — poprawione 11:50 |
-| 9 | `data.py` + `ev_shortlist.py` | zero użytecznych wierszy daje dziś tylko `WARNING` i pliki z zerami; punkt wejścia ma to zamienić na `ERROR` | A + B |
+| 9 | `data.py` + `ev_shortlist.py` | zero użytecznych wierszy daje dziś tylko `WARNING` i pliki z zerami; punkt wejścia ma to zamienić na `ERROR` | A + B — rozwiązane (B, 11:48; sprawdzone przez C 12:29): `ERROR: … no usable trip rows; nothing written`, kod 1, brak plików |
 | 8 | nazwy gałęzi | `tor-b-wykonalnosc` obok `tor-a`, `tor-c` — zostaje, nie zmieniamy w trakcie | — |

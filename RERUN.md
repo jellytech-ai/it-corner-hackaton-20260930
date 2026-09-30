@@ -11,7 +11,10 @@ This tool reads a telematics export and the van register and writes the EV short
 | `ev_shortlist.py` | the command you run |
 | `data.py`, `feasibility.py`, `economics.py` | the steps it calls (cleaning, feasibility, savings); no need to open them |
 | `params.csv` | every price, rate and threshold the tool uses; edit this, not the code |
+| `RERUN.md` | these instructions |
 | `ASSUMPTIONS.md` | what the numbers are based on |
+
+After the first run Python creates a `__pycache__` folder next to the scripts. That is normal; you can ignore or delete it.
 
 ## Steps
 
