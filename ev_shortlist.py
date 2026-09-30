@@ -77,7 +77,8 @@ def depot_limits(params):
             if k.startswith("chargers.")}
 
 
-def rank_with_notes(feasibility, economics, limit, depot_limits=None, max_moved=None):
+def rank_with_notes(feasibility, economics, limit, depot_limits=None, max_moved=None,
+                    horizon_years=None):
     """Return (shortlisted rows, {van_id: why a feasible van is not on the shortlist}).
 
     Feasible vans go by saving_pln then annual_km, descending. A van is left out when its
@@ -93,7 +94,8 @@ def rank_with_notes(feasibility, economics, limit, depot_limits=None, max_moved=
         depot = r.get("ev_depot", "")
         is_moved = depot != r.get("depot", depot)
         if _money(r.get("saving_pln")) <= 0:
-            notes[r["van_id"]] = "saving over the horizon is not positive"
+            notes[r["van_id"]] = ("saving over %d years is not positive" % horizon_years
+                                  if horizon_years else "saving is not positive")
         elif len(kept) >= limit:
             notes[r["van_id"]] = "grant limit of %d EVs reached" % limit
         elif depot_limits is not None and used.get(depot, 0) >= depot_limits.get(depot, 0):
@@ -125,7 +127,8 @@ def choose_models(profile, trips, feasibility, params, period_days):
         if len(models) > 1:
             van = by_id[row["van_id"]]
             options = [feas_mod.assess_van(van, trips, params, model=m) for m in models]
-            savings = [_money(econ_mod.economics([van], [o], params, period_days)[0]["saving_pln"])
+            savings = [econ_mod.saving_for_model(van, o["ev_model"], o["day_tariff_share"],
+                                                 params, period_days)["saving_pln"]
                        for o in options]
             best = max(range(len(options)), key=lambda i: (savings[i], -i))  # tie: cheaper model
             row = options[best]
@@ -156,7 +159,8 @@ def run(trips_path, vans_path, params_path, out_dir, fixture_mode=False):
     max_moved = int(feas_mod.param(params, "max_south_vans_at_north"))
     depot_of = {p["van_id"]: p["depot"] for p in profile}
     ranked, left_out = rank_with_notes([{**f, "depot": depot_of[f["van_id"]]} for f in feas],
-                                       econ, limit, depot_limits(params), max_moved)
+                                       econ, limit, depot_limits(params), max_moved,
+                                       int(feas_mod.param(params, "saving_horizon_years")))
     on_list = {r["van_id"] for r in ranked}
     shortlist = [export_format({**r, "rank": i + 1, "reason": r.get("reason", "")})
                  for i, r in enumerate(ranked)]

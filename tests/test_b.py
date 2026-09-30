@@ -569,9 +569,14 @@ class PipelineOnSourceData(unittest.TestCase):
                              os.path.join(ROOT, "params.csv"), out)
             s = {r["figure"]: r["value"] for r in read(os.path.join(out, "summary.csv"))}
             short = [r["van_id"] for r in read(os.path.join(out, "shortlist.csv"))]
+            notes = {r["van_id"]: r["shortlist_note"] for r in read(os.path.join(out, "all_vans.csv"))}
+        self.assertEqual(notes["P-14"], "saving over 5 years is not positive")
+        self.assertIn("limit of 3 vans", notes["P-31"])
         self.assertEqual((s["vans_assessed"], s["trips_counted"], s["total_km"]),
                          ("38", "2777", "344952"))
-        self.assertTrue(0 < len(short) <= 10)
+        # B10: frozen figures (Ewa's rules, D13 five-year saving); a change needs a journal entry
+        self.assertEqual(short, ["P-12", "P-30", "P-21", "P-08", "P-05", "P-25", "P-13", "P-04"])
+        self.assertEqual(s["saving_pln"], "95637")
 
 
 if __name__ == "__main__":
