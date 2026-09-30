@@ -542,3 +542,6 @@ Demo w trzech krokach:
 | 15:20 | Wydanie `v1.0`: PR `devel` → `main`, tag, zip z tagu (`SDLC.md`, sekcja 4) |
 | 15:18 | Ewa: `CHANGE.md` — nowy eksport, nowy rejestr, reguła najgorszego dnia, wymagany `impact.csv` |
 | 15:27 | Zmiana wdrożona na `devel` (84239c1): zamrożenie z 14:45 uchylone; 7 vanów, 85 750 PLN; `impact.py`, `params_lunch.csv`, 104 testy; A26–A33, D17–D19. **Wydanie `v1.0` na `main` ma stare liczby (8 vanów)** — potrzebne nowe wydanie |
+| 15:32 | Wydanie `v1.1`: PR #7 `devel` → `main`, tag, zip z tagu sprawdzony w pustym katalogu, pliki jako załączniki wydania na GitHubie |
+| 15:33 | Komplet końcowy wysłany Ewie w wątku „9” (7 vanów, 85 750 PLN, `impact.csv`, linki do plików wydania): https://github.com/handsonarchitects/it-corner-hackathon-20260930/discussions/4#discussioncomment-18680193 |
+| 15:36 | Prezentacja przebudowana na gałęzi `prezentacja-v1.1` (16 slajdów, nowy slajd o zmianie z 15:18, nowe demo) |
