@@ -1,6 +1,6 @@
 # SLEDZENIE — od wymagania do testu i kolumny wyniku
 
-Stan: 30.09.2026, 13:07, na `devel` (`9a72ed6`). Właściciel: tor A. Każdy wiersz mówi, skąd wzięło się wymaganie, który parametr je niesie, który kod je liczy, który test go pilnuje i gdzie Ewa zobaczy skutek.
+Stan: 30.09.2026, 15:20, na `devel` (`e8088a4`), wersja do wydania `v1.0`. Właściciel: tor A. Każdy wiersz mówi, skąd wzięło się wymaganie, który parametr je niesie, który kod je liczy, który test go pilnuje i gdzie Ewa zobaczy skutek.
 
 Nowa reguła albo parametr dostaje tu wiersz **razem z testem** (`KONSTYTUCJA.md`, sekcja 7). Wiersz bez testu trafia do sekcji 3.
 
@@ -37,6 +37,9 @@ Skróty: `a`, `b`, `c` = `tests/test_a.py`, `test_b.py`, `test_c.py`. Numery A i
 | W9 | Roczne km z długości okresu, nie ze stałego mnożnika (A24) | `days_per_year` | `economics.economics` | c: `test_annual_km_scales_period_to_year`, `test_annual_km_uses_period_days_argument` | `annual_km` |
 | W10 | „Blisko progu” pokazujemy zarządowi | `near_miss_range_pct`, `near_miss_days`, `at_threshold_pct` | `feasibility.assess` | b: klasy `NearThreshold` i `Thresholds` (pod, na, nad progiem) | `reject_reason`, `reason` |
 | W11 | Błąd to jedna linia `ERROR:`, kod 1, bez plików (`KONSTYTUCJA.md`, sekcja 3) | — | `ev_shortlist.main` | b: `test_missing_file_is_one_error_line`, `test_missing_parameter_is_error`, `test_zero_usable_rows_is_error` · a: `test_missing_column_is_a_clear_error` | `stderr` |
+| W12 | Do percentyla dnia liczą się tylko dni, w których van jeździł; dni bez kursów nie są zerami (A19, doprecyzowane 15:05 — Ewa: wybierzcie sami) | `range_check_percentile` | `data.build_van_profile` | a: `test_profile_sums_the_day_and_flags_two_shifts`, `test_range_day_uses_percentile_from_params` (pośrednio — patrz L6) | `range_check_km` |
+| W13 | Zapisany ładunek to sam towar, bez kierowcy; porównujemy go wprost z ładownością EV (A25, 15:12 — Ewa: wybierzcie sami) | `ev.<model>.payload_kg` | `feasibility.model_failures` | b: `test_payload_below_at_above` | `reject_reason` |
+| W14 | Roczne km z dni kalendarzowych (× 365 ÷ 90), bez korekty o święta; wrażliwość 8 / 7 / 6 vanów opisana w notatce (A12, decyzja po 14:45) | `days_per_year` | `economics.economics` | c: `test_annual_km_scales_period_to_year` | `annual_km`, `BOARD_NOTE.md` |
 
 ## 3. Luki znalezione przy budowie macierzy
 
@@ -47,5 +50,6 @@ Skróty: `a`, `b`, `c` = `tests/test_a.py`, `test_b.py`, `test_c.py`. Numery A i
 | L3 | `winter_temp_factor`, `winter_payload_factor`, `charger_kw`, `midday_connect_minutes` działają tylko przy `midday_charging_allowed = yes`, czyli dziś nigdy | martwa ścieżka według reguły R4; nie wpływa na wynik | zostawić (przełącznik dla kolejnych kwartałów), dopisać zdanie w `RERUN.md` | B, C |
 | L4 | Reguła „dotacja tylko przy zakupie” (R5) nie ma parametru ani testu — jest decyzją D16 | gdyby Ewa dopuściła leasing EV, trzeba zmienić kod, nie parametr | wystarczy wpis w `ASSUMPTIONS.md`; nie ruszać kodu przed 14:45 | C |
 | L5 | `fixtures/feasibility.csv` ma nagłówek bez `reason` i `fit_models` | wzór nie odpowiada `KONTRAKT.md`, sekcja 6 (kontrakt mówi o tym wprost: „wzór uproszczony”) | zostawić; służył tylko do startu toru C | A |
+| L6 | Reguła W12 nie ma testu, który wprost sprawdza, że dzień bez kursów nie wchodzi do percentyla jako zero | wynika to z konstrukcji (`day_km` powstaje tylko z dni z kursami), ale zmiana kodu mogłaby to zepsuć bez czerwonego testu | jeden test w `test_a.py` w kolejnym kwartale; po zamrożeniu nie ruszamy | A |
 
 Żadna z luk (ani zamknięcie L1) nie zmienia dzisiejszych liczb (8 vanów, 95 637 PLN w 5 lat).
