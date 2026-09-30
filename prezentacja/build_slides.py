@@ -58,7 +58,7 @@ CELL_B = ParagraphStyle("cellb", parent=CELL, fontName="Sans-Bold")
 
 LOGO = svg2rlg(os.path.join(ASSETS, "jellytech-logo.svg"))
 
-TOTAL = 17
+TOTAL = 18
 CURRENT = 0  # slide number, set in main() so slides can be reordered freely
 
 
@@ -385,7 +385,7 @@ def s11_change(c):
 
 
 def s12_second_change(c):
-    frame(c, 12, "15:18: nowe dane i nowa reguła — 15:27 gotowe", "Proces")
+    frame(c, 12, "1. Workflow: 15:18 nowe dane i nowa reguła — 15:27 gotowe", "Proces · punkt 1")
     table(c, [["Van", "Zmiana", "Przyczyna", "Dlaczego"],
               ["P-30", "wypadł", "nowa reguła", "najgorszy dzień 166,2 km przy 156 km zasięgu zimowego Cargo S"],
               ["P-21", "wypadł", "nowa reguła", "najgorszy dzień 158,6 km"],
@@ -488,7 +488,7 @@ def sB_timeline(c):
 
 
 def sAB_sdlc_timeline(c):
-    frame(c, 0, "Nasz SDLC na osi czasu: najpierw specyfikacja, potem kod", "Proces")
+    frame(c, 0, "1. Workflow na osi czasu: najpierw specyfikacja, potem kod", "Proces · punkt 1")
     x0, x1, y = M + 10, W - M - 10, 306
     start, end = 10 * 60, 16 * 60
     c.setStrokeColor(RULE)
@@ -540,8 +540,49 @@ def sAB_sdlc_timeline(c):
          M, 76, 864, ParagraphStyle("foot", parent=SMALL, fontSize=11, leading=14))
 
 
+def sW_workflow(c):
+    frame(c, 0, "1. Workflow: od danych Ewy do narzędzia", "Proces · punkt 1")
+    style = ParagraphStyle("wf", parent=MID, fontSize=13, leading=17.5)
+    bullets(c, [
+        "<b>Najpierw czytanie.</b> 10:10–11:10: profil pięciu plików, pułapki w danych (222 duplikaty, P-17/P-17B, "
+        "ujemny licznik, braki GPS) i jeden dokument z każdym założeniem, jego godziną i statusem.",
+        "<b>Pięć pytań, każde z planem B.</b> Dwa odpadły, bo odpowiedź była w danych (P-17, chłodnie) — Ewa potwierdziła oba.",
+        "<b>Specyfikacja przed kodem.</b> Kontrakt (właściciel każdego pliku, funkcje, kolumny), "
+        "<font name='Mono'>params.csv</font> i pliki testowe — trzy tory ruszyły o 11:20, nie czekając na siebie.",
+        "<b>Trzy tory równolegle:</b> dane i liczby kontrolne; wykonalność, ranking i eksport; ekonomia i dokumenty. "
+        "Scalenia o ustalonych godzinach, testy przy każdym wypchnięciu.",
+        "<b>Dwie zmiany wymagań jako zmiana parametrów i danych:</b> reguły z południa (3 → 8 vanów) i zmiana z 15:18 "
+        "(8 → 7 vanów, <font name='Mono'>impact.csv</font>) — ok. 15 minut od wiadomości Ewy do wpisu w wątku.",
+        "<b>Sprawdzone dwa razy.</b> Liczby kontrolne drugą metodą (<font name='Mono'>sort</font>, "
+        "<font name='Mono'>awk</font>); shortlista z południa policzona niezależnie w drugiej sesji — zgodna co do złotówki.",
+        "<b>Wydane jak oprogramowanie.</b> PR do <font name='Mono'>main</font>, tag, zip z tagu sprawdzony w pustym katalogu.",
+    ], M, 428, 864, style, gap=5)
+
+
+def sH_humans_agents(c):
+    frame(c, 0, "2. Ludzie i agenci", "Proces · punkt 2")
+    table(c, [["Osoba", "Tor", "Zakres"],
+              ["Wojtek", "A", "dane, kontrakt i wspólne zasady, pytania i odpowiedzi do Ewy, wydania"],
+              ["Rafał", "B", "wykonalność, ranking, eksport, integracja, narzędzie do slajdów"],
+              ["Walerian", "C", "ekonomia, notatka dla zarządu, lista założeń, instrukcja uruchomienia"]],
+          M, 428, [110, 50, 704])
+    style = ParagraphStyle("ha", parent=MID, fontSize=13, leading=17.5)
+    bullets(c, [
+        "<b>Kilka sesji agentów na osobę</b> (Claude Code): jedna na tor we własnym katalogu roboczym, plus sesja, "
+        "która tylko obserwowała repo i dyskusje organizatorów i przekazywała odpowiedzi Ewy.",
+        "<b>Agenci:</b> profil danych, kod i testy, odczyt odpowiedzi Ewy u źródła (także z wątków innych zespołów), "
+        "kontrole krzyżowe, wydania, dokumenty, slajdy.",
+        "<b>Ludzie:</b> co jest problemem Ewy, które pytania zadać, każde scalenie do wspólnej gałęzi, każda wiadomość "
+        "do Ewy, decyzje biznesowe (na liście tylko vany, które się zwracają).",
+        "<b>Na co szedł czas:</b> głównie przegląd wyników agentów i decyzje, potem prompty; bardzo mało pisania kodu. "
+        "Wąskim gardłem była uwaga człowieka, nie tempo implementacji.",
+        "<b>Uczciwy wyjątek:</b> o 15:18, pod presją czasu, agent sam wybrał dwie reguły (GPS dla licznika 1383 km; "
+        "skalowanie nowych vanów) — zapisał je w założeniach i zgłosił.",
+    ], M, 298, 864, style, gap=5)
+
+
 def sC_tooling(c):
-    frame(c, 0, "Tooling", "Proces")
+    frame(c, 0, "3. Narzędzia i technologie", "Proces · punkt 3")
     table(c, [["Obszar", "Narzędzie", "Do czego"],
               ["Asystent AI", "Claude Code (model Opus) w terminalu", "implementacja, testy, integracja, weryfikacja, dokumenty"],
               ["Izolacja pracy", "git worktree na tor (Orca)", "każda sesja we własnym katalogu"],
@@ -609,7 +650,7 @@ def sD_human_ai(c):
 
 
 def sF_usual_way(c):
-    frame(c, 0, "Gdzie nasz zwykły sposób pracy dziś nie pasował", "Proces")
+    frame(c, 0, "4. Gdzie nasz zwykły sposób pracy dziś nie pasował", "Proces · punkt 4")
     table(c, [["Zwykle", "Dziś"],
               ["Każdy PR zatwierdza druga osoba",
                "oba wydania zatwierdziła jedna osoba — agenci produkowali zmiany szybciej, niż trzy osoby mogły je przejrzeć"],
@@ -626,7 +667,7 @@ def sF_usual_way(c):
 
 
 def sE_lessons(c):
-    frame(c, 0, "Co zrobimy inaczej", "Proces")
+    frame(c, 0, "5. Co zrobimy inaczej", "Proces · punkt 5")
     boxes = [("Jako zespół, od teraz",
               "Specyfikacja przed kodem w pracy z agentami: kontrakt, plik parametrów, pliki testowe, CI i celowo "
               "zepsuty eksport istnieją przed pierwszą linią kodu. Nasze założenie „te same kolumny co kwartał” "
@@ -655,7 +696,7 @@ def sE_lessons(c):
 
 
 def s13_demo(c):
-    frame(c, 14, "Demo: to samo narzędzie przed zmianą i po niej", "Demo")
+    frame(c, 14, "6. Demo: narzędzie na najnowszym eksporcie", "Demo · punkt 6")
     items = [
         ("1", "Przed zmianą: jeden eksport, reguła 95. percentyla",
          "ev_shortlist.py --trips trips.csv --vans vans.csv --params params_lunch.csv --out lunch/",
@@ -721,7 +762,7 @@ def s15_close(c):
 # Order follows the organisers' PRESENTATION.md: workflow, humans and agents, tools, where our usual way
 # did not fit, what we will do differently; then assumptions and result; demo last.
 SLIDES = [s01_title, s02_answer,
-          sAB_sdlc_timeline, s12_second_change, sD_human_ai, sC_tooling, sF_usual_way, sE_lessons,
+          sW_workflow, sAB_sdlc_timeline, s12_second_change, sH_humans_agents, sC_tooling, sF_usual_way, sE_lessons,
           s03_range, s04_money_assumptions, s05_data_assumptions,
           s07_feasibility, s08_money, s09_sensitivity,
           s14_analyst, s13_demo, s15_close]

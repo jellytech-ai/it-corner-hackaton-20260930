@@ -9,7 +9,7 @@ Team 9: Wojtek, Rafał, Walerian. Final delivery: tag `v1.1`, 7 vans, 85750 PLN 
 - **Specified before coding.** A contract (who owns which file, function signatures, table columns), a parameter file (`params.csv`) and fixture files in the agreed format, so three tracks could start at 11:20 without waiting for each other.
 - **Three parallel tracks:** data cleaning and check figures; feasibility, ranking and export; economics and documents. Merged to one branch at agreed times, tests run on every push.
 - **Two requirement changes absorbed as parameter and data changes.** Ewa's noon rules (3 → 8 vans) and her 15:18 change (new export, new register, worst-day rule: 8 → 7 vans, plus `impact.csv`). The second took about 15 minutes from her message to our post in the thread.
-- **Verified twice.** Check figures recomputed with `sort`/`awk`; the shortlist recomputed independently in a second session; both matched to the zloty.
+- **Verified twice.** Check figures recomputed with `sort`/`awk`; the noon shortlist recomputed independently in a second session; both matched to the zloty. Another team arrived independently at the same seven vans for the final list.
 - **Released like software.** PR to `main`, tag, zip built from the tag and rerun in an empty folder, then posted with the CSVs, the board note, the assumptions and the rerun instructions.
 
 ## 2. Humans and agents
@@ -28,7 +28,7 @@ Team 9: Wojtek, Rafał, Walerian. Final delivery: tag `v1.1`, 7 vans, 85750 PLN 
 - **Repository and CI:** GitHub, track branches → `devel` → `main` by merge only; GitHub Actions on Python 3.9 and 3.13.
 - **The tool for Ewa:** Python, standard library only, `unittest` (104 tests); no install for her analyst, all numbers in `params.csv`.
 - **Independent check:** shell (`sort -u`, `awk` with `LC_ALL=C`).
-- **Client channel:** GitHub Discussions. **Slides:** a Python script (reportlab) that builds the PDF from the tool's numbers.
+- **Client channel:** GitHub Discussions. **Slides:** a Python script (reportlab) that builds the PDF.
 
 ## 4. Where our usual way of working didn't fit
 
