@@ -1,5 +1,3 @@
-<!-- DRAFT (track C, C9), from HANDOFF.md sections 6 and 10 as of 12:17, after Ewa's lunch answers. Update after the 14:45 freeze. -->
-
 # Assumptions and decisions
 
 All times are CEST on 30 Sep 2026. "Confirmed by you" means your lunch answers settled it; "accepted" means we chose it and would change it if you tell us otherwise. Every number below is a line in `params.csv`, so changing an assumption means changing a value there, not the code.
