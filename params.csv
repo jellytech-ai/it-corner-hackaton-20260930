@@ -30,3 +30,6 @@ max_evs_grant,10
 exclude_refrigerated,yes
 van_alias.P-17,P-17B
 days_per_year,365
+near_miss_range_pct,10
+near_miss_days,3
+at_threshold_pct,1
