@@ -402,6 +402,7 @@ Demo w trzech krokach:
 | D9 | 11:25 | Kursy vana spoza rejestru (po aliasach) nie wchodzą do liczb; ostrzeżenie mówi, co dopisać do `vans.csv` lub `van_alias` | następny eksport może mieć nowego vana; analityk ma to zobaczyć, a nie dostać cicho zmienione liczby |
 | D10 | 11:25 | `vans_assessed` = vany z rejestru z co najmniej jednym kursem; van bez kursów dostaje ostrzeżenie | liczba kontrolna musi odpowiadać temu, co naprawdę oceniliśmy |
 | D11 | 11:35 | Raport i komunikaty narzędzia są po angielsku | czyta je analityk Ewy |
+| D12 | 11:41 | Konstytucja komunikatów narzędzia: `KONTRAKT.md` sekcja 10 (K1–K7) — angielski, `ERROR:` bez tracebacka, `WARNING:` w raporcie, liczby kontrolne na ekranie | analityk ma naprawić problem bez czytania kodu i bez nas (A17) |
 | D6 | 11:20 | Korekta D5: narzędzie to jeden katalog i jedno polecenie, ale cztery pliki `.py` (`data.py`, `feasibility.py`, `economics.py`, `ev_shortlist.py`) | trzy osoby nie mogą równolegle edytować jednego pliku; do wątku trafia zip |
 
 ### Otwarte
@@ -421,10 +422,6 @@ Demo w trzech krokach:
 | Godzina | Co |
 |---|---|
 | 10:10 | Repo sklonowane, materiały przeczytane, pierwszy profil danych |
-| 11:31 | Tor C: `economics()` z `annual_km`, `annual_fuel_saving_pln`, `saving_pln` wypchnięte na `tor-c` |
-| 11:33 | Tor A: liczby kontrolne 2777 / 344952 / 38 potwierdzone przez `data.py` i niezależnie w powłoce. Pułapka: `awk` przy polskich ustawieniach regionalnych obcina ułamki (343 699) — trzeba `LC_ALL=C` |
-| 11:35 | Tor A: `data.py` wypchnięte na `tor-a` |
-| 11:55 | Tor C: szkice `RERUN.md` i `ASSUMPTIONS.md`; decyzje toru A przeniesione do rejestru |
 | 10:20 | Analiza wpływu braku danych zimowych |
 | 10:29 | Decyzja: nie pytamy o dane zimowe; pytanie o chłodnie wraca do piątki |
 | 10:30 | Współczynnik zimowy 0,57 × WLTP ze źródłami |
@@ -438,3 +435,9 @@ Demo w trzech krokach:
 | 11:13 | Zakres narzędzia dla analityka i scenariusz prezentacji (sekcja 9, D5) |
 | 11:13 | A17: analityk jest techniczny i ma Pythona |
 | 11:20 | Dokumenty torów, `KONTRAKT.md`, `params.csv` i pliki testowe; D6 |
+| 11:31 | Tor C: `economics()` z `annual_km`, `annual_fuel_saving_pln`, `saving_pln` wypchnięte na `tor-c` |
+| 11:33 | Tor A: liczby kontrolne 2777 / 344952 / 38 potwierdzone przez `data.py` i niezależnie w powłoce. Pułapka: `awk` przy polskich ustawieniach regionalnych obcina ułamki (343 699) — trzeba `LC_ALL=C` |
+| 11:35 | Tor A: `data.py` wypchnięte na `tor-a` |
+| 11:37 | Tor C: szkice `RERUN.md` i `ASSUMPTIONS.md`; decyzje toru A przeniesione do rejestru |
+| 11:40 | `handoff-wstepna-analiza` (A + B) scalone do `tor-c`; pełny potok na `trips.csv`: shortlista P-08, P-26, P-14; `saving_pln` razem 64 552 PLN/rok |
+| 11:41 | Konstytucja komunikatów (D12) w `KONTRAKT.md` sekcja 10; do poprawy w `ev_shortlist.py` (tor B): K1, K3, K6 |

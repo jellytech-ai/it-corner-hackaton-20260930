@@ -1,4 +1,4 @@
-<!-- DRAFT (track C, C9), from HANDOFF.md sections 6 and 10 as of 11:45. Update after Ewa's lunch answers (C7) and the 14:45 freeze. -->
+<!-- DRAFT (track C, C9), from HANDOFF.md sections 6 and 10 as of 11:41. Update after Ewa's lunch answers (C7) and the 14:45 freeze. -->
 
 # Assumptions and decisions
 

@@ -55,6 +55,8 @@ This tool reads a telematics export and the van register and writes the EV short
 
 ## If something goes wrong
 
+A problem that stops the tool is printed as one line starting with `ERROR:`, naming the file and the column or parameter to fix. Problems in the data that do not stop it are lines starting with `WARNING:` in `data_report.txt`.
+
 | Message or symptom | What to do |
 |---|---|
 | `python3: command not found` | install Python 3 from python.org, or try `python` instead of `python3` |
