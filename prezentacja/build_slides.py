@@ -58,7 +58,8 @@ CELL_B = ParagraphStyle("cellb", parent=CELL, fontName="Sans-Bold")
 
 LOGO = svg2rlg(os.path.join(ASSETS, "jellytech-logo.svg"))
 
-TOTAL = 16
+TOTAL = 18
+CURRENT = 0  # slide number, set in main() so slides can be reordered freely
 
 
 def logo(c, x, y, width):
@@ -71,6 +72,7 @@ def logo(c, x, y, width):
 
 
 def frame(c, n, title, kicker=""):
+    n = CURRENT or n
     c.setFillColor(colors.white)
     c.rect(0, 0, W, H, stroke=0, fill=1)
     c.setFillColor(BRAND)
@@ -425,6 +427,152 @@ def s12_parallel(c):
          M, 112, 860, SMALL)
 
 
+def sA_sdlc(c):
+    frame(c, 0, "Nasz SDLC: najpierw specyfikacja, potem kod", "Proces")
+    table(c, [["Faza", "Artefakt", "Bramka do kolejnej fazy"],
+              ["1. Wymagania", "rejestr 33 założeń i 19 decyzji z godzinami; 5 pytań do Ewy z planem B",
+               "każde założenie ma numer, godzinę i status"],
+              ["2. Projekt", "kontrakt (wersje 1.0 → 2.3), konstytucja, <font name='Mono'>params.csv</font>, pliki testowe",
+               "zmiana kolumny lub parametru = najpierw nowa wersja kontraktu"],
+              ["3. Implementacja", "4 moduły + <font name='Mono'>impact.py</font>, 3 tory równolegle", "testy lokalnie"],
+              ["4. Weryfikacja", "104 testy, macierz wymaganie → test, CI, liczby liczone dwiema metodami",
+               "CI zielone, żaden test pominięty"],
+              ["5. Wydanie", "PR <font name='Mono'>devel</font> → <font name='Mono'>main</font>, tagi v1.0 i v1.1, zip z tagu",
+               "przegląd drugiej osoby (z braku czasu: jednej)"],
+              ["6. Akceptacja", "zip w pustym katalogu; świeży eksport; typowe pomyłki analityka",
+               "wynik bajt w bajt, zawsze czytelny ERROR"],
+              ["7. Utrzymanie", "<font name='Mono'>RERUN.md</font>: co zmieniać co kwartał, co robić przy błędzie", "—"]],
+          M, 424, [130, 420, 314])
+    para(c, "Dwie zmiany wymagań przeszły tę samą drogę — wymaganie → kontrakt → parametr → kod → test: "
+            "w południe w 33 minuty (3 → 8 vanów), o 15:18 w kwadrans do wpisu w wątku (8 → 7 vanów). "
+            "Bez przepisywania narzędzia.", M, 128, 864, MID)
+
+
+def sB_timeline(c):
+    frame(c, 0, "Oś czasu: 10:10 → 15:33", "Proces")
+    x0, x1, y = M + 10, W - M - 10, 262
+    start, end = 10 * 60, 16 * 60
+    c.setStrokeColor(RULE)
+    c.setLineWidth(3)
+    c.line(x0, y, x1, y)
+    c.setFont("Sans", 10)
+    c.setFillColor(MUTED)
+    for hour in range(10, 17):
+        hx = x0 + (hour * 60 - start) / (end - start) * (x1 - x0)
+        c.setLineWidth(1)
+        c.line(hx, y - 5, hx, y + 5)
+    events = [("10:10", "start: profil danych", 1, False), ("11:09", "5 pytań do Ewy", -1, False),
+              ("11:19", "kontrakt, 3 tory", 2, False), ("11:55", "pierwsze scalenie: 3 vany", -2, False),
+              ("12:00", "odpowiedzi Ewy: nowe reguły", 3, True), ("12:33", "8 vanów, 95 637 PLN", -3, False),
+              ("12:55", "test ponownego uruchomienia", 1, False), ("13:07", "CI, macierz śladowania", -1, False),
+              ("14:45", "zamrożenie liczb", 2, False), ("15:18", "Ewa: nowe dane, nowa reguła", -2, True),
+              ("15:20", "wydanie v1.0", 3, False), ("15:33", "v1.1: 7 vanów, wpis w wątku", 1, False)]
+    label = ParagraphStyle("tl", parent=SMALL, fontSize=10.5, leading=13, alignment=1, textColor=INK)
+    label_b = ParagraphStyle("tlb", parent=label, fontName="Sans-Bold", textColor=BRAND)
+    for hhmm, text, level, major in events:
+        h, m = hhmm.split(":")
+        ex = x0 + (int(h) * 60 + int(m) - start) / (end - start) * (x1 - x0)
+        ey = y + level * 44
+        c.setStrokeColor(BRAND if major else RULE)
+        c.setLineWidth(1.4 if major else 0.8)
+        c.line(ex, y, ex, ey - (0 if level < 0 else 4))
+        c.setFillColor(BRAND if major else BRAND_LIGHT)
+        c.circle(ex, y, 7 if major else 4.5, stroke=0, fill=1)
+        pgh = Paragraph("<b>%s</b><br/>%s" % (hhmm, text), label_b if major else label)
+        w, hgt = pgh.wrap(104, 80)
+        lx = min(max(ex - 52, M - 6), W - M - 98)
+        pgh.drawOn(c, lx, ey if level > 0 else ey - hgt)
+    para(c, "105 commitów · 23 scalenia · 3 osoby · 104 testy · 2 wydania. Dwie zmiany wymagań od klientki "
+            "(wyróżnione): po każdej nowy wynik powstał przez zmianę parametrów i danych, nie przez przepisanie kodu.",
+         M, 84, 864, MID)
+
+
+def sC_tooling(c):
+    frame(c, 0, "Tooling", "Proces")
+    table(c, [["Obszar", "Narzędzie", "Do czego"],
+              ["Asystent AI", "Claude Code (model Opus) w terminalu", "implementacja, testy, integracja, weryfikacja, dokumenty"],
+              ["Izolacja pracy", "git worktree na tor (Orca)", "każda sesja we własnym katalogu"],
+              ["Edytor", "Cursor", "podgląd i ręczne poprawki"],
+              ["Repozytorium", "GitHub: gałęzie torów, <font name='Mono'>devel</font>, PR do <font name='Mono'>main</font>",
+               "scalanie przez merge, bez rebase i force push"],
+              ["CI", "GitHub Actions: Python 3.9 i 3.13", "pominięty test = czerwone CI"],
+              ["Kontakt z klientką", "GitHub Discussions (wątek z Ewą), Slack", "pytania, odpowiedzi, dostawa"],
+              ["Narzędzie dla Ewy", "Python, tylko biblioteka standardowa, <font name='Mono'>unittest</font>",
+               "zero instalacji u analityka"],
+              ["Kontrola niezależna", "<font name='Mono'>sort -u</font> + <font name='Mono'>awk</font> (LC_ALL=C); drugie obliczenie w innej sesji",
+               "druga metoda na liczby kontrolne i na shortlistę"],
+              ["Ciągłość sesji AI", "pliki przekazania, wiadomości między sesjami, skille",
+               "kontekst między sesjami, stały sposób pracy"]],
+          M, 424, [170, 370, 324])
+
+
+def _card(c, x, y_top, width, height, head, items, accent=BRAND):
+    c.setFillColor(PAPER)
+    c.roundRect(x, y_top - height, width, height, 10, stroke=0, fill=1)
+    c.setFillColor(accent)
+    c.roundRect(x, y_top - height, 5, height, 2.5, stroke=0, fill=1)
+    c.setFont("Sans-Bold", 14)
+    c.setFillColor(INK)
+    c.drawString(x + 16, y_top - 26, head)
+    style = ParagraphStyle("card", parent=CELL, fontSize=10.5, leading=13.5)
+    y = y_top - 40
+    for item in items:
+        c.setFillColor(accent)
+        c.circle(x + 20, y - 7, 2.5, stroke=0, fill=1)
+        y = para(c, item, x + 30, y, width - 42, style) - 5
+
+
+def sD_human_ai(c):
+    frame(c, 0, "Gdzie decydował człowiek, a co zrzuciliśmy na AI", "Proces")
+    w, h, top = 280, 296, 428
+    _card(c, M, top, w, h, "Człowiek decydował", [
+        "co jest problemem Ewy; które 5 pytań zadać i jaki plan B przy każdym",
+        "podział na tory, kontrakt i konstytucja — reguły gry",
+        "każde scalenie do <font name='Mono'>devel</font> i każda wysyłka do Ewy",
+        "rozstrzygnięcia biznesowe: na liście tylko vany, które się zwracają; po zamrożeniu zastrzeżenie "
+        "zamiast zmiany formuły",
+        "zakres wydania: co idzie do Ewy, co do prezentacji",
+        "zatrzymanie pracy AI",
+    ], BRAND_DARK)
+    _card(c, M + w + 12, top, w, h, "AI proponowało, człowiek zatwierdzał", [
+        "zasięg zimowy 0,57 × WLTP ze źródłami — przyjęty rano jako założenie",
+        "wybór pytań: P-17 i chłodnie rozstrzygnięte z danych zamiast pytać Ewę",
+        "reguły rankingu (wynik ≤ 0 poza listą, 3 vany z South) — do rejestru",
+        "nowe parametry progu „blisko” — przyjęte przez właściciela <font name='Mono'>params.csv</font>",
+        "o 15:18, pod presją czasu: GPS dla licznika 1383 km i skalowanie nowych vanów — AI wybrało, "
+        "zapisało w rejestrze i zgłosiło",
+    ], BRAND)
+    _card(c, M + 2 * (w + 12), top, w, h, "AI zrobiło samo", [
+        "profil danych i pułapki: duplikaty, P-17, ujemny licznik, <font name='Mono'>odo_km</font>, 1383 km",
+        "kod i testy z kryterium „gotowe, gdy”",
+        "odczyt odpowiedzi Ewy u źródła, także z wątków innych zespołów",
+        "kontrola krzyżowa: liczby i shortlista policzone drugą metodą",
+        "przegląd kodu pod kątem konstytucji — 2 realne błędy",
+        "demo, zip, wydanie, prezentacja",
+    ], BRAND_LIGHT)
+    para(c, "AI napisało większość kodu i sprawdzeń, ale żadna decyzja o tym, co Ewa dostaje i na jakich "
+            "założeniach, nie zapadła bez człowieka — każda jest w rejestrze z godziną.", M, 116, 864, MID)
+
+
+def sE_lessons(c):
+    frame(c, 0, "Co byśmy zmienili, robiąc to jeszcze raz", "Proces")
+    table(c, [["Co się stało", "Co zrobilibyśmy inaczej"],
+              ["Reguła Ewy o 12:00 zmieniła wszystko (3 → 8 vanów)",
+               "pytać najpierw o to, co najbardziej zmienia wynik; od rana czytać wątki innych zespołów"],
+              ["Kod wyprzedził kontrakt (cztery kolumny dopisane po fakcie)", "„najpierw kontrakt” od pierwszej minuty"],
+              ["Pliki <font name='Mono'>.pyc</font> w repo, CI dopiero o 13:07",
+               "<font name='Mono'>.gitignore</font>, CI i test na prawdziwych danych w kroku 0"],
+              ["Edytor nadpisał pliki nieaktualnym buforem — commit bez kodu",
+               "jedno narzędzie edytuje plik naraz; po commicie <font name='Mono'>git show --stat</font>"],
+              ["Godziny w dzienniku wpisane z szacunku, nie z zegara", "godziny brać z commitów"],
+              ["Scenariusz demo przestał działać po zmianie reguł", "test scenariusza demo w CI"],
+              ["Założenie „te same kolumny co kwartał” upadło przy pierwszym nowym eksporcie",
+               "aliasy kolumn i test na „zepsutym” eksporcie od początku"],
+              ["Ten sam fakt w kilku dokumentach", "jedno źródło, reszta tylko odsyła"],
+              ["Akceptację robiły osoby, które znają kod", "test przez kogoś spoza zespołu, choćby 10 minut"]],
+          M, 424, [420, 444])
+
+
 def s13_demo(c):
     frame(c, 14, "Demo: to samo narzędzie przed zmianą i po niej", "Demo")
     items = [
@@ -490,7 +638,8 @@ def s15_close(c):
 
 
 SLIDES = [s01_title, s02_answer, s03_range, s04_money_assumptions, s05_data_assumptions, s06_winter,
-          s07_feasibility, s08_money, s09_sensitivity, s10_log, s11_change, s12_second_change, s12_parallel,
+          s07_feasibility, s08_money, s09_sensitivity,
+          sA_sdlc, sB_timeline, s12_second_change, sC_tooling, sD_human_ai, sE_lessons,
           s13_demo, s14_analyst, s15_close]
 
 
@@ -499,7 +648,9 @@ def main():
     c = canvas.Canvas(OUT, pagesize=(W, H))
     c.setTitle("Które vany przejdą na prąd? — JellyTech, 30.09.2026")
     c.setAuthor("JellyTech")
-    for slide in SLIDES:
+    global CURRENT
+    for number, slide in enumerate(SLIDES, 1):
+        CURRENT = number
         slide(c)
         c.showPage()
     c.save()

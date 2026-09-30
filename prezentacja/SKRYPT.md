@@ -17,6 +17,18 @@ Liczby: narzędzie uruchomione na `devel` 35d8e0b na oryginalnym eksporcie (30.0
 
 PDF ma teraz **16 slajdów**: doszedł slajd 12 o zmianie z 15:18, a dawne slajdy 12–15 to teraz 13–16. Tekst poniżej zastępuje odpowiednie akapity w dalszej części skryptu; slajdy 4, 6, 10, 11 i 13 czytamy bez zmian.
 
+**Układ po 15:45 (18 slajdów):** 1 tytuł, 2 odpowiedź, 3–6 założenia, 7–9 wynik, 10 SDLC, 11 oś czasu, 12 zmiana z 15:18, 13 tooling, 14 człowiek i AI, 15 co byśmy zmienili, 16 demo, 17 analityk, 18 podsumowanie. Dawne slajdy „dziennik założeń”, „odpowiedzi Ewy o 12:00” i „praca równoległa” zastąpiła sekcja procesu z `PROPOZYCJA-PROCES.md`. Numery slajdów w akapitach poniżej („Slajd 12”, „Slajd 14”, „Slajd 16”) odnoszą się do układu 16-slajdowego: zmiana z 15:18 to teraz slajd 12, demo 16, podsumowanie 18.
+
+**Slajd 10 — SDLC.** Pracowaliśmy w siedmiu fazach i każda ma swój artefakt i bramkę. Najważniejsze: najpierw rejestr założeń i kontrakt, dopiero potem kod. Dzięki temu obie zmiany wymagań od Ewy przeszły tę samą drogę — w południe w trzydzieści trzy minuty, po piętnastej w kwadrans.
+
+**Slajd 11 — Oś czasu.** Od 10:10 do 15:33. Dwa wyróżnione punkty to zmiany od klientki: w południe nowe reguły, o 15:18 nowe dane i nowa reguła zasięgu. Po każdej nowy wynik powstał przez zmianę parametrów i danych, nie przez przepisanie kodu.
+
+**Slajd 13 — Tooling.** Asystent AI w terminalu, osobny katalog roboczy na każdy tor, testy uruchamiane automatycznie przy każdym wypchnięciu, a dla Ewy narzędzie bez żadnej instalacji. Liczby kontrolne i shortlistę liczyliśmy drugą, niezależną metodą.
+
+**Slajd 14 — Człowiek i AI.** AI napisało większość kodu i sprawdzeń. Ale to człowiek wybierał pytania do Ewy, zatwierdzał każde scalenie i każdą wysyłkę oraz rozstrzygał sprawy biznesowe. O 15:18, pod presją czasu, AI samo wybrało dwa rozwiązania — i dlatego są zapisane w rejestrze i zgłoszone, a nie ukryte.
+
+**Slajd 15 — Co byśmy zmienili.** Pytać najpierw o to, co najbardziej zmienia wynik. Kontrakt przed kodem od pierwszej minuty. Godziny brać z commitów, nie z szacunku. I od początku testować na celowo zepsutym eksporcie — nasze założenie o niezmiennych kolumnach upadło przy pierwszym nowym pliku.
+
 **Slajd 2 — Odpowiedź na początek.** Rekomendujemy zakup siedmiu aut elektrycznych z dotacją, wszystkie ładowane w bazie North. W pięć lat dają 85 750 złotych oszczędności, już po zapłaceniu za auta. To wynik na wszystkich danych, jakie Ewa przysłała, łącznie z eksportem, który dostaliśmy o 15:18, i według reguły, którą wtedy zmieniła. W południe było osiem vanów i 95 637 złotych.
 
 **Slajd 3 — Zasięg i ładowność.** Najważniejsze dotyczy zasięgu. Od 15:18 van przechodzi tylko wtedy, gdy jego najgorszy dzień w danych mieści się w sześćdziesięciu procentach zasięgu katalogowego: 156 kilometrów dla Cargo S i 228 dla Cargo L. W południe obowiązywał dziewięćdziesiąty piąty percentyl; operacje wygrały spór i teraz liczy się każdy dzień.
