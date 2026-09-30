@@ -172,6 +172,7 @@ Każde założenie ma godzinę przyjęcia; Ewa chce wiedzieć „co i mniej wię
 | A13 | — | Ładowanie nocne w taryfie 0,58 PLN/kWh; jeden punkt = jeden van | do potwierdzenia (vany dwuzmianowe wracają ok. 20:40, startują ok. 04:30) |
 | A14 | — | Limit EV w North = 6 (liczba punktów), South = 0 | czeka na Ewę (pyt. 1) |
 | A16 | 10:50 | Vany dwuzmianowe (świt + popołudnie: P-08, P-09, P-12, P-24, P-36) doładowują się w bazie między trasami z punktu 22 kW. Zimą daje to ok. 58 km zasięgu na godzinę ładowania dla Cargo S i ok. 51 km dla Cargo L; odliczamy 15 min na podłączenie. Test: pierwsza trasa ≤ zasięg zimowy oraz stan po doładowaniu ≥ druga trasa, dla każdego dnia z danych. Wymaga: powrotu do bazy między trasami, wolnego punktu w dzień, energii w taryfie dziennej (0,92 PLN/kWh) | przyjęte; skutki w sekcji 8 |
+| A17 | 11:13 | Analityk Ewy jest osobą techniczną i ma Pythona 3; uruchamia skrypt z wiersza poleceń i edytuje `params.csv` | przyjęte (niepotwierdzone przez Ewę) |
 | A15 | — | Podstawa `saving_pln` (co wliczamy i na ile lat) | **do ustalenia** — zależy od pyt. 2 |
 
 ### Skąd 0,57 × WLTP (A6–A8)
@@ -314,7 +315,7 @@ Założenie: lunch ok. 13:00 (godzina niepotwierdzona — jeśli jest inna, prze
 
 ### Co tniemy, jeśli brakuje czasu (w tej kolejności)
 
-1. Plik XLSX obok CSV (mile widziany, nie wymagany).
+1. Plik XLSX obok CSV (mile widziany, nie wymagany; nie jest potrzebny jako zamiennik skryptu — A17).
 2. Wariant po 5 latach degradacji (0,49) — zostaje jedno zdanie w notatce.
 3. Pełne porównanie zakup/leasing — zostaje jeden wariant z opisaną podstawą w `saving_basis`.
 4. Analiza wrażliwości skrócona do trzech progów bez osobnych tabel per van.
@@ -350,7 +351,7 @@ Decyzje projektowe (D5, 11:13):
 - **Roczne km z długości okresu w danych**, nie ze stałego mnożnika × 4 (doprecyzowanie A12) — następny eksport może mieć inną liczbę tygodni.
 - **Ostrzeżenia zamiast cichych poprawek:** nieznany `van_id`, ujemny przebieg, brak kolumny, duplikaty — wszystko trafia do `data_report.txt`.
 - **Liczby kontrolne na ekranie** po każdym uruchomieniu.
-- Ryzyko: nie wiemy, czy analityk ma Pythona. Wariant zapasowy (XLSX) jest pierwszy na liście cięć.
+- Zakładamy, że analityk jest osobą techniczną i ma Pythona 3 (A17), więc nie robimy wariantu zapasowego w XLSX.
 
 Do wątku trafia: `ev_shortlist.py`, `params.csv`, `RERUN.md` (krótka instrukcja po angielsku), lista założeń, wynik uruchomienia jako dowód.
 
@@ -416,3 +417,4 @@ Demo w trzech krokach:
 | 11:09 | Pytania wysłane do Ewy |
 | 11:10 | Harmonogram z terminem 16:00 i lista cięć (sekcja 9) |
 | 11:13 | Zakres narzędzia dla analityka i scenariusz prezentacji (sekcja 9, D5) |
+| 11:13 | A17: analityk jest techniczny i ma Pythona |
