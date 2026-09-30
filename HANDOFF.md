@@ -503,3 +503,7 @@ Demo w trzech krokach:
 | 12:17 | Tor C: `saving_pln` według D13 (`ac53902`), `saving_for_model` dla wyboru modelu (D14); odpowiedzi Ewy przeniesione do rejestru (A19–A22, D13, D14). Kontrola na prawdziwych danych zgodna z podglądem toru A: 15 vanów pasuje, 9 dodatnich, 8 wybranych = 95 637 PLN w 5 lat |
 | 12:19 | Tor B: B10 — ranking końcowy po D13 (8 vanów, 95 637 PLN w 5 lat), wybór modelu przez `saving_for_model`; B11 — próba zipa oczami analityka OK |
 | 12:29 | Tor C: pytania B Q14, Q15, Q17, Q20, Q22 rozstrzygnięte (A23, A24, D15, D16; KONSTYTUCJA 12 zaktualizowana); sekcja 8 oznaczona jako nieaktualna |
+| 12:35 | Tor A: progi „blisko progu” (`near_miss_range_pct` 10, `near_miss_days` 3) przyjęte w `params.csv`; kolumny `reason`, `fit_models`, `shortlisted`, `shortlist_note` dopisane do KONTRAKT 6–7 (kolejności pilnuje test). Kontrola krzyżowa: wynik narzędzia (8 vanów, 95 637 PLN w 5 lat) identyczny z niezależnym obliczeniem toru A |
+| 12:35 | Tor C: `BOARD_NOTE.md` i `PREZENTACJA.md` według reguł Ewy; demo krok 2 = percentyl 95 → 100 (8 → 6 vanów) |
+| 12:40 | Tor B: liczby w `BOARD_NOTE.md` sprawdzone uruchomieniem narzędzia (shortlista, sumy 136 092 / 95 637, warianty 59 482 / 47 897 / 38 575 / 56 414) — zgodne. B11: testowy zip i demo przygotowane poza repo |
+| 12:43 | Odpowiedź dla Ewy na pytanie z 12:03 (sekcja 7) wysyła tor A (Wojtek) |
