@@ -12,13 +12,10 @@ ev.Volta Cargo S.range_wltp_km,260
 ev.Volta Cargo S.payload_kg,1050
 ev.Volta Cargo S.kwh_per_100km,24
 ev.Volta Cargo S.price_pln,150000
-ev.Volta Cargo S.lease_pln_per_month,2900
 ev.Volta Cargo L.range_wltp_km,380
 ev.Volta Cargo L.payload_kg,880
 ev.Volta Cargo L.kwh_per_100km,27
 ev.Volta Cargo L.price_pln,195000
-ev.Volta Cargo L.lease_pln_per_month,3770
-ev_lease_months,60
 winter_range_factor,0.60
 range_check_percentile,95
 winter_temp_factor,0.70
