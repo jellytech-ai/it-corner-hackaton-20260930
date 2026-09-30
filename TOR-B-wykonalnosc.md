@@ -118,6 +118,17 @@ Near miss przy 0,60: ładunek — P-02, P-06, P-18 (1 dzień), P-22, P-27 (2), P
 | `shortlist_note` | `all N charging points at <baza> taken` | brak wolnego punktu (`chargers.<baza>`) |
 | `shortlist_note` | `limit of N vans based away from their depot reached` | wyczerpany limit vanów z South |
 | `fit_models` | lista modeli, które przechodzą filtry | `ev_model` = ten z wyższym `saving_pln` |
+| 12:18 | Sprawdzenie demo (B11) na `devel` 2c169b0. Krok 3 (świeży eksport `fixtures/fresh_trips.csv` + `vans.csv`): kod 0, trzy `WARNING` (P-39, ujemny licznik P-13, odrzucony wiersz P-21), okres 41 dni, 1310 kursów / 161 957 km, lista 10 vanów. **Krok 2 z `PREZENTACJA.md` (0,57 → 0,65) jest nieaktualny**: bazą jest 0,60, a 0,65 daje tę samą listę. Wyniki zmiany jednego parametru na surowych danych (ekonomia C roczna): |
+
+| Zmiana w `params.csv` | Shortlista | `saving_pln` razem |
+|---|---|---|
+| bez zmian (0,60, 95. percentyl) | 10: P-12, P-08, P-30, P-25, P-21, P-05, P-13, P-26, P-04, P-14 | 236 863 |
+| `winter_range_factor` 0,65 | bez zmian | 236 863 |
+| `winter_range_factor` 0,55 | 7: P-12, P-08, P-05, P-20, P-26, P-14, P-28 | 156 335 |
+| `winter_range_factor` 0,50 | 2: P-08, P-10 | 43 690 |
+| `range_check_percentile` 100 (najgorszy dzień, reguła Witolda) | 8: bez P-30, P-21 | 187 632 |
+| `max_south_vans_at_north` 0 | 8: tylko North | 171 305 |
+
 
 ## Pytania na koniec pracy
 
@@ -145,3 +156,4 @@ Near miss przy 0,60: ładunek — P-02, P-06, P-18 (1 dzień), P-22, P-27 (2), P
 | Q20 | Dotacja tylko przy zakupie: czy `saving_pln` liczy zakup dla wszystkich vanów z listy? Wtedy limit 10 z dotacji = limit listy; przy leasingu limit dotacji nie dotyczy | do C (podstawa `saving_basis`) |
 | Q21 | Kolumny `fit_models`, `shortlisted`, `shortlist_note` i `range_day_km` w `all_vans.csv` — dopisać do KONTRAKT 6/7 | do A |
 | Q22 | Które vany z South trafiają do North: teraz trzy z najwyższym `saving_pln`. Alternatywa: najbliższe końca leasingu. Zapisać w założeniach | do C |
+| Q23 | Demo krok 2 (`PREZENTACJA.md`, plik toru C): zamienić 0,57 → 0,65 na `range_check_percentile` 95 → 100 („najgorszy dzień zamiast 95. percentyla: 10 → 8 vanów”) albo `winter_range_factor` 0,60 → 0,55 (10 → 7). Liczby do przeliczenia po zmianie ekonomii C na 5 lat | do C |
