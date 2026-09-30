@@ -78,3 +78,4 @@ Czyszczenia danych, filtrów, rankingu, zapisu plików wynikowych.
 | 11:41 | Szkic zasad komunikatów w `KONTRAKT.md` sekcja 10; `RERUN.md` opisuje `ERROR:` i `WARNING:` |
 | 11:42 | Scalone `tor-c` → `handoff-wstepna-analiza`. Równolegle powstał `KONSTYTUCJA.md` (D12) — sekcja 10 w `KONTRAKT.md` zamieniona na odsyłacz, żeby nie było dwóch wersji |
 | 11:44 | `KONSTYTUCJA.md`: dopisana zasada „nowy komunikat → wiersz w `RERUN.md`” i brak liczb na sztywno w komunikatach; niezgodność 5 rozwiązana. `RERUN.md` i `ASSUMPTIONS.md` zgodne ze słownikiem (check figures, near miss) |
+| 11:50 | C8: szkic `BOARD_NOTE.md` z liczb pełnego uruchomienia (11:46, niezamrożone): 3 vany, 64 552 PLN/rok przy leasingu 104 400 PLN/rok, zakup zwraca się w ok. 7 lat; 8 z 10 najdłużej jeżdżących odpada na zasięgu; wrażliwość 1 / 3 / 8. Liczby po angielsku bez separatora tysięcy (KONSTYTUCJA 10) — poprawione też w `ASSUMPTIONS.md` |
