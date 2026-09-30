@@ -13,6 +13,32 @@ Liczby: narzędzie uruchomione na `devel` 35d8e0b na oryginalnym eksporcie (30.0
 
 ---
 
+## AKTUALIZACJA 15:40 — po zmianie Ewy z 15:18 (czytać to zamiast starych akapitów)
+
+PDF ma teraz **16 slajdów**: doszedł slajd 12 o zmianie z 15:18, a dawne slajdy 12–15 to teraz 13–16. Tekst poniżej zastępuje odpowiednie akapity w dalszej części skryptu; slajdy 4, 6, 10, 11 i 13 czytamy bez zmian.
+
+**Slajd 2 — Odpowiedź na początek.** Rekomendujemy zakup siedmiu aut elektrycznych z dotacją, wszystkie ładowane w bazie North. W pięć lat dają 85 750 złotych oszczędności, już po zapłaceniu za auta. To wynik na wszystkich danych, jakie Ewa przysłała, łącznie z eksportem, który dostaliśmy o 15:18, i według reguły, którą wtedy zmieniła. W południe było osiem vanów i 95 637 złotych.
+
+**Slajd 3 — Zasięg i ładowność.** Najważniejsze dotyczy zasięgu. Od 15:18 van przechodzi tylko wtedy, gdy jego najgorszy dzień w danych mieści się w sześćdziesięciu procentach zasięgu katalogowego: 156 kilometrów dla Cargo S i 228 dla Cargo L. W południe obowiązywał dziewięćdziesiąty piąty percentyl; operacje wygrały spór i teraz liczy się każdy dzień.
+
+**Slajd 5 — Dane i narzędzie (dopowiedzieć).** Trzy rzeczy z nowego eksportu. Kolumna licznika zmieniła nazwę — nasze założenie, że nazwy się nie zmienią, upadło przy pierwszym nowym pliku; narzędzie zatrzymało się i nazwało kolumnę, a poprawka to jedna linia w parametrach. Jeden odczyt licznika jest niemożliwy: 1383 kilometry na jednej porannej trasie; bierzemy dla niego dystans z GPS. I dwa nowe vany mają tylko dwanaście dni danych, więc ich roczny przebieg liczymy z ich własnych dni.
+
+**Slajd 7 — Wykonalność: 40 → 7.** Z czterdziestu vanów czternaście mieści się w zasięgu i ładowności. Osiem z nich zwraca się w pięć lat. Siedem mieści się w limitach: P-25 jest na plusie, ale byłby czwartym vanem z South, a w North mogą stacjonować trzy.
+
+**Slajd 8 — Skąd 85 750 PLN.** Siedem vanów przez pięć lat oszczędza na eksploatacji około 902 tysięcy złotych. Auta po dotacji kosztują 798 tysięcy, a wyjście z leasingu dwóch nowych diesli 18 600. Zostaje 85 750. Dwa ostatnie vany, P-13 i P-04, zwracają się ledwo — o trzy i pół oraz dwa tysiące złotych.
+
+**Slajd 9 — Reguła zasięgu decyduje o liście.** Reguła najgorszego dnia daje siedem vanów. Ta sama flota na regule z południa dałaby dziewięć vanów i prawie 123 tysiące. Zasada „żaden van nigdy nie zawiedzie” kosztuje więc dwa vany i około 37 tysięcy złotych. Dalej: przy 55 procentach zostają trzy vany, po pięciu latach baterii jeden. Gdyby liczyć 303 dni dostaw w roku zamiast dni kalendarzowych — sześć. A gdyby wziąć dosłownie licznik 1383 kilometry — też sześć, bo wypada P-13.
+
+**Slajd 12 (nowy) — 15:18: nowe dane i nowa reguła.** O 15:18 Ewa dołożyła nowy eksport, nowy rejestr z dwoma vanami i zmieniła regułę zasięgu. O 15:27 mieliśmy nowy wynik z testami, o 15:33 wpis w wątku i nowe wydanie. Wypadły P-30 i P-21 — przez nową regułę, bo ich najgorsze dni to 166 i 159 kilometrów. Wypadł P-25 — przez nowe dane, bo jego miejsce zajął nowy van P-40 z wyższym wynikiem. Weszły dwa nowe vany. Każda z trzech pułapek w nowych danych została złapana przez narzędzie, a nie przez nas: zmieniona nazwa kolumny, niemożliwy licznik i vany z dwunastoma dniami danych.
+
+**Slajd 14 — Demo.** Krok 1: stan z południa — jeden eksport, parametry z południa; osiem vanów, 95 637 złotych. Krok 2: to samo polecenie z dwoma plikami eksportu, nowym rejestrem i aktualnymi parametrami — na ekranie alias kolumny, ostrzeżenie o liczniku P-13, siedem vanów, 85 750 złotych. Krok 3: drugi skrypt porównuje oba stany i zapisuje `impact.csv` — kto wszedł, kto wypadł i dlaczego. Polecenia wklejamy z `RERUN.md`.
+
+**Slajd 16 — Podsumowanie.** Rekomendacja: siedem aut elektrycznych z dotacją, 85 750 złotych w pięć lat. Wynik stoi na regule najgorszego dnia w sześćdziesięciu procentach zasięgu, najcięższym ładunku jako limicie i zakupie z dotacją. Ryzyko: dane z lata i września, a dwa nowe vany oceniamy na dwunastu dniach. I proces: dwie zmiany wymagań w ciągu dnia — dwadzieścia minut w południe, dziesięć minut po piętnastej — a analityk uruchamia całość bez nas.
+
+**Spodziewane pytania — nowe odpowiedzi.** „Dlaczego 7, a nie 10?” — tylko osiem vanów zwraca się w pięć lat, a jeden z nich nie mieści się w limicie trzech vanów z South. „Skąd reguła najgorszego dnia?” — to reguła Ewy z 15:18; wcześniej 95. percentyl, a rano nasze własne 57 procent. „Czy nowe vany to pewny wybór?” — mają 12 dni danych i świeży leasing; liczymy je tak, jak Ewa kazała, i mówimy o tym wprost.
+
+---
+
 ## Slajd 1 — Tytuł · 0:00–0:15
 
 Dzień dobry, jesteśmy JellyTech. Odpowiemy na pytanie Ewy — które vany mogą przejść na prąd — powiemy, na jakich założeniach oparliśmy odpowiedź, i pokażemy, jak do niej doszliśmy.
