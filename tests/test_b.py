@@ -100,6 +100,14 @@ class PipelineOnFixtures(unittest.TestCase):
             for k in ("annual_km", "annual_fuel_saving_pln", "saving_pln"):
                 self.assertRegex(r[k], r"^(-?\d+)?$", (r["van_id"], k))
 
+    def test_all_vans_columns_in_contract_order(self):
+        with open(os.path.join(self.out, "all_vans.csv"), encoding="utf-8") as f:
+            header = f.readline().strip().split(",")
+        self.assertEqual(header, data.PROFILE_COLUMNS + [
+            "feasible", "ev_model", "ev_depot", "range_check_km", "midday_charging",
+            "day_tariff_share", "reject_reason", "reason", "fit_models",
+            "annual_km", "annual_fuel_saving_pln", "saving_pln", "shortlisted", "shortlist_note"])
+
     def test_all_vans_has_every_van(self):
         rows = read(os.path.join(self.out, "all_vans.csv"))
         self.assertEqual(len(rows), 38)

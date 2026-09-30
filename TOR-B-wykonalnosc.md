@@ -147,6 +147,7 @@ Near miss przy 0,60: ładunek — P-02, P-06, P-18 (1 dzień), P-22, P-27 (2), P
 zip -j ev_shortlist_tool.zip ev_shortlist.py data.py feasibility.py economics.py params.csv RERUN.md ASSUMPTIONS.md
 ```
 | 12:30 | Scalony `devel` a4bc375: tor C rozstrzygnął Q14, Q15, Q17, Q20, Q22 (A23, A24, D15, D16) — wszystkie zgodne z tym, co już jest w kodzie B; bez zmian w kodzie. `RERUN.md` wymienia `RERUN.md` w spisie zipa i wyjaśnia `__pycache__`. Otwarte pytania B: Q1, Q2, Q10, Q11/Q18/Q21 (kontrakt — tor A), Q23 (demo — tor C) |
+| 12:32 | Scalony `devel` e66e30a: tor A zaakceptował progi near miss (Q10) i dopisał `reason`, `fit_models`, `shortlisted`, `shortlist_note` do KONTRAKT 6–7 (Q11, Q18, Q21); kolejność kolumn zgodna z kodem — pilnuje jej nowy test `test_all_vans_columns_in_contract_order`. Kontrola krzyżowa A: 8 vanów / 95 637 PLN identyczne z niezależnym obliczeniem |
 
 ## Pytania na koniec pracy
 
@@ -161,17 +162,17 @@ zip -j ev_shortlist_tool.zip ev_shortlist.py data.py feasibility.py economics.py
 | Q7 | A16: czy vany dwuzmianowe faktycznie wracają do bazy między trasami? Dane pokazują tylko godziny (HANDOFF 8) | rozwiązane przez Ewę: nie wracają na ładowanie (A21) |
 | Q8 | Wrażliwość zmienia tylko `winter_range_factor`; zużycie zimowe w symulacji A16 (`winter_temp_factor` × `winter_payload_factor` = 0,63) zostaje stałe. Czy te dwa współczynniki mają być spójne (0,57 vs 0,63)? | nieaktualne po A21 |
 | Q9 | `.gitignore` i usunięcie `.pyc` | rozwiązane w `devel` (1d43542) |
-| Q10 | Tor B dopisał do `params.csv` (plik toru A) `near_miss_range_pct,10`, `near_miss_days,3`, `at_threshold_pct,1` w osobnym commicie 4c4391c — tor A ma zaakceptować albo przenieść | czeka na A |
-| Q11 | Kolumna `reason` w `feasibility` wykracza poza KONTRAKT 6 — dopisać ją do kontraktu (C nie musi jej używać) | dopisać |
+| Q10 | Tor B dopisał do `params.csv` (plik toru A) `near_miss_range_pct,10`, `near_miss_days,3`, `at_threshold_pct,1` w osobnym commicie 4c4391c — tor A ma zaakceptować albo przenieść | rozwiązane 12:35: zaakceptowane przez A (KONTRAKT 11) |
+| Q11 | Kolumna `reason` w `feasibility` wykracza poza KONTRAKT 6 — dopisać ją do kontraktu (C nie musi jej używać) | rozwiązane 12:35: KONTRAKT 6 |
 | Q12 | Język opisów w `reason`/`reject_reason` | rozwiązane: KONSTYTUCJA 2 — angielski |
 | Q13 | P-25 (South) jest dokładnie na progu (148,2 = 148,2) — gdyby Ewa pozwoliła na EV z South w North, to kandydat najbardziej ryzykowny | nieaktualne po A19 (0,60, 95. percentyl) |
 | Q14 | `annual_km` (tor C) = km z okresu ÷ 90 dni kalendarzowych × 365, niezależnie od liczby dni pracy (P-08: 11 670 km → 47 329 km/rok). Czy to zamierzone (vany jeżdżą też w weekendy/dni bez danych)? | rozwiązane 12:29: A24 |
 | Q15 | Raport A: „gps_km missing: 15” po deduplikacji vs 17 w HANDOFF sekcja 4 (surowe) — ujednolicić opis w `HANDOFF.md` | rozwiązane 12:29: HANDOFF 4 poprawiony |
 | Q16 | Scalenie B5 do `devel` (dawniej `handoff-wstepna-analiza`) i push — wymaga zgody (gałąź wspólna) | rozwiązane 11:54: scalone i wypchnięte |
 | Q17 | KONSTYTUCJA 12 poz. 1–4, 6, 9: tor B zrobił swoją część — właściciel konstytucji ma zaktualizować status w tabeli | rozwiązane 12:29: KONSTYTUCJA 12 zaktualizowana przez C |
-| Q18 | Kolumna `reason` jest w `feasibility`, `all_vans.csv` i `shortlist.csv`, ale nie ma jej w KONTRAKT 6 (tabela `feasibility`) — KONSTYTUCJA 5 wymaga kolejności kolumn „dokładnie jak w KONTRAKT” | dopisać do KONTRAKT 6 (tor A) |
+| Q18 | Kolumna `reason` jest w `feasibility`, `all_vans.csv` i `shortlist.csv`, ale nie ma jej w KONTRAKT 6 (tabela `feasibility`) — KONSTYTUCJA 5 wymaga kolejności kolumn „dokładnie jak w KONTRAKT” | rozwiązane 12:35: KONTRAKT 6 |
 | Q19 | Tor C: `saving_pln` nadal roczny (D7) — po zmianie na 5 lat z ceną EV, dotacją i opłatą za leasing shortlista się zmieni (podgląd A: P-26 i P-14 na minus). `choose_models` i ranking działają bez zmian w B | rozwiązane 12:17: D13 |
 | Q20 | Dotacja tylko przy zakupie: czy `saving_pln` liczy zakup dla wszystkich vanów z listy? Wtedy limit 10 z dotacji = limit listy; przy leasingu limit dotacji nie dotyczy | rozwiązane 12:29: D16 — wszystkie EV kupione, limit dotacji = limit listy |
-| Q21 | Kolumny `fit_models`, `shortlisted`, `shortlist_note` i `range_day_km` w `all_vans.csv` — dopisać do KONTRAKT 6/7 | do A |
+| Q21 | Kolumny `fit_models`, `shortlisted`, `shortlist_note` i `range_day_km` w `all_vans.csv` — dopisać do KONTRAKT 6/7 | rozwiązane 12:35: KONTRAKT 6 i 7 |
 | Q22 | Które vany z South trafiają do North: teraz trzy z najwyższym `saving_pln`. Alternatywa: najbliższe końca leasingu. Zapisać w założeniach | rozwiązane 12:29: A23 |
 | Q23 | Demo krok 2 (`PREZENTACJA.md`, plik toru C): zamienić 0,57 → 0,65 na `range_check_percentile` 95 → 100 („najgorszy dzień zamiast 95. percentyla: 10 → 8 vanów”) albo `winter_range_factor` 0,60 → 0,55. Po D13: percentyl 100 daje 8 → 6 vanów (95 637 → 59 482 PLN); 0,55 daje 8 → 3 | do C |
