@@ -1,6 +1,6 @@
 # Which vans go electric first
 
-**Recommendation: buy 8 Volta Cargo EVs with the grant and base all of them at North. Together they save 95637 PLN over five years after paying for the EVs.** Five are North vans; three are South vans that move to North and keep their routes. Without the grant, none of the 8 would pay back in five years.
+**Recommendation: buy 8 Volta Cargo EVs with the grant and base all of them at North. Together they save 95637 PLN over five years after paying for the EVs.** Five are North vans; three are South vans that move to North and keep their routes. Without the grant, none of the 8 would pay back in five years. Six of the eight are solid; the last two, P-13 and P-04, depend on how many days a year the vans drive (see "Days on the road" below).
 
 ## The shortlist
 
@@ -41,6 +41,18 @@ The 95th-percentile rule means a van may have a few days a quarter longer than t
 | No South vans at North | 5 | 56414 PLN |
 
 The two Cargo L vans (P-12, P-08) have the most range to spare and stay on the list under every range rule above.
+
+## Days on the road
+
+We scale the summer export to a year by calendar days (× 365 / 90). The vans drove on 77 of those 90 days: Monday to Saturday, and not on the 15 August public holiday. Scaling by calendar days therefore assumes about 312 delivery days a year, with no public holidays. If deliveries stop on public holidays, as they did on 15 August, a year has about 303 delivery days (2027: 313 Mondays to Saturdays, 10 of them public holidays), and every van drives about 3% fewer km than in the table above.
+
+| Delivery days a year | Vans on the list | Five-year saving |
+|---|---|---|
+| **About 312 (calendar-day scaling, used in this note)** | **8** | **95637 PLN** |
+| 303 (public holidays off) | 7 (without P-04) | 67794 PLN |
+| 300 | 6 (without P-04, P-13) | 59379 PLN |
+
+P-13 and P-04 pay back by only 3818 and 1171 PLN, so a few percent fewer km puts them below zero. The first six stay on the list in all three cases. Please confirm how many days a year you deliver; it is one value in `params.csv` (`days_per_year`).
 
 ## Next steps
 
