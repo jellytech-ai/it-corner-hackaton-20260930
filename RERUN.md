@@ -2,7 +2,7 @@
 
 # Rerunning the EV shortlist
 
-This tool reads a telematics export and the van register and writes the EV shortlist, the control figures and a per-van report. It needs **Python 3.9 or newer** and nothing else: no packages to install.
+This tool reads a telematics export and the van register and writes the EV shortlist, the check figures and a per-van report. It needs **Python 3.9 or newer** and nothing else: no packages to install.
 
 ## What is in the folder
 
@@ -40,7 +40,7 @@ This tool reads a telematics export and the van register and writes the EV short
    python3 ev_shortlist.py --trips trips.csv --vans vans.csv --params params.csv --out results/
    ```
 
-4. **Check the control figures on screen.** The tool prints the number of vans assessed, trips counted and total km. Compare them with the export: trips counted is the number of rows after removing exact duplicates, and total km is their sum.
+4. **Check the check figures on screen.** The tool prints the number of vans assessed, trips counted and total km. Compare them with the export: trips counted is the number of rows after removing exact duplicates, and total km is their sum.
 
 5. **Read the warnings in `results/data_report.txt`.** Lines starting with `WARNING` need a look; nothing is dropped silently. The report lists removed duplicates, applied van aliases, rows where GPS distance replaced a broken odometer reading, trips of vans that are not in the register (left out of the figures), registered vans without trips, and the date range used. If an unknown van appears, add it to `vans.csv` or to `van_alias` in `params.csv` and run again.
 
@@ -49,7 +49,7 @@ This tool reads a telematics export and the van register and writes the EV short
    | File | What it holds |
    |---|---|
    | `shortlist.csv` | recommended vans in rank order, with the EV model, depot and savings |
-   | `summary.csv` | control figures, totals and a one-line description of how savings are counted |
+   | `summary.csv` | check figures, totals and a one-line description of how savings are counted |
    | `all_vans.csv` | every van with the reason it was accepted or rejected |
    | `data_report.txt` | what was cleaned and why |
 

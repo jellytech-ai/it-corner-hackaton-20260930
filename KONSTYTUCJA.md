@@ -62,6 +62,8 @@ ERROR: Missing parameter 'winter_range_factor' in params.csv
 - Tylko punkt wejścia (`ev_shortlist.py`, `main()` w `data.py`) łapie te dwa wyjątki, wypisuje `ERROR: <treść>` na `stderr` i zwraca kod 1. Analityk nie powinien zobaczyć śladu stosu dla przewidywalnego błędu.
 - Brakujący parametr zgłasza się zawsze tym samym zdaniem: `Missing parameter '<klucz>' in params.csv`.
 - Po udanym przebiegu punkt wejścia wypisuje na ekran: raport, trzy liczby kontrolne, liczbę vanów na shortliście, katalog wyników.
+- Liczby, progi i nazwy modeli w komunikatach pochodzą z danych lub `params.csv`, nie z tekstu wpisanego w kod.
+- **Każdy nowy komunikat `ERROR` i każdy nowy rodzaj `WARNING`, który może zobaczyć analityk, ma wiersz w tabeli „If something goes wrong” w `RERUN.md`: objaw i co zrobić.** Autor komunikatu zgłasza go torowi C w swoim dzienniku; C dopisuje wiersz przed 15:15 (C10).
 
 ## 4. Liczby
 
@@ -146,7 +148,7 @@ W tekstach po polsku liczby piszemy z przecinkiem dziesiętnym i spacją jako se
 | 2 | `ev_shortlist.py` | brak obsługi błędów: brakujący plik daje ślad stosu zamiast `ERROR: …` i kodu 1 | B |
 | 3 | `ev_shortlist.py` | nie wypisuje raportu ani liczb kontrolnych na ekran | B |
 | 4 | `ev_shortlist.py`, `--help` | opis i pomoc po polsku | B |
-| 5 | `ev_shortlist.py` | `saving_basis` z tekstem „zaslepka…” trafia do `summary.csv`, dopóki tor C nie jest scalony | B + C |
+| 5 | `ev_shortlist.py` | `saving_basis` z tekstem „zaslepka…” trafia do `summary.csv`, dopóki tor C nie jest scalony | B + C — rozwiązane 11:42 (scalenie `tor-c`: prawdziwe `economics.py`) |
 | 6 | `feasibility.py` | docstringi po polsku bez polskich znaków | B |
 | 7 | `tests/test_a.py` | zmienna `HACKATHON_DATA` zamiast wspólnej `EV_SOURCE_DIR` | A — poprawione 11:50 |
 | 9 | `data.py` + `ev_shortlist.py` | zero użytecznych wierszy daje dziś tylko `WARNING` i pliki z zerami; punkt wejścia ma to zamienić na `ERROR` | A + B |

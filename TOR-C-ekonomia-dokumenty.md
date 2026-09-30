@@ -75,4 +75,6 @@ Czyszczenia danych, filtrów, rankingu, zapisu plików wynikowych.
 | 11:35 | C9: szkic `ASSUMPTIONS.md` (EN) z A1–A17, D1–D7 i 7 pytaniami „co byśmy zapytali dalej” (5 z listy do Ewy + powrót dwuzmianowych do bazy + historia serwisu). A13 i A14 bez godziny, jak w `HANDOFF.md` |
 | 11:37 | Rejestr: decyzje toru A (11:25–11:35) przeniesione do `HANDOFF.md` jako A5 (przyjęte) i D8–D11; to samo w `ASSUMPTIONS.md`. `RERUN.md` krok 5 zgodny z raportem `data.py` (linie `WARNING`) |
 | 11:40 | Scalone `handoff-wstepna-analiza` (A + B) do `tor-c`; 56/56 testów OK. Pełny potok na `trips.csv`: 2777 / 344952 / 38, shortlista P-08, P-26, P-14. **C5 potwierdzone:** suma po shortliście = `summary.csv` (paliwo 43 566, `saving_pln` 64 552 PLN/rok). P-08 z taryfą dzienną 0,484 → paliwo 19 738 zamiast 20 888 z fixtures. Q5 i Q6 toru B opisane w `ASSUMPTIONS.md` (A16) |
-| 11:41 | Konstytucja komunikatów: `KONTRAKT.md` sekcja 10 (D12). `RERUN.md` opisuje `ERROR:` i `WARNING:`. Tor B do poprawy w `ev_shortlist.py`: K1, K3, K6 |
+| 11:41 | Szkic zasad komunikatów w `KONTRAKT.md` sekcja 10; `RERUN.md` opisuje `ERROR:` i `WARNING:` |
+| 11:42 | Scalone `tor-c` → `handoff-wstepna-analiza`. Równolegle powstał `KONSTYTUCJA.md` (D12) — sekcja 10 w `KONTRAKT.md` zamieniona na odsyłacz, żeby nie było dwóch wersji |
+| 11:44 | `KONSTYTUCJA.md`: dopisana zasada „nowy komunikat → wiersz w `RERUN.md`” i brak liczb na sztywno w komunikatach; niezgodność 5 rozwiązana. `RERUN.md` i `ASSUMPTIONS.md` zgodne ze słownikiem (check figures, near miss) |

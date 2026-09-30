@@ -138,27 +138,6 @@ tail -n +2 ../it-corner-hackathon-20260930/trips.csv | LC_ALL=C sort -u | LC_ALL
 
 `data.py` jest gotowy i zgodny z plikami w `fixtures/`. Tory B i C mogą importować `data` po scaleniu gałęzi `tor-a`; interfejs bez zmian względem sekcji 5. Komunikaty i raport są po angielsku.
 
-## 10. Komunikaty narzędzia — konstytucja (11:41)
+## 10. Komunikaty narzędzia
 
-Obowiązuje wszystkie tory. Odbiorcą jest analityk Ewy, który uruchamia narzędzie bez nas (A17), więc każdy komunikat musi dać się zrozumieć i naprawić bez czytania kodu.
-
-| # | Zasada | Przykład |
-|---|---|---|
-| K1 | **Język: angielski** — wszystko, co widzi analityk: ekran, `data_report.txt`, wyjątki, `reason` / `reject_reason` (D11) | — |
-| K2 | **Błąd zatrzymujący** = wyjątek `ValueError` / `FileNotFoundError`. Treść: nazwa pliku, klucz lub kolumna, co poprawić | `Missing parameter 'fuel_l_per_100km.Brona D40' in params.csv` · `Trips file trips.csv: missing column(s) gps_km` |
-| K3 | `ev_shortlist.py` łapie wyjątki z K2, wypisuje `ERROR: <treść>` na stderr i kończy kodem 1, **bez tracebacka** | `ERROR: Parameter file not found: params.csv` |
-| K4 | **Problem w danych, który nie zatrzymuje** = linia w raporcie zaczynająca się od `WARNING: ` — z miejscem (van, data) i skutkiem. Nigdy cicha poprawka ani ciche pominięcie | `WARNING: van_id 'P-40' is not in the van register; 12 rows excluded …` |
-| K5 | **Informacja** = linia bez prefiksu | `Exact duplicate rows removed: 222` |
-| K6 | Po każdym udanym uruchomieniu na ekranie: liczby kontrolne (`vans_assessed`, `trips_counted`, `total_km`), liczba ostrzeżeń i ścieżka do wyników (D5) | `3 vans on the shortlist; 4 warnings, see results/data_report.txt` |
-| K7 | Nowy komunikat, który analityk może zobaczyć (K2–K4), dopisujemy do tabeli „If something goes wrong” w `RERUN.md` — zgłoszenie do toru C | — |
-
-Liczby, progi i nazwy modeli w komunikatach pochodzą z danych lub `params.csv`, nie są wpisane w tekście na sztywno.
-
-### Stan wdrożenia (11:41)
-
-| Moduł | Stan |
-|---|---|
-| `data.py` (A) | zgodny z K1, K2, K4, K5 |
-| `economics.py` (C) | zgodny z K1, K2 |
-| `feasibility.py` (B) | do sprawdzenia przez B |
-| `ev_shortlist.py` (B) | **do poprawy:** komunikat końcowy po polsku (K1); brak obsługi wyjątków — analityk zobaczy traceback (K3); brak liczb kontrolnych na ekranie (K6) |
+Zasady języka, błędów (`ERROR:`), ostrzeżeń (`WARNING:`), liczb, CSV i gita są w `KONSTYTUCJA.md` (sekcje 2–8). Przy sprzeczności wygrywa konstytucja.
