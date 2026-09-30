@@ -199,7 +199,8 @@ def run(trips_path, vans_path, params_path, out_dir, fixture_mode=False):
 def main(argv=None):
     ap = argparse.ArgumentParser(
         description="Rank the vans that can be replaced by an EV and write the shortlist files.")
-    ap.add_argument("--trips", required=True, help="telematics export (trips.csv)")
+    ap.add_argument("--trips", required=True, nargs="+",
+                    help="telematics export; give several files to combine them (trips.csv trips_latest.csv)")
     ap.add_argument("--vans", required=True, help="van register (vans.csv)")
     ap.add_argument("--params", default=os.path.join(HERE, "params.csv"),
                     help="parameter file (default: params.csv next to this script)")
@@ -208,7 +209,8 @@ def main(argv=None):
                     help="--trips and --vans are clean_trips.csv and van_profile.csv from fixtures/")
     a = ap.parse_args(argv)
     try:
-        res = run(a.trips, a.vans, a.params, a.out, fixture_mode=a.fixtures)
+        trips_arg = a.trips[0] if len(a.trips) == 1 else a.trips
+        res = run(trips_arg, a.vans, a.params, a.out, fixture_mode=a.fixtures)
     except (FileNotFoundError, ValueError) as err:
         print("ERROR: %s" % err, file=sys.stderr)
         return 1
