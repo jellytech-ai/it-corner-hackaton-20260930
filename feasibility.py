@@ -1,33 +1,43 @@
-"""Tor B: wykonalnosc zamiany vana na EV.
+"""Track B: can a van be replaced by an EV, and by which model.
 
-Wszystkie progi i dane modeli z params.csv (KONTRAKT sekcja 4).
+Every threshold and every EV model figure comes from params.csv.
 """
 
-EPS = 1e-9  # 260 * 0.57 = 148.20000000000002 w float; porownujemy z tolerancja
+EPS = 1e-9  # 260 * 0.57 = 148.20000000000002 in float; compare with a tolerance
+
+
+def param(params, key):
+    """Return a numeric parameter, or raise ValueError when params.csv does not have it."""
+    if params.get(key, "") == "":
+        raise ValueError("Missing parameter '%s' in params.csv" % key)
+    return float(params[key])
 
 
 def ev_models(params):
-    """{model: {pole: float}} z kluczy ev.<model>.<pole>, posortowane od najtanszego."""
+    """Return {model: {field: float}} from the ev.<model>.<field> keys, cheapest model first."""
     models = {}
     for key, value in params.items():
         if key.startswith("ev."):
             model, field = key[3:].rsplit(".", 1)
             models.setdefault(model, {})[field] = float(value)
+    if not models:
+        raise ValueError("Missing parameter 'ev.<model>.range_wltp_km' in params.csv")
+    for model, spec in models.items():
+        for field in ("range_wltp_km", "payload_kg", "kwh_per_100km", "price_pln"):
+            if field not in spec:
+                raise ValueError("Missing parameter 'ev.%s.%s' in params.csv" % (model, field))
     return dict(sorted(models.items(), key=lambda m: m[1]["price_pln"]))
 
 
 def winter_range_km(spec, params):
-    return spec["range_wltp_km"] * float(params["winter_range_factor"])
+    """Return the winter range of a model: WLTP range x winter_range_factor."""
+    return spec["range_wltp_km"] * param(params, "winter_range_factor")
 
 
 def winter_kwh_per_km(spec, params):
+    """Return winter consumption in kWh per km."""
     return (spec["kwh_per_100km"] / 100
-            / (float(params["winter_temp_factor"]) * float(params["winter_payload_factor"])))
-
-
-def _param(params, key, default):
-    """Progi B9 — w params.csv; domyslna wartosc do czasu dopisania przez tor A."""
-    return float(params.get(key, default))
+            / (param(params, "winter_temp_factor") * param(params, "winter_payload_factor")))
 
 
 def _minutes(hhmm):
@@ -35,10 +45,10 @@ def _minutes(hhmm):
     return int(h) * 60 + int(m)
 
 
-# --- doladowanie miedzy trasami (A16) ----------------------------------------
+# --- midday charging between routes (A16) -------------------------------------
 
 def van_days(trips, van_id):
-    """Dni vana: lista list kursow, kazdy dzien posortowany po start_time."""
+    """Return the van's days as lists of trips, each day sorted by start_time."""
     days = {}
     for t in trips:
         if t["van_id"] == van_id:
@@ -47,19 +57,19 @@ def van_days(trips, van_id):
 
 
 def midday_gain_km(first, second, spec, params):
-    """Km odzyskane podczas przerwy miedzy kursami."""
+    """Return the km of range recovered while charging between two routes."""
     hours = (_minutes(second["start_time"]) - _minutes(first["end_time"])
-             - float(params["midday_connect_minutes"])) / 60
-    return max(0.0, hours) * float(params["charger_kw"]) / winter_kwh_per_km(spec, params)
+             - param(params, "midday_connect_minutes")) / 60
+    return max(0.0, hours) * param(params, "charger_kw") / winter_kwh_per_km(spec, params)
 
 
 def simulate_day(day, spec, params):
-    """(ok, km doladowane w dzien). Rano bateria pelna; w przerwie ladowanie do pelna."""
+    """Return (ok, km charged during the day); battery full in the morning, topped up between routes."""
     full = winter_range_km(spec, params)
     km = [float(t["km"]) for t in day]
     if len(day) == 1:
         return km[0] <= full + EPS, 0.0
-    first, second = km[0], sum(km[1:])  # wiecej niz dwa kursy w danych nie wystepuje
+    first, second = km[0], sum(km[1:])  # the data never has more than two routes a day
     if first > full + EPS:
         return False, 0.0
     refill = min(midday_gain_km(day[0], day[1], spec, params), first)
@@ -67,11 +77,12 @@ def simulate_day(day, spec, params):
 
 
 def failed_days(days, spec, params):
-    """Daty, w ktorych zabrakloby zasiegu mimo doladowania miedzy trasami."""
+    """Return the dates on which the model would run out of range even with midday charging."""
     return [d[0]["date"] for d in days if not simulate_day(d, spec, params)[0]]
 
 
 def day_tariff_share(days, spec, params):
+    """Return the share of energy charged at the day tariff."""
     total = sum(float(t["km"]) for d in days for t in d)
     day_km = sum(simulate_day(d, spec, params)[1] for d in days)
     return round(day_km / total, 3) if total else 0
@@ -82,10 +93,10 @@ def _longer_route_of_worst_day(days):
     return max(float(t["km"]) for t in worst)
 
 
-# --- ocena ---------------------------------------------------------------------
+# --- assessment ------------------------------------------------------------------
 
 def model_failures(van, spec, params, days=None):
-    """(lista niespelnionych warunkow, czy potrzebne doladowanie miedzy trasami)."""
+    """Return (failed checks among 'payload' and 'range', whether midday charging is needed)."""
     fails = []
     if float(van["max_load_kg"]) > spec["payload_kg"] + EPS:
         fails.append("payload")
@@ -98,13 +109,14 @@ def model_failures(van, spec, params, days=None):
     return fails, midday
 
 
-def near_threshold(van, days, spec, params):
-    """B9: lista uwag, jak blisko modelu jest van; None, gdy ktorys warunek odpada wyraznie."""
+def near_miss(van, days, spec, params):
+    """Return notes on how close the van is to fitting the model, or None when it is clearly out."""
+    max_days = param(params, "near_miss_days")
     notes = []
     payload_days = sum(1 for d in days
                        if max(float(t["max_load_kg"]) for t in d) > spec["payload_kg"] + EPS)
     if payload_days:
-        if payload_days > _param(params, "near_payload_days", 3):
+        if payload_days > max_days:
             return None
         notes.append("payload over on %d days" % payload_days)
     full = winter_range_km(spec, params)
@@ -112,9 +124,9 @@ def near_threshold(van, days, spec, params):
     if worst > full + EPS:
         excess = (worst / full - 1) * 100
         failed = len(failed_days(days, spec, params)) if any(len(d) > 1 for d in days) else 0
-        if excess <= _param(params, "near_range_pct", 10) + EPS:
+        if excess <= param(params, "near_miss_range_pct") + EPS:
             notes.append("range +%.1f%% (%.1f/%.1f km)" % (excess, worst, full))
-        elif 0 < failed <= _param(params, "near_payload_days", 3):
+        elif 0 < failed <= max_days:
             notes.append("range fails %d days with midday charging" % failed)
         else:
             return None
@@ -122,50 +134,55 @@ def near_threshold(van, days, spec, params):
 
 
 def feasible_reason(van, spec, midday, params):
+    """Return the reason text for a feasible van: range margin, at threshold, or midday charging."""
     if midday:
         return "midday charging between routes; 0 failed days"
     full = winter_range_km(spec, params)
     margin = full - float(van["worst_day_km"])
     note = "range margin %.1f km (%.1f%%)" % (margin, margin / full * 100)
-    if margin / full * 100 < _param(params, "at_threshold_pct", 1):
+    if margin / full * 100 < param(params, "at_threshold_pct"):
         note = "at threshold: " + note
     return note
 
 
 def assess(profile, trips, params):
-    """Tabela feasibility (KONTRAKT 6): jeden wiersz na van z profilu.
+    """Return the feasibility table: one row per van in the profile.
 
-    ev_model = najtanszy model, ktory miesci ladunek i kazdy dzien w zasiegu zimowym
-    (dla dni z dwiema trasami: z doladowaniem w przerwie, A16).
-    Gdy zaden nie pasuje, reject_reason podaje braki najtanszego modelu
-    i ewentualnie modele „blisko progu” (B9). Kolumna reason: opis dla wykonalnych.
+    ev_model is the cheapest model that carries the van's max load and covers every day
+    in winter range (with midday charging on two-route days, A16). When no model fits,
+    reject_reason lists what the cheapest model fails, plus any near misses.
     """
     models = ev_models(params)
     cheapest = next(iter(models.values()))
-    exclude_refr = params.get("exclude_refrigerated", "yes") == "yes"
+    if params.get("exclude_refrigerated", "") not in ("yes", "no"):
+        raise ValueError("Missing parameter 'exclude_refrigerated' in params.csv")
+    exclude_refr = params["exclude_refrigerated"] == "yes"
     rows = []
     for van in profile:
         days = van_days(trips, van["van_id"])
         refrigerated = exclude_refr and van["refrigerated"] == "yes"
         fit, midday = "", False
-        for model, spec in models.items():
-            fails, needs_midday = model_failures(van, spec, params, days)
-            if not fails:
-                fit, midday = model, needs_midday
-                break
+        if days:
+            for model, spec in models.items():
+                fails, needs_midday = model_failures(van, spec, params, days)
+                if not fails:
+                    fit, midday = model, needs_midday
+                    break
         reasons = []
+        if not days:
+            reasons.append("no trips in this export")
         if refrigerated:
             reasons.append("refrigerated")
-        if not fit:
+        if days and not fit:
             reasons += model_failures(van, cheapest, params, days)[0]
-        if float(params.get("chargers." + van["depot"], 0)) <= 0:
+        if param(params, "chargers." + van["depot"]) <= 0:
             reasons.append("no chargers at depot")
         feasible = "no" if reasons else "yes"
-        near = [] if refrigerated or fit else [
+        near = [] if refrigerated or fit or not days else [
             "%s %s" % (m, "; ".join(n)) for m, spec in models.items()
-            for n in [near_threshold(van, days, spec, params)] if n]
+            for n in [near_miss(van, days, spec, params)] if n]
         if near:
-            reasons.append("near threshold: " + " | ".join(near))
+            reasons.append("near miss: " + " | ".join(near))
         rows.append({
             "van_id": van["van_id"],
             "feasible": feasible,
@@ -182,11 +199,11 @@ def assess(profile, trips, params):
 
 
 def sensitivity(profile, trips, params, factors):
-    """Dla kazdego progu zimowego: ile vanow przechodzi i ktore.
+    """Return, for each winter range factor, how many vans pass and which.
 
-    feasible_* = pelna ocena jak w assess; fit_* = vany z dobranym ev_model,
-    czyli pasujace technicznie niezaleznie od ladowarek w bazie (np. South).
-    Zmienia sie tylko winter_range_factor; zuzycie zimowe w symulacji A16 zostaje.
+    feasible_* is the full assessment; fit_* are vans with an ev_model, i.e. a model fits
+    whatever the charging points at the depot (e.g. South). Only winter_range_factor
+    changes; the winter consumption used for midday charging stays as in params.csv.
     """
     rows = []
     for factor in factors:
