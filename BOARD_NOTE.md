@@ -1,5 +1,3 @@
-<!-- DRAFT (track C, C8). Numbers from the 12:31 run on devel with Ewa's lunch rules; refresh from summary.csv / shortlist.csv / all_vans.csv after the 14:45 freeze. -->
-
 # Which vans go electric first
 
 **Recommendation: buy 8 Volta Cargo EVs with the grant and base all of them at North. Together they save 95637 PLN over five years after paying for the EVs.** Five are North vans; three are South vans that move to North and keep their routes. Without the grant, none of the 8 would pay back in five years.

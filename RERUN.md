@@ -1,5 +1,3 @@
-<!-- DRAFT (track C, C6). Check against the real ev_shortlist.py after the 12:20 merge; final version after the rerun test (C10). -->
-
 # Rerunning the EV shortlist
 
 This tool reads a telematics export and the van register and writes the EV shortlist, the check figures and a per-van report. It needs **Python 3.9 or newer** and nothing else: no packages to install.
@@ -24,7 +22,7 @@ After the first run Python creates a `__pycache__` folder next to the scripts. T
 
    The export can cover any period; annual km are scaled from the number of days in the file.
 
-2. **Update `params.csv`.** Open it in Excel or a text editor and change only the `value` column.
+2. **Update `params.csv`.** Open it in a text editor and change only the `value` column. A text editor is safer than Excel: Excel with Polish regional settings saves CSV files with semicolons and decimal commas, and the tool then stops with an `ERROR` that says so.
 
    **Every quarter:** set `lease_reference_date` to the date of the analysis (YYYY-MM-DD). It decides which diesel leases end within 12 months and so cost nothing to leave.
 
@@ -109,6 +107,9 @@ A problem that stops the tool is printed as one line starting with `ERROR:`, nam
 | `ERROR: … file not found: …` | check the path; run the command from the tool folder or give the full path |
 | `ERROR: … missing column(s) …` | the export has different column names; rename them to the ones in step 1 |
 | `ERROR: Trips file …: no usable trip rows; nothing written` | the file is not the telematics export, or every row was rejected; check the file you passed to `--trips` |
+| `ERROR: … The file uses semicolons; save it as CSV with a comma separator and a dot as the decimal mark` | a spreadsheet saved the file in a regional format; save it again as comma-separated CSV, or edit it in a text editor |
+| `ERROR: Parameter '<key>' in params.csv has a decimal comma '0,60'; use a dot: 0.60` | replace the comma with a dot in that line of `params.csv` |
 | `ERROR: Missing parameter '<key>' in params.csv` | add the line to `params.csv`. Usual cause: a new diesel model in the register (`fuel_l_per_100km.<model>`) or a new depot (`chargers.<depot>`) |
 | `reject_reason` is `no trips in this export` | the van is in the register but did not drive in this period; `data_report.txt` has a matching `WARNING` |
+| the check figures on screen do not match your own count of the export | read the `WARNING` lines in `data_report.txt`: the difference is exact duplicate rows that were removed, rows rejected for having no usable distance, or trips of vans that are not in the register |
 | shortlist is empty | check `all_vans.csv`, column `reject_reason`, to see which rule rejects the vans |
