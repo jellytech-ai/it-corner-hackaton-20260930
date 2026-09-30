@@ -28,6 +28,7 @@ class PipelineOnFixtures(unittest.TestCase):
             os.path.join(FX, "van_profile.csv"),
             os.path.join(ROOT, "params.csv"),
             cls.out,
+            fixture_mode=True,
         )
 
     @classmethod
@@ -268,7 +269,7 @@ class NearThreshold(unittest.TestCase):
     def test_shortlist_reason_comes_from_assess(self):
         with tempfile.TemporaryDirectory() as out:
             ev_shortlist.run(os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"),
-                             os.path.join(ROOT, "params.csv"), out)
+                             os.path.join(ROOT, "params.csv"), out, fixture_mode=True)
             rows = {r["van_id"]: r for r in read(os.path.join(out, "shortlist.csv"))}
         self.assertIn("at threshold", rows["P-14"]["reason"])
 
@@ -281,10 +282,29 @@ class Cli(unittest.TestCase):
                  "--trips", os.path.join(FX, "clean_trips.csv"),
                  "--vans", os.path.join(FX, "van_profile.csv"),
                  "--params", os.path.join(ROOT, "params.csv"),
-                 "--out", out],
+                 "--out", out, "--fixtures"],
                 check=True,
             )
             self.assertTrue(os.path.exists(os.path.join(out, "shortlist.csv")))
+
+
+SOURCE = os.environ.get("EV_SOURCE_DIR",
+                        os.path.join(os.path.dirname(ROOT), "it-corner-hackathon-20260930"))
+
+
+@unittest.skipUnless(os.path.exists(os.path.join(SOURCE, "trips.csv")) and
+                     os.path.exists(os.path.join(ROOT, "data.py")),
+                     "brak danych zrodlowych (EV_SOURCE_DIR) albo data.py toru A")
+class PipelineOnSourceData(unittest.TestCase):
+    def test_full_run_control_figures(self):
+        with tempfile.TemporaryDirectory() as out:
+            ev_shortlist.run(os.path.join(SOURCE, "trips.csv"), os.path.join(SOURCE, "vans.csv"),
+                             os.path.join(ROOT, "params.csv"), out)
+            s = {r["figure"]: r["value"] for r in read(os.path.join(out, "summary.csv"))}
+            short = [r["van_id"] for r in read(os.path.join(out, "shortlist.csv"))]
+        self.assertEqual((s["vans_assessed"], s["trips_counted"], s["total_km"]),
+                         ("38", "2777", "344952"))
+        self.assertEqual(sorted(short), ["P-08", "P-14", "P-26"])
 
 
 if __name__ == "__main__":

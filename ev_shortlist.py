@@ -90,6 +90,8 @@ def _stub_saving_basis(params):
 
 
 def _pick(module, name, stub):
+    if not module:
+        return stub
     try:
         return getattr(__import__(module), name)
     except (ImportError, AttributeError):
@@ -126,12 +128,14 @@ def rank(feasibility, economics, limit, depot_limits=None):
 
 # --- potok ------------------------------------------------------------------
 
-def run(trips_path, vans_path, params_path, out_dir):
-    load_params = _pick("data", "load_params", _stub_load_params)
-    load_and_clean = _pick("data", "load_and_clean", _stub_load_and_clean)
-    build_van_profile = _pick("data", "build_van_profile", _stub_build_van_profile)
-    control_figures = _pick("data", "control_figures", _stub_control_figures)
-    period_days = _pick("data", "period_days", _stub_period_days)
+def run(trips_path, vans_path, params_path, out_dir, fixture_mode=False):
+    """fixture_mode: wejscie to juz clean_trips + van_profile (fixtures/), bez czyszczenia A."""
+    data = "" if fixture_mode else "data"
+    load_params = _pick(data, "load_params", _stub_load_params)
+    load_and_clean = _pick(data, "load_and_clean", _stub_load_and_clean)
+    build_van_profile = _pick(data, "build_van_profile", _stub_build_van_profile)
+    control_figures = _pick(data, "control_figures", _stub_control_figures)
+    period_days = _pick(data, "period_days", _stub_period_days)
     assess = _pick("feasibility", "assess", _stub_assess)
     economics = _pick("economics", "economics", _stub_economics)
     saving_basis = _pick("economics", "saving_basis", _stub_saving_basis)
@@ -180,8 +184,10 @@ def main(argv=None):
     ap.add_argument("--vans", required=True)
     ap.add_argument("--params", default=os.path.join(HERE, "params.csv"))
     ap.add_argument("--out", default="wyniki")
+    ap.add_argument("--fixtures", action="store_true",
+                    help="--trips/--vans to clean_trips.csv/van_profile.csv z fixtures/")
     a = ap.parse_args(argv)
-    res = run(a.trips, a.vans, a.params, a.out)
+    res = run(a.trips, a.vans, a.params, a.out, fixture_mode=a.fixtures)
     print("Zapisano do %s: %d vanow na shortliscie" % (a.out, len(res["shortlist"])))
 
 
