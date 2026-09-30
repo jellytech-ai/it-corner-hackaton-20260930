@@ -83,7 +83,7 @@ UTF-8 CSV, przecinek, wiersz nagłówka, kropka dziesiętna, bez separatorów ty
 | Pełne duplikaty wierszy | 222 (zostaje 2777) | usuwamy |
 | `P-17` nie ma w rejestrze | 33 wiersze surowe, 30 dni od 15.06; `P-17B` jeździ od 03.08, ten sam kierowca (Waldemar Kasprzak) | traktujemy jako ten sam van (`P-17B`) — założenie A2 |
 | Ujemny przebieg | 1 wiersz: P-27, 13.08, −208,6 km przy GPS 90,3 | **do decyzji:** podmiana na GPS albo wartość bezwzględna |
-| Brak `gps_km` | 17 wierszy | dystans bierzemy z licznika |
+| Brak `gps_km` | 17 wierszy w danych surowych, 15 po deduplikacji (tyle podaje `data_report.txt`) | dystans bierzemy z licznika |
 | Licznik dużo wyższy niż GPS | 250 wierszy, średnio o 27 km; tylko P-02, P-06, P-10, P-11, P-16, P-18 (trasy z ok. 34 przystankami) | ufamy licznikowi (GPS gubi dystans w gęstej zabudowie) |
 | Dwie trasy dziennie | P-08, P-09, P-12, P-24, P-36 (ok. 60 dni każdy) | zasięg liczymy **na dzień**, nie na kurs |
 | Tylko lato | brak danych z zimy; Ewa potwierdziła, że więcej danych nie ma | współczynnik zimowy z literatury (sekcja 6) |
@@ -178,6 +178,8 @@ Każde założenie ma godzinę przyjęcia; Ewa chce wiedzieć „co i mniej wię
 | A19 | 12:15 | **Reguła zasięgu Ewy:** van przechodzi, jeśli jego dzień z 95. percentyla (percentyl dziennych sum km, interpolacja liniowa jak `PERCENTILE.INC`) mieści się w **0,60 × WLTP** (Cargo S 156 km, Cargo L 228 km). Zastępuje A4 i A6; nasz rozkład 0,57 zostaje w notatce jako uzasadnienie, że 0,60 to rozsądny kompromis | potwierdzone przez Ewę |
 | A20 | 12:15 | Ładowanie: North 10 punktów (6 + 4 zamówione, gotowe przed dostawą EV), jeden EV na punkt; South bez ładowarek w pierwszym roku; do 3 vanów z South może stacjonować w North, trasy bez zmian, bez doliczania dojazdu | potwierdzone przez Ewę |
 | A21 | 12:15 | Vany dwuzmianowe nie ładują się między trasami („only come back for a driver change”); cały dzień na jednym ładowaniu nocnym | potwierdzone przez Ewę |
+| A23 | 12:29 | Gdy z South pasuje więcej vanów, niż może stacjonować w North (`max_south_vans_at_north` = 3), bierzemy te z najwyższym `saving_pln`. Dziś odpada P-31 (+1 589 PLN w 5 lat) | przyjęte (Q22 toru B) |
+| A24 | 12:29 | `annual_km` = km z okresu × 365 ÷ liczba dni kalendarzowych okresu (90), niezależnie od liczby dni pracy vana. Van, który w 13 tygodni jeździł 75 dni, jeździ tak samo przez cały rok (A12) | przyjęte (Q14 toru B; doprecyzowanie A12 i D5) |
 | A22 | 12:17 | Wcześniejsze wyjście z leasingu diesla = 3 raty; leasing kończący się w ciągu 12 miesięcy od `lease_reference_date` (dziś 2026-09-30) — bez opłaty (nie odnawiamy). Granica „w ciągu 12 miesięcy” liczona włącznie (koniec 2027-09-30 = bez opłaty) | reguła potwierdzona przez Ewę; granica włącznie — nasza decyzja |
 
 ### Skąd 0,57 × WLTP (A6–A8)
@@ -282,6 +284,8 @@ JellyTech
 ---
 
 ## 8. Wstępny obraz wykonalności (ręczny odczyt z tabeli, do potwierdzenia skryptem)
+
+> **Nieaktualne od 12:15** — obraz sprzed odpowiedzi Ewy (0,57 × WLTP, najgorszy dzień, doładowanie między trasami, 6 punktów). Obowiązują A19–A24 i D13–D16; aktualny wynik: `TOR-B-wykonalnosc.md` (B10). Sekcja zostaje jako zapis rozumowania.
 
 Filtry: nie chłodnia · maks. ładunek ≤ ładowność EV · najgorszy dzień ≤ zasięg zimowy (S 148 km, L 217 km).
 
@@ -451,13 +455,13 @@ Demo w trzech krokach:
 | D12 | 11:50 | Wspólne zasady języka, błędów, liczb, CSV i gita w `KONSTYTUCJA.md` (m.in. angielski dla analityka, `ERROR:` bez śladu stosu, `WARNING:` w raporcie, liczby kontrolne na ekranie, słownik pojęć). Pierwszeństwo: README Ewy > konstytucja > `KONTRAKT.md`. 11:44 tor C dopisał: każdy nowy komunikat ma wiersz w `RERUN.md` | analityk ma naprawić problem bez czytania kodu i bez nas (A17); dokumenty mają wyglądać jak dzieło jednego zespołu |
 | D13 | 12:17 | `saving_pln` = 5 × (paliwo − ładowanie + różnica serwisu) − cena zakupu EV × (1 − 30% dotacji) − opłata za wyjście z leasingu; bez rat diesla i wartości odsprzedaży. Zastępuje D7. `annual_fuel_saving_pln` bez zmian | Ewa: „The board looks at five years: what we save on running the van, minus what the EV costs us after the grant, minus any lease exit fee … Leave our diesel lease payments and resale values out”. Dotacja tylko przy zakupie, więc liczymy zakup (leasing EV: 60 × 2900 = 174 000 PLN > 105 000 PLN po dotacji) |
 | D14 | 12:17 | Model EV dla vana: spośród modeli, które przechodzą zasięg i ładowność, ten z wyższym `saving_pln` w 5 lat (`economics.saving_for_model`); wybiera tor B | Ewa: „take whichever EV model works out better over the five years” |
+| D15 | 12:19 | Ranking: malejąco po `saving_pln`, przy remisie po `annual_km`. Na shortlistę nie trafia van z `saving_pln` ≤ 0; odpada też van, dla którego brakuje wolnego punktu w bazie, limitu vanów z South albo limitu dotacji (10). Każdy taki van ma w `all_vans.csv` notatkę z powodem | Jolanta czyta najpierw oszczędność; van, który w 5 lat nie zarabia, nie jest rekomendacją, tylko informacją dla zarządu (P-14, P-26, P-10, P-20, P-28, P-32) |
+| D16 | 12:29 | Wszystkie EV z listy liczymy jako kupione, więc limit dotacji (10 EV) jest limitem shortlisty | dotacja tylko przy zakupie, a zakup po dotacji (105 000 PLN za Cargo S) jest tańszy niż 60 rat leasingu (174 000 PLN) — D13 (Q20 toru B) |
 | D6 | 11:20 | Korekta D5: narzędzie to jeden katalog i jedno polecenie, ale cztery pliki `.py` (`data.py`, `feasibility.py`, `economics.py`, `ev_shortlist.py`) | trzy osoby nie mogą równolegle edytować jednego pliku; do wątku trafia zip |
 
 ### Otwarte
 
-- Czy na shortlistę trafiają vany z ujemnym `saving_pln` (tor B; propozycja: nie — pokazujemy je w `all_vans.csv` i w notatce).
-- Kolejność rankingu: największy `saving_pln` (Ewa zostawiła nam wybór zespołom, które pytały).
-- Które 3 vany z South przenosimy do North, gdy pasuje więcej (propozycja: te z najwyższym `saving_pln`).
+- Brak. Vany z ujemnym wynikiem, kolejność rankingu i wybór vanów z South rozstrzygnięte o 12:19–12:29 (D15, D16, A23).
 
 ### Odpowiedzi Ewy
 
@@ -497,3 +501,5 @@ Demo w trzech krokach:
 | 11:42 | `tor-c` scalone do `handoff-wstepna-analiza`; `KONSTYTUCJA.md` (D12) zastępuje szkic sekcji 10 w `KONTRAKT.md` |
 | 11:44 | Tor C: uzupełnienie `KONSTYTUCJA.md` (komunikaty → `RERUN.md`), dokumenty EN zgodne ze słownikiem (check figures, near miss) |
 | 12:17 | Tor C: `saving_pln` według D13 (`ac53902`), `saving_for_model` dla wyboru modelu (D14); odpowiedzi Ewy przeniesione do rejestru (A19–A22, D13, D14). Kontrola na prawdziwych danych zgodna z podglądem toru A: 15 vanów pasuje, 9 dodatnich, 8 wybranych = 95 637 PLN w 5 lat |
+| 12:19 | Tor B: B10 — ranking końcowy po D13 (8 vanów, 95 637 PLN w 5 lat), wybór modelu przez `saving_for_model`; B11 — próba zipa oczami analityka OK |
+| 12:29 | Tor C: pytania B Q14, Q15, Q17, Q20, Q22 rozstrzygnięte (A23, A24, D15, D16; KONSTYTUCJA 12 zaktualizowana); sekcja 8 oznaczona jako nieaktualna |

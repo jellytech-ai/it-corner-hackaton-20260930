@@ -13,7 +13,7 @@ All times are CEST on 30 Sep 2026. "Confirmed by you" means your lunch answers s
 | A3 | 10:15 | Distance is the odometer reading. GPS is used only when the odometer value is missing or not positive. | confirmed by you ("trust the odometer") |
 | A5 | 11:25 | One row (P-27, 13 Aug) has an odometer reading of −208.6 km. We use its GPS distance (90.3 km). General rule: an odometer value that is missing or not positive is replaced by GPS, with a warning. | accepted (decision D8) |
 | A11 | 10:30 | There is no other data (for example from winter). | confirmed by you |
-| A12 | 10:50 | Routes and loads are the same all year. Annual km are scaled from the number of days in the export (90 days here, × 365 / 90). Each van drives one fixed route (two-shift vans two), average trip length is flat over four months (122–125 km), and operations plan no route changes. Risk: the pre-Christmas peak. Rerunning the tool on the Q4 export will test this. | accepted |
+| A12 | 10:50 | Routes and loads are the same all year. Annual km are scaled from the number of calendar days in the export (90 days here, × 365 / 90), whatever the number of days the van actually drove: a van that drove on 75 of those days is assumed to drive the same way all year. Each van drives one fixed route (two-shift vans two), average trip length is flat over four months (122–125 km), and operations plan no route changes. Risk: the pre-Christmas peak. Rerunning the tool on the Q4 export will test this. | accepted |
 
 ## Range and winter
 
@@ -47,6 +47,7 @@ How our morning estimate of winter range was built (it came out at 57%, close to
 | # | When | Assumption | Status |
 |---|---|---|---|
 | A20 | 12:15 | North has 10 charging points when the EVs arrive (6 today + 4 ordered), one EV per point overnight. South has none in year 1. Up to 3 South vans can be based at North and keep their routes; nothing is added for the drive between depots. | confirmed by you |
+| A23 | 12:29 | When more South vans fit than may be based at North (3), we take those with the highest five-year saving. Today this leaves out P-31 (+1589 PLN over 5 years). | accepted |
 | A13 | — | All charging is overnight at the night tariff (0.58 PLN/kWh). Two-shift vans return about 20:40 and leave about 04:30, so a small part of their charge may fall in the day tariff; we do not count it. | accepted |
 
 ## Savings
@@ -79,6 +80,8 @@ How our morning estimate of winter range was built (it came out at 57%, close to
 | D9 | 11:25 | Trips of a van that is not in the register (after aliases) are left out of the figures, with a warning saying what to add to `vans.csv` or `van_alias`. | A future export may contain a new van; you should see it rather than get silently changed numbers. |
 | D10 | 11:25 | `vans_assessed` counts registered vans with at least one trip; a registered van without trips gets a warning. | The check figure matches what was actually assessed. |
 | D7 | 11:26 | Morning basis: `saving_pln` = annual operating saving only. | Replaced by D13 after your lunch answer. |
+| D15 | 12:19 | Ranking: highest five-year saving first; ties go to the van with more km. A van whose five-year saving is zero or negative is not on the shortlist; nor is a van for which no charging point, South-van place or grant place is left. Every such van has the reason in `all_vans.csv`. | A van that does not pay back in five years is information for the board, not a recommendation (P-14, P-26, P-10, P-20, P-28, P-32). |
+| D16 | 12:29 | Every EV on the list is counted as bought, so the grant limit of 10 EVs is the limit of the shortlist. | The grant pays only on purchase, and buying after the grant (105000 PLN for a Cargo S) costs less than 60 lease payments (174000 PLN). |
 | D14 | 12:17 | For each van, the EV model is the one with the higher five-year `saving_pln` among the models that pass range and payload. | Your answer: "take whichever EV model works out better over the five years". |
 
 ## Your answers
@@ -94,7 +97,7 @@ How our morning estimate of winter range was built (it came out at 57%, close to
 
 ## What we would ask next
 
-1. **Vans with a negative five-year result:** should the board see them as "fits, but does not pay", or are they simply out?
+1. **Vans with a negative five-year result:** we leave them off the shortlist and list them in the board note as "fits, but does not pay back in five years". Is that how the board should see them?
 2. **Grant conditions:** must the application name specific vans, and must the replaced diesel be scrapped?
 3. **Retired diesels:** kept as spares for the coldest days, or sold? You asked us to leave resale out of the saving, but spares would cover the winter risk.
 4. **Battery capacity after 5 years:** does the dealer guarantee it? The board note shows which vans on the list would still qualify at about 52% of WLTP.
