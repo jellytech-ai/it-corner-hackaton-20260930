@@ -1,47 +1,52 @@
-<!-- DRAFT (track C, C8), numbers from the 11:46 run on the full export, not yet frozen. Refresh from summary.csv / shortlist.csv / all_vans.csv after the 14:45 freeze and after Ewa's lunch answers (grant, chargers, lease exit). -->
+<!-- DRAFT (track C, C8). Numbers from the 12:31 run on devel with Ewa's lunch rules; refresh from summary.csv / shortlist.csv / all_vans.csv after the 14:45 freeze. -->
 
 # Which vans go electric first
 
-**Recommendation: replace 3 diesel vans at North with Volta Cargo S now (P-08, P-26, P-14), not 10.** They are the only vans that would complete every day in our data on a winter charge, carry their current loads and have a charging point. Each further EV needs either charging points at South or a decision to accept a lower winter margin.
+**Recommendation: buy 8 Volta Cargo EVs with the grant and base all of them at North. Together they save 95637 PLN over five years after paying for the EVs.** Five are North vans; three are South vans that move to North and keep their routes. Without the grant, none of the 8 would pay back in five years.
 
-## The numbers
+## The shortlist
 
-| Rank | Van | EV | Distance per year | Fuel saving per year | Fuel + maintenance saving per year | Why it qualifies |
+| Rank | Van | Today at | EV | km per year | Fuel saving per year | Five-year saving |
 |---|---|---|---|---|---|---|
-| 1 | P-08 | Volta Cargo S | 47329 km | 19738 PLN | 29204 PLN | two routes a day; tops up at the depot between them, no failed day |
-| 2 | P-26 | Volta Cargo S | 34795 km | 14394 PLN | 21353 PLN | worst day 141.8 km against 148 km winter range |
-| 3 | P-14 | Volta Cargo S | 22805 km | 9434 PLN | 13995 PLN | worst day 148.0 km: exactly at the limit |
-| | **Total** | | | **43566 PLN** | **64552 PLN** | |
+| 1 | P-12 | South | Volta Cargo L | 49835 | 21994 PLN | 23305 PLN |
+| 2 | P-30 | North | Volta Cargo S | 38099 | 17544 PLN | 20818 PLN |
+| 3 | P-21 | North | Volta Cargo S | 39218 | 16224 PLN | 15337 PLN |
+| 4 | P-08 | North | Volta Cargo L | 47329 | 20888 PLN | 15270 PLN |
+| 5 | P-05 | South | Volta Cargo S | 34618 | 15941 PLN | 9322 PLN |
+| 6 | P-25 | South | Volta Cargo S | 39283 | 16251 PLN | 6596 PLN |
+| 7 | P-13 | North | Volta Cargo S | 39854 | 13793 PLN | 3818 PLN |
+| 8 | P-04 | North | Volta Cargo S | 38885 | 13457 PLN | 1171 PLN |
+| | **Total** | | | | **136092 PLN** | **95637 PLN** |
 
-Source: `shortlist.csv` and `summary.csv`; every van, including rejected ones, is in `all_vans.csv`.
+Source: `shortlist.csv` and `summary.csv`; every van, including rejected ones, is in `all_vans.csv`. Check figures: 38 vans assessed, 2777 trips counted, 344952 km driven between 15 Jun and 12 Sep 2026.
 
-Check figures: 38 vans assessed, 2777 trips counted, 344952 km driven between 15 Jun and 12 Sep 2026. Savings are at current prices (diesel 5.20 PLN/l, mostly night charging at 0.58 PLN/kWh) and include a 10% winter energy uplift.
+**How the five-year saving is built**, as you asked: what we save on running the van (fuel minus charging, plus lower maintenance) over five years, minus the EV's purchase price after the 30% grant, minus any lease exit fee. For the 8 vans: about 1007600 PLN saved on running, minus 903000 PLN for the EVs after a grant of 387000 PLN, minus 8940 PLN to end P-25's lease early (3 monthly payments). Diesel lease payments and resale values are left out.
 
-**The savings do not pay for the vans on their own.** Leasing three Cargo S costs 104400 PLN a year (2900 PLN a month each), against 64552 PLN saved: about 40000 PLN a year short before any grant. Buying them costs 450000 PLN, which the savings repay in about 7 years, longer than the 5-year lease term the dealer offers. The case therefore rests on the grant, whose amount we do not yet know. P-14 and P-26 are leased diesels (to Mar 2027 and Jun 2028); the cost of ending those leases early is not included.
+## How the vans were chosen
 
-## Why not "the vans that drive the most"
+Every van had to pass four tests: not a refrigerated van (6 are out for year 1); the EV carries the heaviest load the van carried this summer (10 more fail; 6 of them were too heavy on only 1–3 days this summer and are marked as near misses in `all_vans.csv`); its 95th-percentile day fits within 60% of the EV's WLTP range, which is 156 km for the Cargo S and 228 km for the Cargo L (7 more fail); and it has an overnight charging point. 15 vans pass. For each, we took the EV model that saves more over five years and ranked them by that saving. 7 of the 15 do not make the list: six do not pay back in five years: P-14, P-10, P-28 and P-32 drive only 21000–24000 km a year, and P-26 and P-20 would pay back but for the fee to end their leases early (8670 and 8820 PLN). P-31 would, by 1589 PLN, but only 3 South vans can move to North. The 8 EVs use 8 of North's 10 charging points.
 
-Of the 10 vans with the highest mileage, 8 have a worst day of 208–302 km. All are beyond what the Cargo S can be relied on to do in January (about 148 km); the Cargo L (about 217 km) would cover only one of them, P-33, which carries more than the Cargo L's 880 kg payload. A van that drives far on an average day also has long single days, and one failed route is not acceptable to operations. The one high-mileage van that fits, P-08, qualifies only because it splits its day into two routes and recharges in between. The next one, P-12, would qualify in the same way, but it is based at South, which has no charging points.
+## Why not simply "the vans that drive the most"
 
-## Winter risk
+Mileage is what makes an EV pay, and the two vans that drive the most on the list (P-12 and P-08) are near the top. But of the 10 vans with the highest mileage, 8 cannot switch: their 95th-percentile day is 206–293 km. That is beyond the Cargo S, and the Cargo L reaches only one of them (P-33), which carries more than the Cargo L's 880 kg payload. Three of them drive two routes a day and, as you told us, have no time to charge between them.
 
-The winter range is our estimate, not a measured figure: 57% of the brochure (WLTP) range, built from published data on cold-weather range loss (−10 °C day), a full load and a reserve for the return to the depot. There is no winter data from the fleet.
+## The winter risk
 
-| Winter range assumed | Vans that qualify |
-|---|---|
-| 50% of WLTP (colder, or battery aged) | 1: P-08 |
-| **57% (our base case)** | **3: P-08, P-26, P-14** |
-| 65% (milder) | 8, of which 6 fit the 6 charging points at North |
+The 95th-percentile rule means a van may have a few days a quarter longer than the range we count on. On the list this matters for two vans: P-30's longest day was 166 km and P-21's 159 km, against 156 km for the Cargo S. The other six stayed within the range on every day in the data. We suggest keeping two of the retired diesels as spares for the longest winter days.
 
-P-14 passes with 0.2 km to spare, so it is the most exposed van on the list. After 5 years of battery ageing (about 49% of WLTP) only P-08 would still qualify. Keeping the replaced diesels as spares for the coldest days would cover this risk.
+| If we change one rule | Vans on the list | Five-year saving |
+|---|---|---|
+| **As agreed (95th-percentile day, 60% of WLTP)** | **8** | **95637 PLN** |
+| Longest day instead of the 95th percentile ("no van may ever fail") | 6 (without P-30, P-21) | 59482 PLN |
+| 55% of WLTP instead of 60% | 3 (P-12, P-08, P-05) | 47897 PLN |
+| Batteries after five years (about 52% of WLTP) | 2 (P-12, P-08) | 38575 PLN |
+| No South vans at North | 5 | 56414 PLN |
 
-## What would change the answer
-
-1. **Charging points at South.** Five South vans (P-05, P-10, P-12, P-20, P-25) already fit on range and load; with points installed, the list grows to 8, within the 10-van grant.
-2. **The grant** — how much per van, and whether it covers leasing — decides whether the switch pays at full cost.
-3. **Early lease exit** for P-14 and P-26, and whether the replaced diesels are sold or kept.
+The two Cargo L vans (P-12, P-08) have the most range to spare and stay on the list under every range rule above.
 
 ## Next steps
 
-- Confirm the grant terms and apply for 3 vans before 16 Oct 2026, with the South charging decision as the route to more.
-- Rerun the tool on the Q4 export (same command, fresh data) to check the pre-Christmas peak and, from January, real winter days.
+1. Apply for the grant for these 8 vans before 16 Oct 2026, as a purchase.
+2. Give notice on P-25's diesel lease; P-04's lease ends in May 2027 and is simply not renewed.
+3. Decide which two retired diesels stay as winter spares.
+4. Rerun the tool on the Q4 export (same command, new data) to check the pre-Christmas peak.
