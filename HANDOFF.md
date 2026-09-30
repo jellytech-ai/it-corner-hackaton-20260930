@@ -242,7 +242,7 @@ Jeśli Ewa nie odpowie na czas: działamy na założeniach z sekcji 6 i zapisuje
 
 ### Do wpisania w odpowiedzi dla Ewy (dopisane 12:12) — jeszcze niewysłane
 
-Ewa zapytała o 12:03: „my analyst will rerun this next quarter without you. What will they open, and what will they type?”. W odpowiedzi w naszym wątku muszą się znaleźć trzy rzeczy:
+Ewa zapytała o 12:03: „my analyst will rerun this next quarter without you. What will they open, and what will they type?”. W odpowiedzi w naszym wątku muszą się znaleźć trzy rzeczy o analityku oraz (uzgodnione 12:52) decyzja o 8 vanach zamiast 10:
 
 | # | Co wpisać | Założenie |
 |---|---|---|
@@ -267,15 +267,18 @@ What they get: shortlist.csv and summary.csv in your import format, plus a
 list of every van with the reason it is in or out, and a data report that
 says what was cleaned. The three check figures are printed on screen.
 
-We are assuming three things. Tell us if any is wrong:
+We are assuming four things. Tell us if any is wrong:
 1. Your analyst has Python 3 installed (3.9 or newer). Nothing else needs
    installing.
-2. The README is what they follow. It says step by step what to open, what
-   to type and what to check, including which prices and dates to update
-   in params.csv each quarter.
+2. The README (RERUN.md) is what they follow. It says step by step what to
+   open, what to type and what to check, including which prices and dates
+   to update in params.csv each quarter.
 3. The data keeps its structure: the same two CSV files with the same
    column names as today. If a column is missing, the script stops and
    names it; it never guesses.
+4. We shortlist only vans that pay back within the five years. That gives
+   8 vans, not 10. The ninth would lose about 6,900 PLN over five years.
+   Tell us if the board would rather use all ten grant places.
 
 Thanks,
 JellyTech
