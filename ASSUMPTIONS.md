@@ -23,7 +23,7 @@ All times are CEST on 30 Sep 2026. "Open" means we used the stated default and w
 | A6 | 10:30 | Winter range = **0.57 × WLTP**: Volta Cargo S about 148 km, Cargo L about 217 km. Built from a −10 °C design day in Poznań (temperature × 0.70), load (× 0.90) and a reserve for the drive back (× 0.90). Sensitivity shown at 0.50 and 0.65. | accepted as base case |
 | A7 | 10:30 | After 5 years (end of the EV lease) battery ageing takes a further × 0.87, giving 0.49 × WLTP (S about 128 km, L about 187 km). Shown as a stress test, not used for the shortlist. | accepted |
 | A8 | 10:30 | Energy use is the dealer's figure plus 10% over the year for winter. | accepted |
-| A16 | 10:50 | Two-shift vans (P-08, P-09, P-12, P-24, P-36) top up at the depot between routes on a 22 kW point, minus 15 minutes to plug in. Winter gain is about 58 km per hour on Cargo S and 51 km on Cargo L. Test for every two-route day: route 1 ≤ winter range, and charge after the top-up ≥ route 2. Top-up energy is billed at the day tariff. | accepted |
+| A16 | 10:50 | Two-shift vans (P-08, P-09, P-12, P-24, P-36) top up at the depot between routes on a 22 kW point, minus 15 minutes to plug in. Winter gain is about 58 km per hour on Cargo S and 51 km on Cargo L. Test for every two-route day: route 1 ≤ winter range, and charge after the top-up ≥ route 2. The top-up is counted as a full recharge of what route 1 used, billed at the day tariff (P-08: 48% of its energy), which is the cautious choice for cost. For these vans `range_check_km` is the longer of the two routes on the worst day, since that is what one charge must cover. | accepted |
 
 Why 0.57:
 
