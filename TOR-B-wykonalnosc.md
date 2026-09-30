@@ -57,3 +57,4 @@ Czyszczenia danych, kosztów i oszczędności, dokumentów.
 | Godzina | Decyzja / zdarzenie |
 |---|---|
 | | |
+| 11:35 | B1 gotowe: `ev_shortlist.py` (CLI, potok, 4 pliki) z zaślepkami A/B/C wyłączającymi się, gdy pojawi się `data.py`/`feasibility.py`/`economics.py`; testy w `tests/test_b.py` |
