@@ -42,7 +42,7 @@ This tool reads a telematics export and the van register and writes the EV short
 
 4. **Check the control figures on screen.** The tool prints the number of vans assessed, trips counted and total km. Compare them with the export: trips counted is the number of rows after removing exact duplicates, and total km is their sum.
 
-5. **Read the warnings in `results/data_report.txt`.** Nothing is dropped silently. The report lists removed duplicates, applied van aliases, rows where GPS distance replaced a broken odometer reading, trips of vans that are not in the register (left out of the figures), registered vans without trips, and the date range used. If an unknown van appears, add it to `vans.csv` or to `van_alias` in `params.csv` and run again.
+5. **Read the warnings in `results/data_report.txt`.** Lines starting with `WARNING` need a look; nothing is dropped silently. The report lists removed duplicates, applied van aliases, rows where GPS distance replaced a broken odometer reading, trips of vans that are not in the register (left out of the figures), registered vans without trips, and the date range used. If an unknown van appears, add it to `vans.csv` or to `van_alias` in `params.csv` and run again.
 
 6. **Use the results** in `results/`:
 

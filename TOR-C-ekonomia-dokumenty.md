@@ -73,3 +73,4 @@ Czyszczenia danych, filtrów, rankingu, zapisu plików wynikowych.
 | 11:31 | `tor-c` wypchnięte (C4 gotowe przed 12:20) |
 | 11:40 | C6: szkic `RERUN.md` (6 kroków + rozwiązywanie problemów). Do sprawdzenia po scaleniu: komunikaty „missing column” (A) i zawartość ekranu (B). `economics()` przy braku parametru rzuca `ValueError` z nazwą klucza i `params.csv` — **prośba do A i B o ten sam styl komunikatów** |
 | 11:50 | C9: szkic `ASSUMPTIONS.md` (EN) z A1–A17, D1–D7 i 7 pytaniami „co byśmy zapytali dalej” (5 z listy do Ewy + powrót dwuzmianowych do bazy + historia serwisu). A13 i A14 bez godziny, jak w `HANDOFF.md` |
+| 11:55 | Rejestr: decyzje toru A (11:25–11:35) przeniesione do `HANDOFF.md` jako A5 (przyjęte) i D8–D11; to samo w `ASSUMPTIONS.md`. `RERUN.md` krok 5 zgodny z raportem `data.py` (linie `WARNING`) |

@@ -161,7 +161,7 @@ Każde założenie ma godzinę przyjęcia; Ewa chce wiedzieć „co i mniej wię
 | A2 | 10:42 | P-17 i P-17B to ten sam van; łączymy pod `P-17B`. Dowody: ta sama trasa (S-R06, nikt inny jej nie jeździ), ten sam kierowca, P-17 kończy się 31.07, P-17B zaczyna 03.08, średni dystans 112 i 111 km, rejestr ma 38 vanów jak w liście Ewy | przyjęte (nie pytamy Ewy) |
 | A3 | 10:15 | Dystans = `odometer_km`; GPS tylko pomocniczo | przyjęte |
 | A4 | 10:15 | Test zasięgu na **najgorszym dniu** (suma kursów dnia), nie na średniej | przyjęte (wymóg Witolda) |
-| A5 | 10:15 | Wiersz P-27 z 13.08 (−208,6 km) jest błędem i wymaga korekty | sposób korekty do decyzji |
+| A5 | 10:15 / 11:25 | Wiersz P-27 z 13.08 (−208,6 km) jest błędem; liczymy go z `gps_km` (90,3 km). Reguła ogólna: licznik ≤ 0 lub pusty → GPS, z ostrzeżeniem w raporcie | przyjęte (tor A, D8) |
 | A6 | 10:30 | Zasięg zimowy = **0,57 × WLTP** (Cargo S ok. 148 km, Cargo L ok. 217 km); warianty 0,50 i 0,65 | przyjęte jako bazowe; pyt. 3 |
 | A7 | 10:30 | Po 5 latach (koniec leasingu EV) dodatkowo × 0,87 → 0,49 × WLTP (S ok. 128 km, L ok. 187 km) | pokazujemy w notatce jako test odporności |
 | A8 | 10:30 | Zużycie energii: liczby dealera + 10% rocznie na zimę | przyjęte |
@@ -398,11 +398,14 @@ Demo w trzech krokach:
 | D4 | 10:50 | Sezonowość przyjmujemy jako założenie A12, bez pytania Ewy | Ewa nie ma danych z zimy; narzędzie zweryfikuje to na eksporcie za IV kwartał |
 | D5 | 11:13 | Narzędzie to jeden plik `ev_shortlist.py` bez zależności, z parametrami w `params.csv`; roczne km liczone z długości okresu w danych | Ewa: „a script is enough”, materiały idą do wątku jako pliki, analityk uruchamia bez nas |
 | D7 | 11:26 | `saving_pln` liczymy jako roczną oszczędność eksploatacyjną: paliwo − ładowanie + różnica serwisu (wariant 1 z `TOR-C`); `saving_basis` opisuje to jednym zdaniem po angielsku | proste i sprawdzalne dla CFO z samych stawek w `params.csv`; nie wymaga założeń o dotacji, wyjściu z leasingu ani racie nowego diesla. Pełny koszt (leasing EV ok. 34 800 PLN/rok przy ok. 14 000 PLN oszczędności) opisujemy w notatce dla zarządu, żeby nie było wrażenia, że wymiana „zarabia” |
+| D8 | 11:25 | Licznik ≤ 0 lub pusty → `gps_km` z ostrzeżeniem; brak obu → wiersz odrzucony z ostrzeżeniem | nie gubimy kursu po cichu; tak są policzone liczby kontrolne (344 952 km) |
+| D9 | 11:25 | Kursy vana spoza rejestru (po aliasach) nie wchodzą do liczb; ostrzeżenie mówi, co dopisać do `vans.csv` lub `van_alias` | następny eksport może mieć nowego vana; analityk ma to zobaczyć, a nie dostać cicho zmienione liczby |
+| D10 | 11:25 | `vans_assessed` = vany z rejestru z co najmniej jednym kursem; van bez kursów dostaje ostrzeżenie | liczba kontrolna musi odpowiadać temu, co naprawdę oceniliśmy |
+| D11 | 11:35 | Raport i komunikaty narzędzia są po angielsku | czyta je analityk Ewy |
 | D6 | 11:20 | Korekta D5: narzędzie to jeden katalog i jedno polecenie, ale cztery pliki `.py` (`data.py`, `feasibility.py`, `economics.py`, `ev_shortlist.py`) | trzy osoby nie mogą równolegle edytować jednego pliku; do wątku trafia zip |
 
 ### Otwarte
 
-- Korekta wiersza P-27 (GPS 90,3 czy wartość bezwzględna 208,6).
 - Czy ładowność sprawdzamy na maksimum, czy na wysokim percentylu.
 - Czy rekomendujemy mniej niż 6 aut, jeśli tyle wychodzi z ostrych filtrów, czy pokazujemy warianty.
 - Zakup czy leasing EV.
@@ -418,6 +421,10 @@ Demo w trzech krokach:
 | Godzina | Co |
 |---|---|
 | 10:10 | Repo sklonowane, materiały przeczytane, pierwszy profil danych |
+| 11:31 | Tor C: `economics()` z `annual_km`, `annual_fuel_saving_pln`, `saving_pln` wypchnięte na `tor-c` |
+| 11:33 | Tor A: liczby kontrolne 2777 / 344952 / 38 potwierdzone przez `data.py` i niezależnie w powłoce. Pułapka: `awk` przy polskich ustawieniach regionalnych obcina ułamki (343 699) — trzeba `LC_ALL=C` |
+| 11:35 | Tor A: `data.py` wypchnięte na `tor-a` |
+| 11:55 | Tor C: szkice `RERUN.md` i `ASSUMPTIONS.md`; decyzje toru A przeniesione do rejestru |
 | 10:20 | Analiza wpływu braku danych zimowych |
 | 10:29 | Decyzja: nie pytamy o dane zimowe; pytanie o chłodnie wraca do piątki |
 | 10:30 | Współczynnik zimowy 0,57 × WLTP ze źródłami |
