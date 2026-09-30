@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Wyniki uruchomień narzędzia (generowane przez ev_shortlist.py)
+wyniki/
+
+# Paczka do wątku (B11)
+*.zip
+
+# System / edytory / lokalne notatki sesji
+.DS_Store
+.vscode/
+.idea/
+.cursor/
+.remember/
