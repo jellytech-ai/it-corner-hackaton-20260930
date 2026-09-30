@@ -1,8 +1,10 @@
 # KONTRAKT — wspólne ustalenia dla torów A, B, C
 
-Stan: 30.09.2026, 11:20. Ten plik czyta każdy tor przed startem. Zmiana kontraktu = wiadomość do pozostałych dwóch osób, potem edycja tutaj.
+**Wersja 2.2** (30.09.2026, 13:15); historia wersji: sekcja 12. Ten plik czyta każdy tor przed startem.
 
-Kontekst, założenia (A1–A17) i decyzje (D1–D5): `HANDOFF.md`.
+**Najpierw kontrakt, potem kod.** Zmiana kolumny, sygnatury albo parametru = wiadomość do pozostałych dwóch osób, edycja tutaj z nowym numerem wersji w sekcji 12, dopiero potem kod i test. Które wymaganie pilnuje który test: `SLEDZENIE.md`.
+
+Kontekst, założenia (A1–A24) i decyzje (D1–D16): `HANDOFF.md`.
 
 Jak piszemy (język, format błędów i ostrzeżeń, zaokrąglenia, CSV, git, słownik): **`KONSTYTUCJA.md`** — obowiązuje wszystkie tory.
 
@@ -29,7 +31,7 @@ Każdy tor edytuje **wyłącznie swoje pliki**. Dzięki temu scalanie gałęzi n
 | `feasibility.py`, `ev_shortlist.py` (punkt wejścia, ranking, eksport) | B | czytają |
 | `economics.py`, `RERUN.md`, `BOARD_NOTE.md`, `ASSUMPTIONS.md` | C | czytają |
 | `HANDOFF.md` | C | zgłaszają decyzje w swoim pliku `TOR-*.md`, sekcja „Dziennik” |
-| `params.csv`, `KONTRAKT.md` | A | zgłaszają potrzebę nowego parametru |
+| `params.csv`, `KONTRAKT.md`, `SLEDZENIE.md`, `SDLC.md`, `.github/workflows/tests.yml` | A | zgłaszają potrzebę nowego parametru |
 | `TOR-A-dane.md`, `TOR-B-wykonalnosc.md`, `TOR-C-ekonomia-dokumenty.md` | odpowiedni tor | — |
 | `tests/test_a.py`, `tests/test_b.py`, `tests/test_c.py` | odpowiedni tor | — |
 
@@ -99,7 +101,7 @@ saving_basis(params) -> str
 `van_id, feasible, ev_model, ev_depot, range_check_km, midday_charging, day_tariff_share, reject_reason, reason, fit_models`
 
 - `feasible`: `yes`/`no`; `ev_model` puste, jeśli żaden model nie pasuje
-- `range_check_km`: dystans porównany z zasięgiem (najgorszy dzień; dla doładowania między trasami — dłuższa z dwóch tras najgorszego dnia, do opisania w założeniach)
+- `range_check_km`: dystans porównany z zasięgiem — `range_day_km` vana (od wersji 2.0); tylko przy `midday_charging_allowed = yes` dla vana dwuzmianowego: dłuższa z dwóch tras najgorszego dnia
 - `day_tariff_share`: jaka część energii jest ładowana w dzień (0 bez doładowania między trasami)
 - `reason` (dopisane 12:35, Q11/Q18): jedno zdanie po angielsku dla vana wykonalnego, np. `range margin 10.9 km (7.0%)`; trafia do kolumny `reason` w `shortlist.csv`. Puste dla niewykonalnych — ich powód jest w `reject_reason`
 - `fit_models` (dopisane 12:35, Q21): wszystkie modele EV, które przechodzą filtry, rozdzielone `; `; z nich tor C wybiera ten o lepszym wyniku w 5 lat (`economics.saving_for_model`)
@@ -147,16 +149,11 @@ tail -n +2 ../it-corner-hackathon-20260930/trips.csv | LC_ALL=C sort -u | LC_ALL
 
 `data.py` jest gotowy i zgodny z plikami w `fixtures/`. Tory B i C mogą importować `data` po scaleniu gałęzi `tor-a`; interfejs bez zmian względem sekcji 5. Komunikaty i raport są po angielsku.
 
-## 10. Komunikaty narzędzia
-
-Zasady języka, błędów (`ERROR:`), ostrzeżeń (`WARNING:`), liczb, CSV i gita są w `KONSTYTUCJA.md` (sekcje 2–8). Przy sprzeczności wygrywa konstytucja.
-
-
-## 10. Zmiany po odpowiedziach Ewy (12:15) — obowiązują wszystkie tory
+## 10. Zmiany po odpowiedziach Ewy (12:15, wersja 2.0) — obowiązują wszystkie tory
 
 Źródło: wątek „9” i wątki innych zespołów w Discussions repo organizatorów; zweryfikowane 12:08. Pełna lista: `HANDOFF.md` sekcja 10.
 
-### Co zrobił tor A (gałąź `tor-a`, jeszcze nie na `devel`)
+### Co zrobił tor A (commit `fa9c541`, na `devel` od 12:12)
 
 - `van_profile` ma nową kolumnę `range_day_km` (95. percentyl dnia, interpolacja liniowa).
 - `build_van_profile` przyjmuje `params`; wywołanie bez `params` daje `range_day_km` = `worst_day_km`.
@@ -176,7 +173,7 @@ Zasady języka, błędów (`ERROR:`), ostrzeżeń (`WARNING:`), liczb, CSV i git
 | `lease_free_exit_within_months` | 12 | leasing kończący się w ciągu 12 miesięcy: bez opłaty |
 | `lease_reference_date` | 2026-09-30 | data, od której liczymy 12 miesięcy; analityk zmienia ją co kwartał |
 
-### Co muszą zrobić tory B i C (9 testów w `test_b.py` nie przechodzi na nowych parametrach — dlatego `tor-a` nie jest scalony do `devel`)
+### Co zrobiły tory B i C (wszystko na `devel` od 12:33; pilnują tego testy z `SLEDZENIE.md`, sekcja 1)
 
 | Tor | Zmiana |
 |---|---|
@@ -203,3 +200,16 @@ Zasady języka, błędów (`ERROR:`), ostrzeżeń (`WARNING:`), liczb, CSV i git
 | Q21: `fit_models`, `shortlisted`, `shortlist_note`, `range_day_km` w `all_vans.csv` | dopisane do sekcji 6 i 7 |
 
 Kontrola krzyżowa: shortlista z `devel` o 12:33 (8 vanów, `saving_pln` razem 95 637 PLN w 5 lat) zgadza się co do złotówki z niezależnym obliczeniem toru A z 12:10 (sekcja 10).
+
+## 12. Wersje kontraktu
+
+Nowa wersja = nowy wiersz tutaj **przed** zmianą w kodzie. Pierwsza cyfra rośnie, gdy zmieniają się wymagania (odpowiedź Ewy); druga, gdy zmienia się interfejs między torami.
+
+| Wersja | Godzina | Co się zmieniło | Powód | Sekcje |
+|---|---|---|---|---|
+| 1.0 | 11:20 | pierwszy kontrakt: właściciele plików, interfejsy, tabele, pliki wynikowe, liczby kontrolne | start trzech torów | 1–8 |
+| 1.1 | 11:35 | `data.py` gotowy, interfejs bez zmian; komunikaty i raport po angielsku | tor A oddany | 9 |
+| 1.2 | 11:42 | zasady komunikatów przeniesione do `KONSTYTUCJA.md` (dawna pierwsza sekcja 10 — usunięta w wersji 2.2, odsyłacz jest w nagłówku) | decyzja D12 | — |
+| 2.0 | 12:15 | reguły Ewy: 10 nowych lub zmienionych parametrów, kolumna `range_day_km`, `build_van_profile(…, params)`, nowa formuła `saving_pln`, wybór modelu po wyniku w 5 lat | odpowiedzi Ewy z ok. 12:00 | 4–6, 10 |
+| 2.1 | 12:35 | kolumny `reason`, `fit_models`, `shortlisted`, `shortlist_note`; parametry progu „blisko”; `saving_for_model` w interfejsach | pytania toru B Q10, Q11, Q18, Q21 — **kod wyprzedził kontrakt**, dopisane po fakcie | 5–7, 11 |
+| 2.2 | 13:15 | porządek: jedna sekcja 10, opis `range_check_km` zgodny z regułą Ewy, status zadań B i C, reguła „najpierw kontrakt”, ta tabela | przegląd procesu (`SDLC.md`) | nagłówek, 6, 10, 12 |

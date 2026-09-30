@@ -1,6 +1,6 @@
 # KONSTYTUCJA — wspólne zasady dla wszystkich torów
 
-Stan: 30.09.2026, 11:50. Obowiązuje każdy tor i każdą sesję. `KONTRAKT.md` mówi, **co** sobie przekazujemy; ten dokument mówi, **jak** piszemy, żeby całość wyglądała jak dzieło jednego zespołu.
+Stan: 30.09.2026, 13:15. Obowiązuje każdy tor i każdą sesję. `KONTRAKT.md` mówi, **co** sobie przekazujemy; ten dokument mówi, **jak** piszemy, żeby całość wyglądała jak dzieło jednego zespołu.
 
 Przy sprzeczności: README Ewy > ta konstytucja > `KONTRAKT.md` > dokumenty torów.
 
@@ -9,7 +9,7 @@ Przy sprzeczności: README Ewy > ta konstytucja > `KONTRAKT.md` > dokumenty tor�
 1. **Nigdy po cichu.** Narzędzie niczego nie poprawia, nie odrzuca i nie zakłada bez śladu w `data_report.txt`.
 2. **Żadnej liczby na sztywno.** Wszystko, co może się zmienić między kwartałami, jest w `params.csv`.
 3. **Liczby do sprawdzenia.** Każdą liczbę w plikach dla Ewy da się odtworzyć z `all_vans.csv` kalkulatorem.
-4. **Najgorszy dzień, nie średnia.** Testy wykonalności liczymy na najgorszym dniu z danych (wymóg Witolda).
+4. **Wysoki percentyl dnia, nie średnia.** Wykonalność liczymy na percentylu dnia z `range_check_percentile` (od 12:15 reguła Ewy: 95; do 12:15 był to najgorszy dzień — wymóg Witolda, dziś wariant `100` w demo).
 5. **Każda decyzja ma godzinę i właściciela.** Bez wpisu w dzienniku decyzja nie istnieje.
 6. **Analityk uruchamia to bez nas.** Komunikat, który wymaga znajomości naszych rozmów, jest błędem.
 
@@ -86,7 +86,7 @@ ERROR: Missing parameter 'winter_range_factor' in params.csv
 
 - Python 3.9+, tylko biblioteka standardowa.
 - Tabele to `list[dict]`; funkcje nie zmieniają argumentów, zwracają nowe wiersze.
-- Sygnatury publiczne dokładnie jak w `KONTRAKT.md`, sekcja 5. Zmiana sygnatury = zmiana kontraktu.
+- Sygnatury publiczne dokładnie jak w `KONTRAKT.md`, sekcja 5. Zmiana sygnatury, kolumny albo parametru = **najpierw** nowa wersja kontraktu (`KONTRAKT.md`, sekcja 12), potem kod.
 - Każda funkcja publiczna ma jednozdaniowy docstring mówiący, co zwraca.
 - Bez zaślepek w wersji końcowej: po 14:45 w repo nie może zostać żaden `_stub_*` ani tekst „zaślepka”.
 
@@ -96,7 +96,8 @@ ERROR: Missing parameter 'winter_range_factor' in params.csv
 - Testy na prawdziwym eksporcie szukają go w `../it-corner-hackathon-20260930` albo w zmiennej `EV_SOURCE_DIR`; gdy go nie ma, są pomijane, nie czerwone.
 - Każdy próg i każda reguła czyszczenia ma test z przypadkiem tuż pod, na i tuż nad progiem.
 - Liczby kontrolne (38 / 2777 / 344952) są testem. Zmiana którejkolwiek wymaga wpisu w dzienniku.
-- Przed każdym wypchnięciem gałęzi wszystkie testy przechodzą.
+- Przed każdym wypchnięciem gałęzi wszystkie testy przechodzą. To samo sprawdza automat na GitHubie (`.github/workflows/tests.yml`) przy każdym wypchnięciu do `devel` i w każdym PR, na Pythonie 3.9 i 3.13, z prawdziwym eksportem.
+- Nowa reguła albo parametr dostaje wiersz w `SLEDZENIE.md` razem z testem.
 
 ## 8. Git
 
@@ -123,7 +124,7 @@ ERROR: Missing parameter 'winter_range_factor' in params.csv
 | liczby kontrolne | check figures | `vans_assessed`, `trips_counted`, `total_km` |
 | najgorszy dzień | worst day | najwyższa suma km jednego vana jednego dnia |
 | zasięg zimowy | winter range | WLTP × `winter_range_factor` |
-| próg zimowy | winter range factor | 0,57 bazowo |
+| próg zimowy | winter range factor | `winter_range_factor`; 0,60 według reguły Ewy (do 12:15 nasze 0,57) |
 | doładowanie między trasami | midday charging | ładowanie w bazie między trasą poranną a popołudniową |
 | van dwuzmianowy | two-shift van | van z co najmniej jednym dniem z dwiema trasami |
 | blisko progu | near miss | do 10% ponad zasięg albo 1–3 dni ponad ładowność |
@@ -140,7 +141,7 @@ W tekstach po polsku liczby piszemy z przecinkiem dziesiętnym i spacją jako se
 - Nie piszemy o tym, czego nie sprawdziliśmy, jakby było pewne: założenie nazywamy założeniem.
 - Bez naszych skrótów roboczych (`A6`, `D3`, „tor B”) w `BOARD_NOTE.md`; w `ASSUMPTIONS.md` numery zostają.
 
-## 12. Niezgodności znalezione przy scaleniu toru B (11:45) — do usunięcia
+## 12. Niezgodności znalezione przy scaleniu toru B (11:45) — wszystkie zamknięte (12:29)
 
 | # | Gdzie | Co | Właściciel |
 |---|---|---|---|
