@@ -149,4 +149,5 @@ W tekstach po polsku liczby piszemy z przecinkiem dziesiętnym i spacją jako se
 | 5 | `ev_shortlist.py` | `saving_basis` z tekstem „zaslepka…” trafia do `summary.csv`, dopóki tor C nie jest scalony | B + C |
 | 6 | `feasibility.py` | docstringi po polsku bez polskich znaków | B |
 | 7 | `tests/test_a.py` | zmienna `HACKATHON_DATA` zamiast wspólnej `EV_SOURCE_DIR` | A — poprawione 11:50 |
+| 9 | `data.py` + `ev_shortlist.py` | zero użytecznych wierszy daje dziś tylko `WARNING` i pliki z zerami; punkt wejścia ma to zamienić na `ERROR` | A + B |
 | 8 | nazwy gałęzi | `tor-b-wykonalnosc` obok `tor-a`, `tor-c` — zostaje, nie zmieniamy w trakcie | — |
