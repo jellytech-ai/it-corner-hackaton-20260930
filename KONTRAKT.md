@@ -12,7 +12,7 @@ Jak piszemy (język, format błędów i ostrzeżeń, zaokrąglenia, CSV, git, s�
 git clone https://github.com/handsonarchitects/it-corner-hackathon-20260930   # dane źródłowe (tylko odczyt)
 git clone https://github.com/jellytech-ai/it-corner-hackaton-20260930         # nasze repo
 cd it-corner-hackaton-20260930
-git checkout handoff-wstepna-analiza
+git checkout devel
 git checkout -b tor-a        # albo tor-b, tor-c
 ```
 
@@ -39,7 +39,7 @@ Uwaga do D5: narzędzie to **jeden katalog i jedno polecenie**, ale cztery pliki
 
 | Godzina | Co |
 |---|---|
-| 12:20 | każdy wypycha swoją gałąź; B scala `tor-a`, `tor-b`, `tor-c` do `handoff-wstepna-analiza` i uruchamia całość |
+| 12:20 | każdy wypycha swoją gałąź; B scala `tor-a`, `tor-b`, `tor-c` do `devel` i uruchamia całość |
 | 13:50 | to samo po naniesieniu odpowiedzi Ewy |
 | 14:45 | zamrożenie liczb; ostatnie scalenie kodu |
 | 15:15 | ostatnie scalenie dokumentów |

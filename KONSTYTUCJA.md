@@ -98,7 +98,7 @@ ERROR: Missing parameter 'winter_range_factor' in params.csv
 
 ## 8. Git
 
-- Gałąź bazowa: `handoff-wstepna-analiza`. Gałęzie torów: `tor-a`, `tor-b-wykonalnosc`, `tor-c`.
+- Gałąź bazowa: `devel` (do 11:43 nazywała się `handoff-wstepna-analiza`). Wszystko scalamy do niej. Gałęzie torów: `tor-a`, `tor-b-wykonalnosc`, `tor-c`.
 - Tor edytuje tylko swoje pliki (tabela w `KONTRAKT.md`, sekcja 2).
 - **`git add <plik>`, nigdy `git add -A` ani `git add .`** — tak trafiły do repo pliki `.pyc`.
 - Do repo nie trafia nic generowanego: `__pycache__`, `wyniki/`, zipy, pliki edytora. `.gitignore` jest wspólny.
