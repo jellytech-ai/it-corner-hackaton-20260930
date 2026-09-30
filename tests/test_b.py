@@ -135,6 +135,17 @@ class AssessBasicFilters(unittest.TestCase):
         self.assertEqual(r["P-05"]["feasible"], "yes")
         self.assertEqual(r["P-05"]["reject_reason"], "")
 
+    def test_cheapest_model_that_fits(self):
+        r = self.assess()
+        self.assertEqual(r["P-26"]["ev_model"], "Volta Cargo S")
+        self.assertEqual(r["P-14"]["ev_model"], "Volta Cargo S")
+        self.assertEqual(r["P-08"]["ev_model"], "Volta Cargo L")  # bez doladowania S nie starcza
+
+    def test_model_order_follows_price_param(self):
+        r = self.assess(**{"ev.Volta Cargo L.price_pln": "100000",
+                             "ev.Volta Cargo L.payload_kg": "1100"})
+        self.assertEqual(r["P-26"]["ev_model"], "Volta Cargo L")
+
 
 class Cli(unittest.TestCase):
     def test_cli_runs(self):
