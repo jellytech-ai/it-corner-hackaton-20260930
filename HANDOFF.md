@@ -180,6 +180,7 @@ Każde założenie ma godzinę przyjęcia; Ewa chce wiedzieć „co i mniej wię
 | A21 | 12:15 | Vany dwuzmianowe nie ładują się między trasami („only come back for a driver change”); cały dzień na jednym ładowaniu nocnym | potwierdzone przez Ewę |
 | A23 | 12:29 | Gdy z South pasuje więcej vanów, niż może stacjonować w North (`max_south_vans_at_north` = 3), bierzemy te z najwyższym `saving_pln`. Dziś odpada P-31 (+1 589 PLN w 5 lat) | przyjęte (Q22 toru B) |
 | A24 | 12:29 | `annual_km` = km z okresu × 365 ÷ liczba dni kalendarzowych okresu (90), niezależnie od liczby dni pracy vana. Van, który w 13 tygodni jeździł 75 dni, jeździ tak samo przez cały rok (A12) | przyjęte (Q14 toru B; doprecyzowanie A12 i D5) |
+| A25 | 15:12 | Zapisany ładunek kursu (`max_load_kg`) to sam towar, bez kierowcy; dealer podaje ładowność EV „z kierowcą na pokładzie”, więc porównujemy wprost i nic nie doliczamy | przyjęte (Ewa 15:12: „Pick the one that makes sense and put it in your assumptions list”) |
 | A22 | 12:17 | Wcześniejsze wyjście z leasingu diesla = 3 raty; leasing kończący się w ciągu 12 miesięcy od `lease_reference_date` (dziś 2026-09-30) — bez opłaty (nie odnawiamy). Granica „w ciągu 12 miesięcy” liczona włącznie (koniec 2027-09-30 = bez opłaty) | reguła potwierdzona przez Ewę; granica włącznie — nasza decyzja |
 
 ### Skąd 0,57 × WLTP (A6–A8)
@@ -514,3 +515,7 @@ Demo w trzech krokach:
 | 12:35 | Tor C: `BOARD_NOTE.md` i `PREZENTACJA.md` według reguł Ewy; demo krok 2 = percentyl 95 → 100 (8 → 6 vanów) |
 | 12:40 | Tor B: liczby w `BOARD_NOTE.md` sprawdzone uruchomieniem narzędzia (shortlista, sumy 136 092 / 95 637, warianty 59 482 / 47 897 / 38 575 / 56 414) — zgodne. B11: testowy zip i demo przygotowane poza repo |
 | 12:43 | Odpowiedź dla Ewy na pytanie z 12:03 (sekcja 7) wysyła tor A (Wojtek) |
+| 13:07 | Tor A: proces opisany jako pełny cykl — `SDLC.md`, `SLEDZENIE.md`, automat testów na GitHubie, `KONTRAKT.md` 2.2; 13:09 usunięte trzy nieużywane parametry leasingu EV (2.3) |
+| 14:45 | Zamrożenie liczb: 8 vanów, 95 637 PLN w 5 lat. Roczne km zostają liczone z dni kalendarzowych (× 365 ÷ 90); wrażliwość na liczbę dni dostaw (8 / 7 / 6 vanów) opisana w `BOARD_NOTE.md` i A12 |
+| 15:05–15:12 | Druga tura odpowiedzi Ewy (nam i innym zespołom): „Pick the one that makes sense and put it in your assumptions list” — A18, A12, A23 bez zmian; A19 doprecyzowane (do percentyla liczą się tylko dni z kursami); nowe A25 (ładunek bez kierowcy). Kod i `params.csv` bez zmian; szczegóły w `ASSUMPTIONS.md` |
+| 15:20 | Wydanie `v1.0`: PR `devel` → `main`, tag, zip z tagu (`SDLC.md`, sekcja 4) |

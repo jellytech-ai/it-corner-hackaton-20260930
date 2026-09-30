@@ -1,6 +1,6 @@
 # SDLC — jak nasz proces pokrywa cały cykl
 
-Stan: 30.09.2026, 13:07. Właściciel: tor A. Ten dokument mówi, **w której fazie cyklu jest który artefakt**, jakie bramki dzielą fazy i co zostało do zrobienia przed 16:00. Nie powtarza treści innych plików, tylko do nich odsyła.
+Stan: 30.09.2026, 15:20. Właściciel: tor A. Ten dokument mówi, **w której fazie cyklu jest który artefakt**, jakie bramki dzielą fazy i co zostało do zrobienia przed 16:00. Nie powtarza treści innych plików, tylko do nich odsyła.
 
 Pracowaliśmy metodą „najpierw specyfikacja, potem kod” (SDD): konstytucja → specyfikacja → kontrakt → zadania → kod z testami. To pokrywa pierwsze trzy fazy. Poniżej domykamy pozostałe: weryfikację, wydanie i utrzymanie.
 
@@ -11,8 +11,8 @@ Pracowaliśmy metodą „najpierw specyfikacja, potem kod” (SDD): konstytucja 
 | 1. Wymagania | co i dla kogo liczymy, czego nie wiemy | `HANDOFF.md` sekcje 1–7 (zadanie, dane, rejestr założeń A1–A24, pytania do Ewy), sekcja 10 (decyzje D1–D16, odpowiedzi Ewy) | gotowe |
 | 2. Projekt | jak dzielimy pracę i co sobie przekazujemy | `KONTRAKT.md` (wersja 2.3), `KONSTYTUCJA.md`, `params.csv`, `fixtures/`, `TOR-*.md` | gotowe |
 | 3. Implementacja | kod | `data.py`, `feasibility.py`, `economics.py`, `ev_shortlist.py` | gotowe, zamrożenie liczb 14:45 |
-| 4. Weryfikacja | czy kod robi to, czego chce Ewa | `tests/` (98 testów), `SLEDZENIE.md`, automat `.github/workflows/tests.yml`, kontrola krzyżowa dwóch torów (`KONTRAKT.md`, sekcja 11) | gotowe; luki L2–L5 w `SLEDZENIE.md` (L1 zamknięta) |
-| 5. Wydanie | co dokładnie dostaje Ewa i z której wersji | PR `devel` → `main`, tag `v1.0`, zip zbudowany z tagu | **do zrobienia po 15:15** — sekcja 4 |
+| 4. Weryfikacja | czy kod robi to, czego chce Ewa | `tests/` (98 testów), `SLEDZENIE.md`, automat `.github/workflows/tests.yml`, kontrola krzyżowa dwóch torów (`KONTRAKT.md`, sekcja 11) | gotowe; luki L2–L6 w `SLEDZENIE.md` (L1 zamknięta) |
+| 5. Wydanie | co dokładnie dostaje Ewa i z której wersji | PR `devel` → `main`, tag `v1.0`, zip zbudowany z tagu | wykonane 15:20 jako `v1.0` — sekcja 4 |
 | 6. Akceptacja | czy analityk poradzi sobie bez nas | test ponownego uruchomienia z samego `RERUN.md` (tor A, 12:55; tor B, 12:20) | zrobione — sekcja 5 |
 | 7. Utrzymanie | co się dzieje w kolejnym kwartale | `RERUN.md` („Every quarter”, „If something goes wrong”), `ASSUMPTIONS.md`, `KONTRAKT.md` sekcja 12 | gotowe; propozycje w sekcji 6 |
 
@@ -45,6 +45,9 @@ Godziny z `git log` i dziennika w `HANDOFF.md`.
 | 12:33 | weryfikacja | `devel` po zmianie: 8 vanów, 95 637 PLN; dwa tory niezależnie, zgodne co do złotówki |
 | 12:55 | akceptacja | test ponownego uruchomienia z samego `RERUN.md` przechodzi |
 | 13:07 | weryfikacja | macierz śladowania, automat testów, kontrakt 2.2 |
+| 14:45 | implementacja | zamrożenie liczb: 8 vanów, 95 637 PLN |
+| 15:05–15:12 | **zmiana wymagań** | druga tura odpowiedzi Ewy: „wybierzcie i zapiszcie” — dwa założenia doprecyzowane, kod bez zmian |
+| 15:20 | wydanie | `v1.0`: PR do `main`, tag, zip z tagu |
 
 **Zdanie na slajd:** zmiana wymagań w połowie dnia przeszła drogą wymaganie → kontrakt → parametr → kod → test w 33 minuty (12:00–12:33), a wynik zmienił się z 3 na 8 vanów bez przepisywania narzędzia.
 
@@ -52,12 +55,12 @@ Godziny z `git log` i dziennika w `HANDOFF.md`.
 
 Liczby z historii: 80 commitów, 16 scaleń, 3 osoby, 98 testów.
 
-## 4. Wydanie — lista kroków po 15:15
+## 4. Wydanie — lista kroków
 
-Nie wykonane. Robimy to raz, po ostatnim scaleniu dokumentów.
+Wykonane 30.09.2026 o 15:20 jako `v1.0`. Wynik próby z zipa (krok 5) jest w dzienniku `TOR-A-dane.md`, bo powstaje dopiero po otagowaniu.
 
 1. Automat na `devel` jest zielony.
-2. PR `devel` → `main`, przegląd jednej osoby, scalenie przez merge.
+2. PR `devel` → `main`, przegląd jednej osoby, scalenie przez merge. (Przy `v1.0` z braku czasu PR zatwierdził Wojtek bez drugiej osoby.)
 3. `git tag -a v1.0 -m "Wersja dla Ewy, 30.09.2026"` na `main`, `git push origin v1.0`.
 4. Zip budujemy **z tagu**, poleceniem toru B z `TOR-B-wykonalnosc.md` (B11), nie z katalogu roboczego.
 5. Zip rozpakowany w pustym katalogu, polecenie z `RERUN.md`, krok 3: liczby kontrolne 38 / 2777 / 344952 i suma `saving_pln` równa tej w `BOARD_NOTE.md`.
