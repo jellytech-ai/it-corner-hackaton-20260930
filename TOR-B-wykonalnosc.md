@@ -93,6 +93,31 @@ tail -n +2 trips.csv | LC_ALL=C sort -u | LC_ALL=C awk -F, '
 | `reject_reason` = `no trips in this export` | van jest w rejestrze, ale nie jeździł w tym eksporcie (towarzyszy mu `WARNING` z `data.py`) |
 | `reject_reason` zawiera `near miss: <model> …` | van blisko progu — kandydat do rozmowy, nie do listy |
 | `reason` = `at threshold: …` | van przechodzi dokładnie na progu (zapas < `at_threshold_pct`) |
+| 12:14 | Scalony `origin/devel` (5ec7255) z regułami Ewy od toru A (KONTRAKT 10). Odpowiedzi Ewy przeczytane u źródła (Discussions, wątek „9” i wątki innych zespołów): 95. percentyl dnia w 60% WLTP; dwuzmianowe „no time to charge. Count their whole day”; North 10 punktów, do 3 vanów z South w North; dla każdego vana model „which works out better over the five years”; ładunek — najcięższy z danych |
+| 12:17 | B7 gotowe (494b32f). Zasięg na `range_day_km`; doładowanie tylko przy `midday_charging_allowed = yes` (kod A16 zostaje, wyłączony parametrem); van z South bez ładowarek → `ev_depot = North`, `reason` „South van based at North, routes unchanged”; `choose_models` liczy `economics()` toru C dla każdego pasującego modelu i bierze wyższy `saving_pln` (remis → tańszy), więc zadziała też po zmianie wzoru C na 5 lat. Wynik na surowych danych: 15 vanów pasuje (8 North, 7 South, zgodnie z podglądem A); P-08 i P-12 tylko Cargo L. Shortlista przy obecnej ekonomii C (roczna, wszystkie dodatnie): P-12, P-08, P-30, P-25, P-21, P-05, P-13, P-26, P-04, P-14; poza listą z notatką: P-20, P-31, P-32 (limit 3 vanów z South), P-10, P-28 (limit 10). Błąd znaleziony przy okazji: `load_fixtures` zostawiało `max_load_kg` kursów jako tekst, więc profil przebudowany w trybie `--fixtures` brał maksimum leksykograficzne — poprawione |
+| 12:17 | Decyzje B (do rejestru C): (1) na shortlistę trafia tylko van z `saving_pln` > 0 — Ewa: zarząd patrzy na wynik w 5 lat; ujemny = EV kosztuje więcej; (2) miejsca dla vanów z South w North rozdaje ranking (najwyższy `saving_pln` wygrywa); (3) rank 1 = największy `saving_pln` (Ewa innym zespołom: „choose and write it down”); (4) lista ucięta na `max_evs_grant` (10), także dla leasingu — równa się liczbie punktów w North; (5) wykonalny van spoza listy ma w `all_vans.csv` kolumny `shortlisted = no` i `shortlist_note` z powodem |
+
+Wrażliwość według nowych reguł (95. percentyl, bez doładowania, bez limitów listy):
+
+| Próg | Zasięg S / L | Pasują (North + South) |
+|---|---|---|
+| 0,50 | 130,0 / 190,0 | 2: P-08, P-10 |
+| 0,57 | 148,2 / 216,6 | 14: bez P-21 |
+| **0,60** | 156,0 / 228,0 | **15**: P-04, P-05, P-08, P-10, P-12, P-13, P-14, P-20, P-21, P-25, P-26, P-28, P-30, P-31, P-32 |
+| 0,65 | 169,0 / 247,0 | 15 (P-16: 169,5 km — 0,5 km za progiem) |
+
+Near miss przy 0,60: ładunek — P-02, P-06, P-18 (1 dzień), P-22, P-27 (2), P-11 (3); zasięg — P-16 (+8,7%).
+
+### Nowe komunikaty dla `RERUN.md` (B7)
+
+| `all_vans.csv`, kolumna | Treść | Znaczenie |
+|---|---|---|
+| `reason` | `…; South van based at North, routes unchanged` | van z South stacjonuje w North (limit `max_south_vans_at_north`) |
+| `shortlist_note` | `saving over the horizon is not positive` | EV kosztuje więcej niż oszczędza |
+| `shortlist_note` | `grant limit of 10 EVs reached` | lista pełna (`max_evs_grant`) |
+| `shortlist_note` | `all N charging points at <baza> taken` | brak wolnego punktu (`chargers.<baza>`) |
+| `shortlist_note` | `limit of N vans based away from their depot reached` | wyczerpany limit vanów z South |
+| `fit_models` | lista modeli, które przechodzą filtry | `ev_model` = ten z wyższym `saving_pln` |
 
 ## Pytania na koniec pracy
 
@@ -116,3 +141,7 @@ tail -n +2 trips.csv | LC_ALL=C sort -u | LC_ALL=C awk -F, '
 | Q16 | Scalenie B5 do `devel` (dawniej `handoff-wstepna-analiza`) i push — wymaga zgody (gałąź wspólna) | czeka na 12:20 |
 | Q17 | KONSTYTUCJA 12 poz. 1–4, 6, 9: tor B zrobił swoją część — właściciel konstytucji ma zaktualizować status w tabeli | do C |
 | Q18 | Kolumna `reason` jest w `feasibility`, `all_vans.csv` i `shortlist.csv`, ale nie ma jej w KONTRAKT 6 (tabela `feasibility`) — KONSTYTUCJA 5 wymaga kolejności kolumn „dokładnie jak w KONTRAKT” | dopisać do KONTRAKT 6 (tor A) |
+| Q19 | Tor C: `saving_pln` nadal roczny (D7) — po zmianie na 5 lat z ceną EV, dotacją i opłatą za leasing shortlista się zmieni (podgląd A: P-26 i P-14 na minus). `choose_models` i ranking działają bez zmian w B | czeka na C |
+| Q20 | Dotacja tylko przy zakupie: czy `saving_pln` liczy zakup dla wszystkich vanów z listy? Wtedy limit 10 z dotacji = limit listy; przy leasingu limit dotacji nie dotyczy | do C (podstawa `saving_basis`) |
+| Q21 | Kolumny `fit_models`, `shortlisted`, `shortlist_note` i `range_day_km` w `all_vans.csv` — dopisać do KONTRAKT 6/7 | do A |
+| Q22 | Które vany z South trafiają do North: teraz trzy z najwyższym `saving_pln`. Alternatywa: najbliższe końca leasingu. Zapisać w założeniach | do C |
