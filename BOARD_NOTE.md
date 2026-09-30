@@ -1,5 +1,43 @@
 # Which vans go electric first
 
+## Update, 15:27: all the data and the worst-day rule
+
+**Recommendation now: buy 7 Volta Cargo EVs with the grant, all based at North. Together they save 85750 PLN over five years after paying for the EVs.** This uses both exports (15 Jun to 26 Sep 2026), the register of 40 vans and the new rule: a van qualifies only if its worst day fits within 60% of the EV's WLTP range.
+
+| Rank | Van | Today at | EV | Worst day | km per year | Fuel saving per year | Five-year saving |
+|---|---|---|---|---|---|---|---|
+| 1 | P-12 | South | Volta Cargo L | 201.4 km | 49328 | 21770 PLN | 21680 PLN |
+| 2 | P-39 | North | Volta Cargo S | 142.3 km | 42821 | 17714 PLN | 17092 PLN |
+| 3 | P-40 | South | Volta Cargo S | 149.0 km | 42821 | 17714 PLN | 17092 PLN |
+| 4 | P-08 | North | Volta Cargo L | 190.0 km | 47117 | 20794 PLN | 14589 PLN |
+| 5 | P-05 | South | Volta Cargo S | 143.6 km | 34687 | 15972 PLN | 9549 PLN |
+| 6 | P-13 | North | Volta Cargo S | 148.8 km | 39757 | 13759 PLN | 3551 PLN |
+| 7 | P-04 | North | Volta Cargo S | 150.9 km | 39261 | 13587 PLN | 2197 PLN |
+| | **Total** | | | | | **121310 PLN** | **85750 PLN** |
+
+Check figures: 40 vans assessed, 3227 trips counted, 401186 km. The 7 EVs cost 798000 PLN after a grant of 342000 PLN; ending the leases of P-39 and P-40 early costs 18600 PLN.
+
+**What changed since the shortlist sent at lunch** (`impact.csv`):
+
+| Van | Change | Cause | Why |
+|---|---|---|---|
+| P-30 | left | new rule | its worst day is 166.2 km, over the 156 km the Cargo S can do in winter |
+| P-21 | left | new rule | its worst day is 158.6 km, over 156 km |
+| P-25 | left | new data | only 3 South vans can be based at North; the new van P-40 saves more and takes the place |
+| P-39 | entered | new data | new van; fits the Cargo S and pays back |
+| P-40 | entered | new data | new van from South; fits the Cargo S and pays back |
+
+**What to know before deciding:**
+
+- **P-39 and P-40 joined the fleet on 14 Sep, so they are judged on 12 days of driving.** Their yearly km are scaled from those days. They are also new leased diesels (leases to Aug 2029); the saving already includes the fee for ending those leases early.
+- **One odometer reading in the new export is impossible** (P-13, 22 Sep: 1383 km in one morning route; GPS says 136.7 km). We used the GPS distance for that one row. Taken literally, it would push P-13 off the list under the worst-day rule.
+- **P-13 and P-04 still pay back only narrowly** (3551 and 2197 PLN); see "Days on the road" below.
+- **No van on the list now depends on a spare diesel for its longest day:** under the worst-day rule every listed van stayed within the winter range on every day in the data.
+
+The sections below are the note as written for the lunch shortlist (8 vans, 95th-percentile rule). The method is the same; the numbers above replace them.
+
+---
+
 **Recommendation: buy 8 Volta Cargo EVs with the grant and base all of them at North. Together they save 95637 PLN over five years after paying for the EVs.** Five are North vans; three are South vans that move to North and keep their routes. Without the grant, none of the 8 would pay back in five years. Six of the eight are solid; the last two, P-13 and P-04, depend on how many days a year the vans drive (see "Days on the road" below).
 
 ## The shortlist

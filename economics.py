@@ -49,7 +49,7 @@ def lease_exit_fee(van, params):
 
 def saving_for_model(van, ev_model, day_tariff_share, params, period_days):
     """Return annual_km, annual_fuel_saving_pln and saving_pln for one van replaced by ev_model."""
-    annual_km = _f(van["km_period"]) * _param(params, "days_per_year") / period_days
+    annual_km = _f(van["km_period"]) * _param(params, "days_per_year") / (_f(van.get("scale_days") or 0) or period_days)
     diesel_cost = (annual_km * _param(params, "fuel_l_per_100km." + van["model"]) / 100
                    * _param(params, "diesel_price_pln_per_l"))
     kwh = (annual_km * _param(params, "ev." + ev_model + ".kwh_per_100km") / 100
@@ -74,7 +74,8 @@ def economics(profile, feasibility, params, period_days):
     for van in profile:
         row = {
             "van_id": van["van_id"],
-            "annual_km": _f(van["km_period"]) * _param(params, "days_per_year") / period_days,
+            "annual_km": (_f(van["km_period"]) * _param(params, "days_per_year")
+                          / (_f(van.get("scale_days") or 0) or period_days)),
             "annual_fuel_saving_pln": "",
             "saving_pln": "",
         }

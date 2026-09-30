@@ -2,6 +2,26 @@
 
 This tool reads a telematics export and the van register and writes the EV shortlist, the check figures and a per-van report. It needs **Python 3.9 or newer** and nothing else: no packages to install.
 
+## The short version
+
+New export, same command. Give every export file you want counted after `--trips`, and the current register after `--vans`:
+
+```
+python3 ev_shortlist.py --trips trips.csv trips_latest.csv --vans vans_latest.csv --params params.csv --out results/
+```
+
+To see which vans entered or left since the last shortlist, and why (`results/impact.csv`):
+
+```
+python3 impact.py --old-trips trips.csv --old-vans vans.csv --old-params params_lunch.csv --trips trips.csv trips_latest.csv --vans vans_latest.csv --params params.csv --out results/
+```
+
+`params_lunch.csv` is the parameter file as it was for the previous shortlist. Before you change `params.csv` for a new run, save a copy of it under a new name and pass that copy as `--old-params` next time.
+
+If a column has a new name in a new export (today `odo_km` instead of `odometer_km`), the tool stops and names the missing column. Add one line to `params.csv`: `column_alias.<new name>,<name the tool expects>`.
+
+The range rule is one line in `params.csv`: `range_check_percentile,100` means the worst day; `95` means the 95th-percentile day.
+
 ## What is in the folder
 
 | File | What it is |

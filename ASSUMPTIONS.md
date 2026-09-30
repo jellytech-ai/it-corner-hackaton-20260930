@@ -1,5 +1,18 @@
 # Assumptions and decisions
 
+## Afternoon change (your message of 15:18, done by 15:27): new export, new register, worst-day rule
+
+| # | When | Assumption or decision | Status |
+|---|---|---|---|
+| A26 | 15:21 | **Your new rule:** a van qualifies only if its worst day in the data fits within 60% of the EV's WLTP range. Set in `params.csv` as `range_check_percentile,100`. This replaces the 95th-percentile rule everywhere, for all vans. | your rule |
+| A27 | 15:21 | **Both exports are combined** (`trips.csv` 15 Jun–12 Sep and `trips_latest.csv` 14–26 Sep: 104 days, 89 with deliveries) and `vans_latest.csv` replaces the register (40 vans). | your answer |
+| A28 | 15:22 | **The new export names the odometer column `odo_km` instead of `odometer_km`.** We treat it as the same column. It is written in `params.csv` (`column_alias.odo_km,odometer_km`); the tool does not guess, and without that line it stops and names the missing column. This breaks our assumption A18 (same column names every quarter) on the first new export. | accepted |
+| A29 | 15:23 | **One odometer reading is impossible:** P-13, 22 Sep, 1383.0 km on one route against 136.7 km by GPS. A reading above `max_plausible_trip_km` (500 km; the longest real route in the data is 306 km) is replaced by the GPS distance, with a warning. You told us to trust the odometer; we do, except for a reading no van can drive in one route. Taken literally it would remove P-13 from the list under the worst-day rule. | accepted |
+| A30 | 15:24 | **The two new vans (P-39, P-40) are judged on the 12 days they drove** (from 14 Sep). Their yearly km are scaled from their own delivery days, in the same proportion as the rest of the fleet, not from the whole 104 days. A van counts as new when its first trip is more than `new_van_gap_days` (7) after the start of the data. | accepted |
+| A31 | 15:24 | The new vans are leased diesels (to Aug 2029), so replacing them costs the early-exit fee of 3 monthly payments (9300 PLN each); it is included in their saving. | follows your lease rule |
+| A32 | 15:25 | **`impact.csv` causes:** we rerun the tool four ways (lunch data and rule; new data with the lunch rule; lunch data with the new rule; new data with the new rule). A van that moves only when the data changes is `new data`, only when the rule changes `new rule`, in both cases `both`. P-25 is `new data`: it still fits and pays back, but the new South van P-40 saves more and takes the third South place at North. | accepted |
+| A33 | 15:26 | The lunch shortlist is reproduced exactly with `params_lunch.csv` (the lunch rule) on the lunch files, so the comparison starts from what we sent you. | checked |
+
 All times are CEST on 30 Sep 2026. "Confirmed by you" means your lunch answers settled it; "accepted" means we chose it and would change it if you tell us otherwise. Every number below is a line in `params.csv`, so changing an assumption means changing a value there, not the code.
 
 ## Data

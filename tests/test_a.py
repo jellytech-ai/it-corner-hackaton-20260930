@@ -152,7 +152,7 @@ class SyntheticExport(unittest.TestCase):
 class RealExport(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.params = data.load_params(os.path.join(ROOT, "params.csv"))
+        cls.params = data.load_params(os.path.join(ROOT, "params_lunch.csv"))
         cls.trips, cls.vans, cls.report = data.load_and_clean(
             os.path.join(SOURCE, "trips.csv"), os.path.join(SOURCE, "vans.csv"), cls.params)
         cls.profile = data.build_van_profile(cls.trips, cls.vans, cls.params)

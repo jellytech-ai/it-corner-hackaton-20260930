@@ -27,7 +27,7 @@ OLD_RULES = {"winter_range_factor": "0.57", "range_check_percentile": "100",
 
 def fixture_data(**overrides):
     """Return (params, trips, profile) from fixtures/, profile rebuilt with the given params."""
-    params = {**data.load_params(os.path.join(ROOT, "params.csv")), **overrides}
+    params = {**data.load_params(os.path.join(ROOT, "params_lunch.csv")), **overrides}
     trips, register, _ = ev_shortlist.load_fixtures(
         os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"))
     return params, trips, data.build_van_profile(trips, register, params)
@@ -41,7 +41,7 @@ class PipelineOnFixtures(unittest.TestCase):
         ev_shortlist.run(
             os.path.join(FX, "clean_trips.csv"),
             os.path.join(FX, "van_profile.csv"),
-            os.path.join(ROOT, "params.csv"),
+            os.path.join(ROOT, "params_lunch.csv"),
             cls.out,
             fixture_mode=True,
         )
@@ -296,7 +296,7 @@ class NearThreshold(unittest.TestCase):
     def test_shortlist_reason_comes_from_assess(self):
         with tempfile.TemporaryDirectory() as out:
             ev_shortlist.run(os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"),
-                             os.path.join(ROOT, "params.csv"), out, fixture_mode=True)
+                             os.path.join(ROOT, "params_lunch.csv"), out, fixture_mode=True)
             short = {r["van_id"]: r["reason"] for r in read(os.path.join(out, "shortlist.csv"))}
             full = {r["van_id"]: r["reason"] for r in read(os.path.join(out, "all_vans.csv"))}
         self.assertTrue(short)
@@ -322,7 +322,7 @@ class Thresholds(unittest.TestCase):
     def setUpClass(cls):
         import feasibility
         cls.f = feasibility
-        cls.params = data.load_params(os.path.join(ROOT, "params.csv"))
+        cls.params = data.load_params(os.path.join(ROOT, "params_lunch.csv"))
         cls.range_s = feasibility.winter_range_km(
             feasibility.ev_models(cls.params)["Volta Cargo S"], cls.params)
         cls.payload_s = float(cls.params["ev.Volta Cargo S.payload_kg"])
@@ -397,7 +397,7 @@ class EwaRules(unittest.TestCase):
         cls.got = {r["van_id"]: r for r in feasibility.assess(cls.profile, cls.trips, cls.params)}
         cls.tmp = tempfile.TemporaryDirectory()
         ev_shortlist.run(os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"),
-                         os.path.join(ROOT, "params.csv"), cls.tmp.name, fixture_mode=True)
+                         os.path.join(ROOT, "params_lunch.csv"), cls.tmp.name, fixture_mode=True)
         cls.short = read(os.path.join(cls.tmp.name, "shortlist.csv"))
         cls.all = {r["van_id"]: r for r in read(os.path.join(cls.tmp.name, "all_vans.csv"))}
 
@@ -452,7 +452,7 @@ class ModelChoiceAndRanking(unittest.TestCase):
     def test_better_saving_model_is_chosen(self):
         import economics
         import feasibility
-        params = data.load_params(os.path.join(ROOT, "params.csv"))
+        params = data.load_params(os.path.join(ROOT, "params_lunch.csv"))
         van = {**_van(worst=100.0, load=500), "model": "Brona D35", "km_period": 9000.0}
         trips = [_trip(km=100.0, load=500)]
         feas = feasibility.assess([van], trips, params)
@@ -506,7 +506,7 @@ class EntryPointMessages(unittest.TestCase):
     def test_missing_parameter_is_error(self):
         with tempfile.TemporaryDirectory() as out:
             params = os.path.join(out, "params.csv")
-            with open(os.path.join(ROOT, "params.csv"), encoding="utf-8") as f:
+            with open(os.path.join(ROOT, "params_lunch.csv"), encoding="utf-8") as f:
                 lines = [l for l in f if not l.startswith("max_evs_grant,")]
             with open(params, "w", encoding="utf-8") as f:
                 f.writelines(lines)
@@ -556,7 +556,7 @@ class Cli(unittest.TestCase):
                 [sys.executable, os.path.join(ROOT, "ev_shortlist.py"),
                  "--trips", os.path.join(FX, "clean_trips.csv"),
                  "--vans", os.path.join(FX, "van_profile.csv"),
-                 "--params", os.path.join(ROOT, "params.csv"),
+                 "--params", os.path.join(ROOT, "params_lunch.csv"),
                  "--out", out, "--fixtures"],
                 check=True,
             )
@@ -574,7 +574,7 @@ class PipelineOnSourceData(unittest.TestCase):
     def test_full_run_control_figures(self):
         with tempfile.TemporaryDirectory() as out:
             ev_shortlist.run(os.path.join(SOURCE, "trips.csv"), os.path.join(SOURCE, "vans.csv"),
-                             os.path.join(ROOT, "params.csv"), out)
+                             os.path.join(ROOT, "params_lunch.csv"), out)
             s = {r["figure"]: r["value"] for r in read(os.path.join(out, "summary.csv"))}
             short = [r["van_id"] for r in read(os.path.join(out, "shortlist.csv"))]
             notes = {r["van_id"]: r["shortlist_note"] for r in read(os.path.join(out, "all_vans.csv"))}

@@ -23,7 +23,7 @@ VAN_COLUMNS = ["van_id", "model", "year", "depot", "ownership", "lease_end",
                "monthly_lease_pln", "refrigerated", "payload_kg"]
 CLEAN_TRIP_COLUMNS = ["date", "van_id", "driver", "route_id", "km", "km_source",
                       "start_time", "end_time", "stops", "max_load_kg"]
-PROFILE_COLUMNS = VAN_COLUMNS + ["days", "trips", "km_period", "worst_day_km", "range_day_km",
+PROFILE_COLUMNS = VAN_COLUMNS + ["days", "trips", "km_period", "scale_days", "worst_day_km", "range_day_km",
                                  "max_load_kg", "two_shift", "two_shift_days"]
 
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -63,11 +63,18 @@ def load_params(path):
     return params
 
 
-def _read_csv(path, required, label):
+def _read_csv(path, required, label, aliases=None, report=None):
     try:
         with open(path, newline="", encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
             header = [c.strip() for c in (reader.fieldnames or [])]
+            renamed = {c: aliases[c] for c in header if aliases and c in aliases and aliases[c] not in header}
+            if renamed:
+                reader.fieldnames = [renamed.get(c.strip(), c) for c in reader.fieldnames]
+                header = [renamed.get(c, c) for c in header]
+                for old, new in sorted(renamed.items()):
+                    if report is not None:
+                        report.append(f"Column alias applied in {path}: {old} -> {new}")
             missing = [c for c in required if c not in header]
             if missing:
                 raise ValueError(f"{label} file {path}: missing column(s) {', '.join(missing)}"
@@ -111,8 +118,17 @@ def load_and_clean(trips_path, vans_path, params):
     report: lines for data_report.txt; lines starting with 'WARNING' need a look.
     """
     vans = _load_vans(vans_path)
-    raw = _read_csv(trips_path, TRIP_COLUMNS, "Trips")
-    report = [f"Trip rows read: {len(raw)}", f"Vans in register: {len(vans)}"]
+    paths = [trips_path] if isinstance(trips_path, str) else list(trips_path)
+    prefix = "column_alias."
+    aliases = {k[len(prefix):]: v for k, v in params.items() if k.startswith(prefix) and v}
+    raw, report = [], []
+    for path in paths:
+        rows_in_file = _read_csv(path, TRIP_COLUMNS, "Trips", aliases, report)
+        if len(paths) > 1:
+            report.append(f"Trip rows read from {path}: {len(rows_in_file)}")
+        raw.extend(rows_in_file)
+    report = [f"Trip rows read: {len(raw)}", f"Vans in register: {len(vans)}"] + report
+    max_trip_km = _to_float(params.get("max_plausible_trip_km", ""))
 
     # 1. Exact duplicate rows (every column identical).
     seen, rows = set(), []
@@ -162,7 +178,17 @@ def load_and_clean(trips_path, vans_path, params):
         odometer, gps = _to_float(row["odometer_km"]), _to_float(row["gps_km"])
         if gps is None:
             missing_gps += 1
-        if odometer is not None and odometer > 0:
+        if odometer is not None and max_trip_km is not None and odometer > max_trip_km:
+            if gps is not None and 0 < gps <= max_trip_km:
+                km, source = gps, "gps"
+                report.append(f"WARNING: odometer_km '{row['odometer_km']}' is above max_plausible_trip_km "
+                              f"({max_trip_km:g}), gps_km {gps} used: {where}")
+            else:
+                report.append(f"WARNING: row rejected, odometer_km '{row['odometer_km']}' is above "
+                              f"max_plausible_trip_km ({max_trip_km:g}) and gps_km '{row['gps_km']}' "
+                              f"cannot replace it: {where}")
+                continue
+        elif odometer is not None and odometer > 0:
             km, source = odometer, "odometer"
         elif gps is not None and gps > 0:
             km, source = gps, "gps"
@@ -244,14 +270,28 @@ def build_van_profile(trips, vans, params=None):
     by_day = defaultdict(lambda: defaultdict(list))
     for t in trips:
         by_day[t["van_id"]][t["date"]].append(t)
+    whole_period = period_days(trips)
+    first_day = date.fromisoformat(min(t["date"] for t in trips)) if trips else None
+    last_day = date.fromisoformat(max(t["date"] for t in trips)) if trips else None
+    gap = _to_float((params or {}).get("new_van_gap_days", ""))
+    fleet_days = sorted({t["date"] for t in trips})
     profile = []
     for van in vans:
         days = by_day.get(van["van_id"], {})
         day_km = [math.fsum(t["km"] for t in day) for day in days.values()]
         loads = [t["max_load_kg"] for day in days.values() for t in day]
         two_shift_days = sum(1 for day in days.values() if len(day) > 1)
+        # A van that joined the fleet during the export is scaled to a year from its own first day.
+        scale_days = ""  # blank: scale by the whole export period
+        if days and gap is not None:
+            van_first = date.fromisoformat(min(days))
+            if (van_first - first_day).days > gap:
+                # its share of the fleet's delivery days, so weekends are weighted as for every other van
+                in_window = sum(1 for d in fleet_days if d >= min(days))
+                scale_days = round(whole_period * in_window / len(fleet_days), 2)
         row = dict(van)
         row.update({
+            "scale_days": scale_days,
             "days": len(days),
             "trips": sum(len(day) for day in days.values()),
             "km_period": round(math.fsum(day_km), 1),

@@ -183,6 +183,23 @@ Każde założenie ma godzinę przyjęcia; Ewa chce wiedzieć „co i mniej wię
 | A25 | 15:12 | Zapisany ładunek kursu (`max_load_kg`) to sam towar, bez kierowcy; dealer podaje ładowność EV „z kierowcą na pokładzie”, więc porównujemy wprost i nic nie doliczamy | przyjęte (Ewa 15:12: „Pick the one that makes sense and put it in your assumptions list”) |
 | A22 | 12:17 | Wcześniejsze wyjście z leasingu diesla = 3 raty; leasing kończący się w ciągu 12 miesięcy od `lease_reference_date` (dziś 2026-09-30) — bez opłaty (nie odnawiamy). Granica „w ciągu 12 miesięcy” liczona włącznie (koniec 2027-09-30 = bez opłaty) | reguła potwierdzona przez Ewę; granica włącznie — nasza decyzja |
 
+### Zmiana Ewy z 15:18 (`CHANGE.md`) — założenia A26–A33
+
+Ewa dołożyła nowy eksport (`trips_latest.csv`, 14–26.09), nowy rejestr (`vans_latest.csv`, 40 vanów) i zmieniła regułę zasięgu. To jej ostatnia wiadomość: „decide, write it down, carry on”.
+
+| # | Kiedy (30.09) | Założenie | Status |
+|---|---|---|---|
+| A26 | 15:21 | **Nowa reguła Ewy:** van przechodzi tylko wtedy, gdy jego **najgorszy dzień** mieści się w 60% WLTP. W `params.csv`: `range_check_percentile,100`. Zastępuje A19 (95. percentyl) dla całej floty | reguła Ewy |
+| A27 | 15:21 | Oba eksporty łączymy (104 dni, 89 z dostawami); `vans_latest.csv` zastępuje rejestr | odpowiedź Ewy |
+| A28 | 15:22 | Nowy eksport ma kolumnę `odo_km` zamiast `odometer_km`; traktujemy ją jako tę samą przez jawny wpis `column_alias.odo_km,odometer_km`. Bez wpisu narzędzie zatrzymuje się i nazywa brakującą kolumnę. **Obala A18** (te same nazwy kolumn co kwartał) | przyjęte |
+| A29 | 15:23 | Niemożliwy odczyt licznika (P-13, 22.09: 1383,0 km przy GPS 136,7 km): odczyt powyżej `max_plausible_trip_km` (500) zastępujemy GPS z ostrzeżeniem. Wzięty dosłownie wyrzuciłby P-13 z listy | przyjęte (wyjątek od „ufać licznikowi”) |
+| A30 | 15:24 | Nowe vany P-39 i P-40 oceniamy na 12 dniach jazdy (od 14.09); roczne km skalujemy z ich własnych dni dostaw (`new_van_gap_days,7`) | przyjęte |
+| A31 | 15:24 | Nowe vany to leasingowane diesle (do 08.2029): ich oszczędność zawiera opłatę za wyjście z leasingu (3 raty, 9 300 PLN) | wynika z reguły leasingu |
+| A32 | 15:25 | Przyczyny w `impact.csv` z czterech uruchomień (dane i reguła z lunchu; nowe dane + stara reguła; stare dane + nowa reguła; nowe dane + nowa reguła). P-25 = `new data`: wypiera go nowy van P-40 | przyjęte |
+| A33 | 15:26 | Shortlista z lunchu odtwarza się co do bajtu na `params_lunch.csv` — porównanie startuje od tego, co wysłaliśmy | sprawdzone |
+
+Wynik po zmianie: **7 vanów (P-12, P-39, P-40, P-08, P-05, P-13, P-04), 85 750 PLN w 5 lat**; liczby kontrolne 40 / 3227 / 401 186. Wypadły P-30 i P-21 (nowa reguła) oraz P-25 (nowe dane); weszły P-39 i P-40 (nowe dane).
+
 ### Skąd 0,57 × WLTP (A6–A8)
 
 | Czynnik | Wartość | Uzasadnienie | Źródło |
@@ -467,6 +484,10 @@ Demo w trzech krokach:
 | D16 | 12:29 | Wszystkie EV z listy liczymy jako kupione, więc limit dotacji (10 EV) jest limitem shortlisty | dotacja tylko przy zakupie, a zakup po dotacji (105 000 PLN za Cargo S) jest tańszy niż 60 rat leasingu (174 000 PLN) — D13 (Q20 toru B) |
 | D6 | 11:20 | Korekta D5: narzędzie to jeden katalog i jedno polecenie, ale cztery pliki `.py` (`data.py`, `feasibility.py`, `economics.py`, `ev_shortlist.py`) | trzy osoby nie mogą równolegle edytować jednego pliku; do wątku trafia zip |
 
+| D17 | 15:21 | Zamrożenie liczb z 14:45 uchylone: Ewa zmieniła dane i regułę o 15:18 | jej wiadomość zastępuje dotychczasową regułę zasięgu i każe liczyć na wszystkich danych |
+| D18 | 15:23 | Odczyt licznika powyżej 500 km na jednej trasie zastępujemy GPS (A29) | najdłuższa realna trasa w danych ma 306 km; 1383 km w jeden poranek jest niemożliwe |
+| D19 | 15:25 | `impact.csv` generuje osobny skrypt `impact.py`, a parametry z poprzedniej shortlisty trzymamy w `params_lunch.csv` | analityk ma móc powtórzyć porównanie przy każdym kolejnym eksporcie |
+
 ### Otwarte
 
 - Brak. Vany z ujemnym wynikiem, kolejność rankingu i wybór vanów z South rozstrzygnięte o 12:19–12:29 (D15, D16, A23).
@@ -519,3 +540,5 @@ Demo w trzech krokach:
 | 14:45 | Zamrożenie liczb: 8 vanów, 95 637 PLN w 5 lat. Roczne km zostają liczone z dni kalendarzowych (× 365 ÷ 90); wrażliwość na liczbę dni dostaw (8 / 7 / 6 vanów) opisana w `BOARD_NOTE.md` i A12 |
 | 15:05–15:12 | Druga tura odpowiedzi Ewy (nam i innym zespołom): „Pick the one that makes sense and put it in your assumptions list” — A18, A12, A23 bez zmian; A19 doprecyzowane (do percentyla liczą się tylko dni z kursami); nowe A25 (ładunek bez kierowcy). Kod i `params.csv` bez zmian; szczegóły w `ASSUMPTIONS.md` |
 | 15:20 | Wydanie `v1.0`: PR `devel` → `main`, tag, zip z tagu (`SDLC.md`, sekcja 4) |
+| 15:18 | Ewa: `CHANGE.md` — nowy eksport, nowy rejestr, reguła najgorszego dnia, wymagany `impact.csv` |
+| 15:27 | Zmiana wdrożona na `devel` (84239c1): zamrożenie z 14:45 uchylone; 7 vanów, 85 750 PLN; `impact.py`, `params_lunch.csv`, 104 testy; A26–A33, D17–D19. **Wydanie `v1.0` na `main` ma stare liczby (8 vanów)** — potrzebne nowe wydanie |

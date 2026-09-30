@@ -16,7 +16,7 @@ def read_csv(name):
 
 
 def read_params():
-    return {r["parameter"]: r["value"] for r in read_csv("params.csv")}
+    return {r["parameter"]: r["value"] for r in read_csv("params_lunch.csv")}
 
 
 def by_van(rows):

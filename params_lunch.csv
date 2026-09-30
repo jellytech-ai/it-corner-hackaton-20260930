@@ -17,7 +17,7 @@ ev.Volta Cargo L.payload_kg,880
 ev.Volta Cargo L.kwh_per_100km,27
 ev.Volta Cargo L.price_pln,195000
 winter_range_factor,0.60
-range_check_percentile,100
+range_check_percentile,95
 winter_temp_factor,0.70
 winter_payload_factor,0.90
 charger_kw,22
