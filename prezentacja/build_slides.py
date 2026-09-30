@@ -1,93 +1,138 @@
-"""Build the presentation PDF: one page = one slide (16:9).
+"""Build the presentation PDF: one page = one slide (16:9), in JellyTech colours.
 
-Not part of the tool (the tool uses the standard library only). Needs reportlab:
-    python3 -m venv /tmp/venv-pdf && /tmp/venv-pdf/bin/pip install reportlab
+Not part of the tool (the tool uses the standard library only). Needs reportlab and svglib:
+    python3 -m venv /tmp/venv-pdf && /tmp/venv-pdf/bin/pip install reportlab svglib
     /tmp/venv-pdf/bin/python prezentacja/build_slides.py
 
+Brand: colours and logo from www.jellytech.com.pl (primary #C2006B, font Poppins, OFL — assets/OFL.txt).
 Figures come from the tool run on the source export at devel 35d8e0b (30.09.2026):
 8 vans, 95 637 PLN over five years. Update them here after the 14:45 freeze if they change.
 """
 import os
 
+from reportlab.graphics import renderPDF
 from reportlab.lib import colors
+from reportlab.lib.fonts import addMapping
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
-from reportlab.lib.fonts import addMapping
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph, Table, TableStyle
+from svglib.svglib import svg2rlg
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+ASSETS = os.path.join(HERE, "assets")
 OUT = os.path.join(HERE, "PREZENTACJA.pdf")
 
 W, H = 960, 540
 M = 48  # side margin
 
-FONT_DIR = "/System/Library/Fonts/Supplemental"
-pdfmetrics.registerFont(TTFont("Sans", os.path.join(FONT_DIR, "Arial.ttf")))
-pdfmetrics.registerFont(TTFont("Sans-Bold", os.path.join(FONT_DIR, "Arial Bold.ttf")))
-pdfmetrics.registerFont(TTFont("Mono", os.path.join(FONT_DIR, "Courier New.ttf")))
-addMapping("Sans", 0, 0, "Sans")
-addMapping("Sans", 1, 0, "Sans-Bold")
-addMapping("Sans", 0, 1, "Sans")
-addMapping("Sans", 1, 1, "Sans-Bold")
+pdfmetrics.registerFont(TTFont("Sans", os.path.join(ASSETS, "Poppins-Regular.ttf")))
+pdfmetrics.registerFont(TTFont("Sans-Medium", os.path.join(ASSETS, "Poppins-Medium.ttf")))
+pdfmetrics.registerFont(TTFont("Sans-Bold", os.path.join(ASSETS, "Poppins-SemiBold.ttf")))
+pdfmetrics.registerFont(TTFont("Mono", "/System/Library/Fonts/Supplemental/Courier New.ttf"))
+# Poppins has no arrow glyph; arrows are drawn in a fallback font
+pdfmetrics.registerFont(TTFont("Sym", "/System/Library/Fonts/Supplemental/Arial.ttf"))
+MISSING = "\u2192"
+for bold, italic in ((0, 0), (0, 1)):
+    addMapping("Sans", bold, italic, "Sans")
+for bold, italic in ((1, 0), (1, 1)):
+    addMapping("Sans", bold, italic, "Sans-Bold")
 
-INK = colors.HexColor("#1B2A41")
-MUTED = colors.HexColor("#5B6B7F")
-ACCENT = colors.HexColor("#0F7B6C")
-ACCENT_SOFT = colors.HexColor("#E3F2EF")
-WARN = colors.HexColor("#B4532A")
-RULE = colors.HexColor("#D5DCE4")
-ROW_ALT = colors.HexColor("#F4F6F8")
+# JellyTech palette (www.jellytech.com.pl)
+BRAND = colors.HexColor("#C2006B")
+BRAND_DARK = colors.HexColor("#A20059")
+BRAND_LIGHT = colors.HexColor("#FF52B1")
+BRAND_SOFT = colors.HexColor("#FBE6F1")
+PAPER = colors.HexColor("#FCF8F9")
+INK = colors.HexColor("#1A1A1A")
+MUTED = colors.HexColor("#5D5F5F")
+RULE = colors.HexColor("#E5E2E3")
+ROW_ALT = colors.HexColor("#FCF8F9")
 
-BODY = ParagraphStyle("body", fontName="Sans", fontSize=17, leading=23, textColor=INK)
-MID = ParagraphStyle("mid", fontName="Sans", fontSize=15, leading=20, textColor=INK)
-SMALL = ParagraphStyle("small", fontName="Sans", fontSize=13, leading=17, textColor=MUTED)
-CELL = ParagraphStyle("cell", fontName="Sans", fontSize=13, leading=16, textColor=INK)
+BODY = ParagraphStyle("body", fontName="Sans", fontSize=15.5, leading=22, textColor=INK)
+MID = ParagraphStyle("mid", fontName="Sans", fontSize=14, leading=19, textColor=INK)
+SMALL = ParagraphStyle("small", fontName="Sans", fontSize=12, leading=16, textColor=MUTED)
+CELL = ParagraphStyle("cell", fontName="Sans", fontSize=11.5, leading=15, textColor=INK)
 CELL_B = ParagraphStyle("cellb", parent=CELL, fontName="Sans-Bold")
 
-TOTAL = 13
+LOGO = svg2rlg(os.path.join(ASSETS, "jellytech-logo.svg"))
+
+TOTAL = 15
+
+
+def logo(c, x, y, width):
+    scale = width / LOGO.width
+    c.saveState()
+    c.translate(x, y)
+    c.scale(scale, scale)
+    renderPDF.draw(LOGO, c, 0, 0)
+    c.restoreState()
 
 
 def frame(c, n, title, kicker=""):
     c.setFillColor(colors.white)
     c.rect(0, 0, W, H, stroke=0, fill=1)
-    c.setFillColor(ACCENT)
-    c.rect(0, H - 8, W, 8, stroke=0, fill=1)
+    c.setFillColor(BRAND)
+    c.rect(0, H - 6, W, 6, stroke=0, fill=1)
+    logo(c, W - M - 118, H - 58, 118)
     if kicker:
-        c.setFont("Sans-Bold", 12)
-        c.setFillColor(ACCENT)
+        c.setFont("Sans-Bold", 11)
+        c.setFillColor(BRAND)
         c.drawString(M, H - 44, kicker.upper())
-    c.setFont("Sans-Bold", 30)
     c.setFillColor(INK)
-    c.drawString(M, H - 82, title)
+    draw(c, M, H - 82, title, "Sans-Bold", 27)
     c.setStrokeColor(RULE)
     c.setLineWidth(1)
     c.line(M, 36, W - M, 36)
-    c.setFont("Sans", 10)
+    c.setFont("Sans", 9.5)
     c.setFillColor(MUTED)
-    c.drawString(M, 20, "JellyTech · EV shortlist · 30.09.2026")
+    c.drawString(M, 20, "JellyTech · Shortlista EV · 30.09.2026")
     c.drawRightString(W - M, 20, "%d / %d" % (n, TOTAL))
 
 
+def _sym(text):
+    for ch in MISSING:
+        text = text.replace(ch, "<font name='Sym'>%s</font>" % ch)
+    return text
+
+
+def draw(c, x, y, text, font, size, align="left"):
+    """drawString that switches to the fallback font for glyphs Poppins lacks."""
+    parts, buf = [], ""
+    for ch in text:
+        if ch in MISSING:
+            parts += [(buf, font), (ch, "Sym")]
+            buf = ""
+        else:
+            buf += ch
+    parts.append((buf, font))
+    width = sum(pdfmetrics.stringWidth(t, f, size) for t, f in parts)
+    x = x - width / 2 if align == "center" else x - width if align == "right" else x
+    for t, f in parts:
+        c.setFont(f, size)
+        c.drawString(x, y, t)
+        x += pdfmetrics.stringWidth(t, f, size)
+
+
 def para(c, text, x, y_top, width, style=BODY):
-    p = Paragraph(text, style)
+    p = Paragraph(_sym(text), style)
     _, h = p.wrap(width, H)
     p.drawOn(c, x, y_top - h)
     return y_top - h
 
 
-def bullets(c, items, x, y_top, width, style=BODY, gap=10):
+def bullets(c, items, x, y_top, width, style=BODY, gap=9):
     y = y_top
     for item in items:
-        c.setFillColor(ACCENT)
-        c.circle(x + 5, y - style.leading / 2 + 3, 3.5, stroke=0, fill=1)
+        c.setFillColor(BRAND)
+        c.circle(x + 5, y - style.leading / 2 + 2, 3.5, stroke=0, fill=1)
         y = para(c, item, x + 20, y, width - 20, style) - gap
     return y
 
 
 def table(c, rows, x, y_top, widths, header=True, bold_rows=(), highlight_rows=()):
-    data = [[Paragraph(str(v), CELL_B if (header and i == 0) or i in bold_rows else CELL)
+    data = [[Paragraph(_sym(str(v)), CELL_B if (header and i == 0) or i in bold_rows else CELL)
              for v in row] for i, row in enumerate(rows)]
     t = Table(data, colWidths=widths)
     style = [
@@ -99,64 +144,65 @@ def table(c, rows, x, y_top, widths, header=True, bold_rows=(), highlight_rows=(
         ("LINEBELOW", (0, 0), (-1, -1), 0.5, RULE),
     ]
     if header:
-        style += [("BACKGROUND", (0, 0), (-1, 0), ACCENT_SOFT),
-                  ("LINEBELOW", (0, 0), (-1, 0), 1.2, ACCENT)]
+        style += [("BACKGROUND", (0, 0), (-1, 0), BRAND_SOFT),
+                  ("LINEBELOW", (0, 0), (-1, 0), 1.2, BRAND)]
     for i in range(1 if header else 0, len(rows)):
-        if (i % 2 == 0) and i not in highlight_rows:
+        if i % 2 == 0 and i not in highlight_rows:
             style.append(("BACKGROUND", (0, i), (-1, i), ROW_ALT))
     for i in highlight_rows:
-        style.append(("BACKGROUND", (0, i), (-1, i), ACCENT_SOFT))
+        style.append(("BACKGROUND", (0, i), (-1, i), BRAND_SOFT))
     t.setStyle(TableStyle(style))
     _, h = t.wrap(sum(widths), H)
     t.drawOn(c, x, y_top - h)
     return y_top - h
 
 
-def big_number(c, x, y, value, label, color=ACCENT, size=54):
+def big_number(c, x, y, value, label, color=BRAND, size=50):
     c.setFont("Sans-Bold", size)
     c.setFillColor(color)
     c.drawString(x, y, value)
-    c.setFont("Sans", 15)
+    c.setFont("Sans", 13.5)
     c.setFillColor(MUTED)
     c.drawString(x, y - 24, label)
 
 
 def code(c, text, x, y, width):
-    c.setFillColor(colors.HexColor("#1E1E1E"))
-    c.roundRect(x, y - 8, width, 30, 4, stroke=0, fill=1)
+    c.setFillColor(INK)
+    c.roundRect(x, y - 8, width, 30, 6, stroke=0, fill=1)
     c.setFont("Mono", 12.5)
-    c.setFillColor(colors.HexColor("#E6E6E6"))
+    c.setFillColor(colors.HexColor("#F2F2F2"))
     c.drawString(x + 12, y + 3, text)
 
 
 # --- slides -------------------------------------------------------------------
 
 def s01_title(c):
-    c.setFillColor(INK)
+    c.setFillColor(PAPER)
     c.rect(0, 0, W, H, stroke=0, fill=1)
-    c.setFillColor(ACCENT)
-    c.rect(0, 0, 14, H, stroke=0, fill=1)
-    c.setFont("Sans-Bold", 14)
-    c.setFillColor(colors.HexColor("#8FD3C7"))
-    c.drawString(80, 360, "IT CORNER HACKATHON · 30.09.2026")
-    c.setFont("Sans-Bold", 46)
+    c.setFillColor(BRAND)
+    c.rect(0, 0, W, 10, stroke=0, fill=1)
+    logo(c, 80, 390, 260)
+    c.setFont("Sans-Bold", 12)
+    c.setFillColor(BRAND)
+    c.drawString(80, 318, "IT CORNER HACKATHON · 30.09.2026")
+    c.setFont("Sans-Bold", 42)
+    c.setFillColor(INK)
+    c.drawString(80, 262, "Które vany przejdą na prąd?")
+    c.setFont("Sans", 19)
+    c.setFillColor(MUTED)
+    c.drawString(80, 224, "Shortlista EV dla floty 38 vanów — założenia, wynik i proces")
+    c.setFillColor(BRAND)
+    c.roundRect(80, 120, 300, 54, 12, stroke=0, fill=1)
+    c.setFont("Sans-Bold", 20)
     c.setFillColor(colors.white)
-    c.drawString(80, 300, "Które vany przejdą na prąd?")
-    c.setFont("Sans", 22)
-    c.setFillColor(colors.HexColor("#C9D3DE"))
-    c.drawString(80, 262, "Shortlista EV dla floty 38 vanów — i proces, który do niej doprowadził")
-    c.setFont("Sans", 16)
-    c.drawString(80, 150, "JellyTech: Wojtek (dane) · Rafał (wykonalność) · Walerian (ekonomia i dokumenty)")
-    c.setFont("Sans", 12)
-    c.setFillColor(colors.HexColor("#8A99AB"))
-    c.drawString(80, 120, "Liczby: narzędzie uruchomione na eksporcie 15.06–12.09.2026, reguły Ewy z 30.09")
+    c.drawString(98, 140, "8 EV · 95 637 PLN w 5 lat")
 
 
 def s02_answer(c):
     frame(c, 2, "8 EV, 95 637 PLN w 5 lat", "Odpowiedź na początek")
     big_number(c, M, 380, "8", "vanów na liście")
     big_number(c, M, 280, "95 637", "PLN w 5 lat, po zapłacie za EV")
-    big_number(c, M, 180, "30%", "dotacji — bez niej żaden się nie zwraca", color=WARN, size=40)
+    big_number(c, M, 180, "30%", "dotacji — bez niej żaden się nie zwraca", color=BRAND_DARK, size=38)
     rows = [["#", "Van", "Model", "Baza EV", "Wynik 5 lat"],
             ["1", "P-12", "Cargo L", "North (z South)", "23 305"],
             ["2", "P-30", "Cargo S", "North", "20 818"],
@@ -168,94 +214,107 @@ def s02_answer(c):
             ["8", "P-04", "Cargo S", "North", "1 171"]]
     table(c, rows, 390, 430, [34, 70, 90, 170, 110])
     para(c, "Kupione z dotacją, wszystkie ładowane w North. Źródło: <font name='Mono'>shortlist.csv</font>, "
-            "<font name='Mono'>summary.csv</font>.", 390, 120, 520, SMALL)
+            "<font name='Mono'>summary.csv</font>.", 390, 118, 520, SMALL)
 
 
-def s03_handoff(c):
-    frame(c, 3, "Handoff jako dziennik decyzji", "Proces")
+def _assumptions(c, rows, y_top=420):
+    """Table of assumptions: what, value, source/status."""
+    return table(c, [["Założenie", "Wartość", "Skąd"]] + rows, M, y_top, [390, 250, 224])
+
+
+def s03_range(c):
+    frame(c, 3, "Założenia: zasięg i ładowność", "Założenia przyjęte do zadania")
+    _assumptions(c, [
+        ["Van przechodzi, gdy jego <b>95. percentyl dnia</b> mieści się w zasięgu zimowym",
+         "60% WLTP: Cargo S 156 km, Cargo L 228 km", "reguła Ewy (12:15)"],
+        ["Dzień = suma wszystkich tras vana w danym dniu", "percentyl jak PERCENTILE.INC w Excelu", "nasza decyzja"],
+        ["Vany dwuzmianowe <b>nie ładują się w dzień</b>", "cały dzień na jednym ładowaniu nocnym", "potwierdziła Ewa"],
+        ["Zużycie energii zimą", "dane dealera + 10% w skali roku", "nasze założenie"],
+        ["Starzenie baterii po 5 latach", "× 0,87 → ok. 52% WLTP; tylko test warunków skrajnych",
+         "Geotab: −2,7% rocznie"],
+        ["EV musi unieść <b>najcięższy ładunek</b>, jaki van wiózł", "twardy limit, bez rozkładania ładunku",
+         "potwierdziła Ewa"],
+        ["Chłodnie zostają na dieslu w 1. roku", "6 vanów", "potwierdziła Ewa"],
+    ])
+
+
+def s04_money_assumptions(c):
+    frame(c, 4, "Założenia: ładowanie i wynik finansowy", "Założenia przyjęte do zadania")
+    _assumptions(c, [
+        ["Punkty ładowania", "North 10 (6 + 4 zamówione), South 0; jeden EV na punkt", "potwierdziła Ewa"],
+        ["Vany z South w North", "najwyżej 3, trasy bez zmian; wybieramy te z najwyższym wynikiem",
+         "Ewa + nasza reguła wyboru"],
+        ["Ładowanie w nocy", "taryfa nocna 0,58 PLN/kWh", "nasze założenie"],
+        ["Wynik = 5 × (paliwo − prąd + różnica serwisu) − cena EV po dotacji − wyjście z leasingu",
+         "bez rat diesla i wartości odsprzedaży", "reguła Ewy"],
+        ["EV <b>kupione</b>, nie leasingowane", "Cargo S po dotacji 105 000 vs 60 rat 174 000 PLN",
+         "wniosek z reguły dotacji"],
+        ["Leasing diesla kończący się w ciągu 12 mies.", "bez opłaty (granica włącznie); dłuższy: 3 raty",
+         "Ewa; „włącznie” — nasze"],
+        ["Serwis", "diesel 0,34 PLN/km, EV 0,14 PLN/km (szacunek dealera)", "dane firmy i dealera"],
+        ["Na liście tylko van z dodatnim wynikiem", "wynik ≤ 0 → poza listą, z powodem", "nasza decyzja"],
+    ])
+
+
+def s05_data_assumptions(c):
+    frame(c, 5, "Założenia: dane i narzędzie", "Założenia przyjęte do zadania")
+    _assumptions(c, [
+        ["Trasy i ładunki są takie same przez cały rok", "roczne km = km z okresu × 365 ÷ dni okresu",
+         "nasze założenie; sprawdzi eksport z IV kw."],
+        ["Dystans z licznika; GPS tylko, gdy licznik pusty lub ≤ 0", "zawsze z ostrzeżeniem w raporcie",
+         "Ewa: „trust the odometer”"],
+        ["P-17 i P-17B to ten sam van", "liczony jako P-17B", "z danych; potwierdziła Ewa"],
+        ["Identyczne wiersze to duplikaty", "usuwane, z liczbą w raporcie", "nasza decyzja"],
+        ["Van spoza rejestru", "poza liczbami, z ostrzeżeniem: co dopisać", "nasza decyzja"],
+        ["Analityk zna wiersz poleceń i ma Pythona 3", "zmienia tylko <font name='Mono'>params.csv</font>",
+         "przyjęte, niepotwierdzone"],
+        ["Kolejny eksport ma te same kolumny", "brak kolumny → jasny błąd, bez zgadywania",
+         "przyjęte, niepotwierdzone"],
+    ])
+
+
+def s06_winter(c):
+    frame(c, 6, "Skąd 60%? Nasze oszacowanie dało 57%", "Założenia przyjęte do zadania")
+    table(c, [["Czynnik", "Wartość", "Źródło"],
+              ["Dzień projektowy −10 °C", "—", "Poznań: średnie minimum w styczniu −3 °C (Weather Spark)"],
+              ["Temperatura", "× 0,70", "ok. 70% zasięgu przy −7 °C, 30 000+ aut (Recurrent)"],
+              ["Ładunek", "× 0,90", "van średni: −7% przy połowie, −11% przy pełnym (Arval / What Van?)"],
+              ["Rezerwa na powrót do bazy", "× 0,90", "margines operacyjny, nasz wybór"],
+              ["Razem", "≈ 0,57", "rano; reguła Ewy o 12:15: 0,60"]],
+          M, 420, [230, 90, 544], bold_rows=(5,), highlight_rows=(5,))
+    para(c, "Liczyliśmy od rana na własnym, udokumentowanym założeniu. Gdy Ewa podała 60%, "
+            "wiedzieliśmy, że to rozsądna liczba na styczeń z marginesem — i ile ryzyka niesie.",
+         M, 190, 860, BODY)
+
+
+def s07_feasibility(c):
+    frame(c, 7, "Wykonalność: 38 → 8", "Wynik")
     bullets(c, [
-        "<b>Każde założenie i decyzja ma godzinę, powód i status</b> — 24 założenia (A1–A24), 16 decyzji (D1–D16).",
-        "Założenie zmienione przez Ewę nie znika: dostaje status „zmienione” i numer następcy (np. A4 → A19).",
-        "Ewa dostaje to samo po angielsku w <font name='Mono'>ASSUMPTIONS.md</font>: <i>co założyliśmy i mniej więcej kiedy</i>.",
-        "Każdy tor prowadzi dziennik; tor C przenosi wpisy do jednego rejestru.",
-    ], M, 420, 520)
-    table(c, [["Nr", "Godz.", "Wpis (skrót)"],
-              ["A6", "10:30", "zasięg zimowy 0,57 × WLTP (nasze źródła)"],
-              ["A19", "12:15", "reguła Ewy: 95. percentyl dnia w 60% WLTP"],
-              ["D15", "12:19", "wynik ≤ 0 → poza listą, z notatką"],
-              ["D16", "12:29", "wszystkie EV kupione → limit 10"]],
-          600, 420, [50, 60, 202])
-
-
-def s04_questions(c):
-    frame(c, 4, "Pięć pytań do Ewy — każde z planem B", "Proces")
-    bullets(c, [
-        "Limit 5 pytań, więc <b>przy każdym napisaliśmy, co przyjmiemy bez odpowiedzi</b> — brak odpowiedzi nigdy nas nie blokował.",
-        "Nie pytaliśmy o to, co da się rozstrzygnąć z danych:",
-    ], M, 420, 860)
-    table(c, [["Rozstrzygnięte z danych", "Jak", "Ewa"],
-              ["P-17 = P-17B", "ta sama trasa i kierowca; jeden kończy, drugi zaczyna", "potwierdziła"],
-              ["Chłodnie poza pierwszą turą", "5 z 6 przekracza ładowność obu EV", "potwierdziła"],
-              ["Ładowność = twardy limit", "najcięższy ładunek z danych", "potwierdziła"]],
-          M + 20, 300, [250, 430, 140])
-    para(c, "Pytaliśmy o: ładowanie, dotację, zasięg zimowy, leasing diesli, los wycofanych diesli.",
-         M + 20, 150, 840, SMALL)
-
-
-def s05_data(c):
-    frame(c, 5, "Dane i liczby kontrolne — policzone dwa razy", "Dane")
-    big_number(c, M, 370, "2 777", "kursów (z 2 999; 222 duplikaty)")
-    big_number(c, M + 300, 370, "344 952", "km łącznie")
-    big_number(c, M + 620, 370, "38", "vanów ocenionych")
-    bullets(c, [
-        "Druga, niezależna metoda: <font name='Mono'>sort -u</font> + <font name='Mono'>awk</font> w powłoce, bez Pythona — ten sam wynik.",
-        "Pułapka: <font name='Mono'>awk</font> z polskimi ustawieniami regionalnymi obcina ułamki (343 699 km). Trzeba <font name='Mono'>LC_ALL=C</font>.",
-        "Nic po cichu: ujemny licznik P-27 → GPS 90,3 km z <font name='Mono'>WARNING</font>; P-17 → P-17B z wpisem w raporcie.",
-    ], M, 250, 860)
-
-
-def s06_feasibility(c):
-    frame(c, 6, "Wykonalność według reguł Ewy", "Wykonalność")
-    bullets(c, [
-        "<b>Zasięg:</b> 95. percentyl dnia ≤ 60% WLTP (Cargo S 156 km, Cargo L 228 km).",
-        "<b>Ładowność:</b> najcięższy ładunek z danych ≤ ładowność EV — twardy limit.",
-        "<b>Dwuzmianowe:</b> cały dzień na jednym ładowaniu nocnym.",
-        "<b>South:</b> brak ładowarek; do 3 vanów stacjonuje w North.",
-        "<b>Model:</b> ten, który w 5 lat daje lepszy wynik.",
+        "<b>15</b> vanów mieści się w zasięgu i ładowności.",
+        "<b>9</b> z nich zwraca się w 5 lat.",
+        "<b>8</b> mieści się w limitach: P-31 jest na plusie, ale byłby 4. vanem z South.",
+        "Model dla każdego vana: ten, który w 5 lat daje lepszy wynik.",
+        "Każdy van spoza listy ma w <font name='Mono'>all_vans.csv</font> zapisany powód.",
     ], M, 420, 470, gap=8)
     x0, y0 = 560, 420
-    steps = [("38", "vanów w rejestrze"), ("15", "przechodzi zasięg i ładowność"),
-             ("9", "ma dodatni wynik w 5 lat"), ("8", "mieści się w limitach (3 z South)")]
+    steps = [("38", "vanów w rejestrze"), ("15", "zasięg i ładowność"),
+             ("9", "dodatni wynik w 5 lat"), ("8", "w limitach (3 z South)")]
     for i, (n, label) in enumerate(steps):
         w = 340 - i * 40
         y = y0 - i * 78
-        c.setFillColor(ACCENT if i == 3 else ACCENT_SOFT)
-        c.roundRect(x0 + (340 - w) / 2, y - 60, w, 60, 6, stroke=0, fill=1)
-        c.setFont("Sans-Bold", 26)
-        c.setFillColor(colors.white if i == 3 else ACCENT)
-        c.drawCentredString(x0 + 170, y - 32, n)
-        c.setFont("Sans", 12)
-        c.setFillColor(colors.white if i == 3 else INK)
-        c.drawCentredString(x0 + 170, y - 50, label)
-
-
-def s07_change(c):
-    frame(c, 7, "Odpowiedzi Ewy o 12:00 — ok. 20 minut na zmianę", "Zmiana wymagań")
-    table(c, [["", "Rano (nasze założenia)", "Po odpowiedziach Ewy"],
-              ["Zasięg", "najgorszy dzień w 57% WLTP", "95. percentyl dnia w 60% WLTP"],
-              ["Dwuzmianowe", "doładowanie między trasami", "cały dzień bez ładowania"],
-              ["Ładowanie", "North 6, South 0", "North 10, do 3 vanów z South"],
-              ["Wynik", "roczna oszczędność na eksploatacji", "5 lat − cena EV po dotacji − wyjście z leasingu"],
-              ["Lista", "3 vany", "8 vanów"]],
-          M, 420, [150, 330, 384], bold_rows=(5,))
-    bullets(c, [
-        "Większość zmian to <b>nowe wartości w <font name='Mono'>params.csv</font></b>, nie nowy kod.",
-        "Wynik sprawdzony niezależnie przez dwa tory — zgodny co do złotówki.",
-    ], M, 180, 860)
+        last = i == 3
+        c.setFillColor(BRAND if last else BRAND_SOFT)
+        c.roundRect(x0 + (340 - w) / 2, y - 60, w, 60, 10, stroke=0, fill=1)
+        c.setFont("Sans-Bold", 24)
+        c.setFillColor(colors.white if last else BRAND)
+        c.drawCentredString(x0 + 170, y - 30, n)
+        c.setFont("Sans", 11)
+        c.setFillColor(colors.white if last else INK)
+        c.drawCentredString(x0 + 170, y - 49, label)
 
 
 def s08_money(c):
-    frame(c, 8, "Skąd 95 637 PLN — i gdzie jest ryzyko", "Pieniądze")
+    frame(c, 8, "Skąd 95 637 PLN — i gdzie jest ryzyko", "Wynik")
     table(c, [["Składnik (8 vanów, 5 lat)", "PLN"],
               ["Oszczędność na eksploatacji (paliwo − prąd + serwis)", "ok. 1 007 600"],
               ["− cena EV po 30% dotacji", "903 000"],
@@ -270,8 +329,8 @@ def s08_money(c):
 
 
 def s09_sensitivity(c):
-    frame(c, 9, "Reguła zasięgu decyduje o liście", "Wrażliwość")
-    table(c, [["Jeśli zmienimy jedną regułę", "Vanów", "Wynik 5 lat (PLN)"],
+    frame(c, 9, "Reguła zasięgu decyduje o liście", "Wrażliwość na założenia")
+    table(c, [["Jeśli zmienimy jedno założenie", "Vanów", "Wynik 5 lat (PLN)"],
               ["Jak uzgodniono (95. percentyl, 60% WLTP)", "8", "95 637"],
               ["Najgorszy dzień zamiast 95. percentyla", "6", "59 482"],
               ["55% WLTP zamiast 60%", "3", "47 897"],
@@ -283,50 +342,92 @@ def s09_sensitivity(c):
          M, 170, 860, BODY)
 
 
-def s10_parallel(c):
-    frame(c, 10, "Trzy tory równolegle — bez konfliktów", "Jak pracowaliśmy")
-    table(c, [["Tor", "Kto", "Zakres"],
-              ["A — dane", "Wojtek", "czyszczenie, profil vanów, liczby kontrolne, parametry"],
-              ["B — wykonalność", "Rafał", "filtry, wybór modelu, ranking, integracja, eksport"],
-              ["C — ekonomia i dokumenty", "Walerian", "wynik w 5 lat, notatka, założenia, instrukcja"]],
-          M, 420, [220, 100, 544])
+def s10_log(c):
+    frame(c, 10, "Każde założenie ma godzinę, powód i status", "Proces")
     bullets(c, [
-        "<b>KONTRAKT</b> — co sobie przekazujemy: funkcje, kolumny, właściciel każdego pliku.",
-        "<b>KONSTYTUCJA</b> — jak piszemy: język, <font name='Mono'>ERROR</font> / <font name='Mono'>WARNING</font>, zaokrąglenia, git.",
-        "<b>Pliki testowe w formacie kontraktu</b> — B i C startują, zanim A odda dane.",
-        "<b>Testy</b> każdego progu (pod / na / nad) i automat na GitHubie przy każdym wypchnięciu.",
-    ], M, 270, 860, gap=6)
+        "Jeden dziennik od pierwszej godziny: <b>24 założenia, 16 decyzji</b>.",
+        "Zmienione założenie nie znika — dostaje status „zmienione” i następcę.",
+        "Ewa dostaje ten sam rejestr po angielsku: <i>co założyliśmy i mniej więcej kiedy</i>.",
+        "<b>5 pytań do Ewy, każde z planem B</b> — brak odpowiedzi nigdy nas nie zatrzymał.",
+        "Nie pytaliśmy o to, co da się rozstrzygnąć z danych (P-17, chłodnie) — Ewa potwierdziła oba wnioski.",
+    ], M, 420, 500, MID, gap=10)
+    table(c, [["Nr", "Godz.", "Wpis (skrót)"],
+              ["A6", "10:30", "zasięg zimowy 0,57 × WLTP (nasze źródła)"],
+              ["A19", "12:15", "reguła Ewy: 95. percentyl dnia w 60% WLTP"],
+              ["D15", "12:19", "wynik ≤ 0 → poza listą, z powodem"],
+              ["D16", "12:29", "wszystkie EV kupione → limit 10"]],
+          590, 420, [48, 58, 216])
 
 
-def s11_demo(c):
-    frame(c, 11, "Demo: to samo polecenie, trzy sytuacje", "Demo")
+def s11_change(c):
+    frame(c, 11, "Odpowiedzi Ewy o 12:00 — ok. 20 minut na zmianę", "Proces")
+    table(c, [["", "Rano (nasze założenia)", "Po odpowiedziach Ewy"],
+              ["Zasięg", "najgorszy dzień w 57% WLTP", "95. percentyl dnia w 60% WLTP"],
+              ["Dwuzmianowe", "doładowanie między trasami", "cały dzień bez ładowania"],
+              ["Ładowanie", "North 6, South 0", "North 10, do 3 vanów z South"],
+              ["Wynik", "roczna oszczędność na eksploatacji", "5 lat − cena EV po dotacji − wyjście z leasingu"],
+              ["Lista", "3 vany", "8 vanów"]],
+          M, 420, [150, 330, 384], bold_rows=(5,))
+    bullets(c, [
+        "Większość zmian to <b>nowe wartości w <font name='Mono'>params.csv</font></b>, nie nowy kod.",
+        "Wynik sprawdzony niezależnie drugą metodą — zgodny co do złotówki.",
+    ], M, 180, 860)
+
+
+def s12_parallel(c):
+    frame(c, 12, "Praca równoległa bez konfliktów", "Proces")
+    cards = [
+        ("Kontrakt", "co sobie przekazujemy: funkcje, kolumny, właściciel każdego pliku"),
+        ("Konstytucja", "jak piszemy: język, format błędów i ostrzeżeń, zaokrąglenia, git"),
+        ("Parametry", "każda liczba w <font name='Mono'>params.csv</font> — odpowiedź Ewy to zmiana wartości, "
+                      "nie kodu"),
+        ("Weryfikacja", "liczby kontrolne policzone dwa razy dwiema metodami; każdy próg testowany pod / na / nad"),
+    ]
+    for i, (head, text) in enumerate(cards):
+        x = M + (i % 2) * 438
+        y = 420 - (i // 2) * 150
+        c.setFillColor(PAPER)
+        c.roundRect(x, y - 128, 424, 128, 12, stroke=0, fill=1)
+        c.setFillColor(BRAND)
+        c.roundRect(x, y - 128, 6, 128, 3, stroke=0, fill=1)
+        c.setFont("Sans-Bold", 17)
+        c.setFillColor(INK)
+        c.drawString(x + 22, y - 34, head)
+        para(c, text, x + 22, y - 48, 380, MID)
+    para(c, "Testy uruchamiają się automatycznie na GitHubie przy każdym wypchnięciu, na prawdziwym eksporcie.",
+         M, 112, 860, SMALL)
+
+
+def s13_demo(c):
+    frame(c, 13, "Demo: to samo polecenie, trzy sytuacje", "Demo")
     items = [
-        ("1", "Oryginalny eksport", "--trips trips.csv --vans vans.csv --params params.csv --out results/",
+        ("1", "Oryginalny eksport",
+         "--trips trips.csv --vans vans.csv --params params.csv --out results/",
          "38 / 2777 / 344952 · WARNING o P-27 · 8 vanów"),
-        ("2", "Jedna liczba w params: percentyl 95 → 100", "--trips trips.csv --vans vans.csv --params params_p100.csv --out results_p100/",
+        ("2", "Jedno założenie w params: percentyl 95 → 100",
+         "--trips trips.csv --vans vans.csv --params params_p100.csv --out results_p100/",
          "6 vanów (bez P-30, P-21) · 95 637 → 59 482 PLN"),
-        ("3", "Następny kwartał", "--trips fresh_trips.csv --vans vans.csv --params params.csv --out results_fresh/",
+        ("3", "Następny kwartał",
+         "--trips fresh_trips.csv --vans vans.csv --params params.csv --out results_fresh/",
          "41 dni · WARNING: P-39, P-13, P-21 · 7 vanów"),
     ]
     y = 420
     for n, title, cmd, result in items:
-        c.setFillColor(ACCENT)
+        c.setFillColor(BRAND)
         c.circle(M + 16, y - 12, 16, stroke=0, fill=1)
-        c.setFont("Sans-Bold", 16)
+        c.setFont("Sans-Bold", 15)
         c.setFillColor(colors.white)
-        c.drawCentredString(M + 16, y - 18, n)
-        c.setFont("Sans-Bold", 17)
+        c.drawCentredString(M + 16, y - 17, n)
         c.setFillColor(INK)
-        c.drawString(M + 46, y - 18, title)
+        draw(c, M + 46, y - 18, title, "Sans-Bold", 16)
         code(c, "python3 ev_shortlist.py " + cmd, M + 46, y - 52, 820)
-        c.setFont("Sans", 13)
         c.setFillColor(MUTED)
-        c.drawString(M + 46, y - 80, result)
+        draw(c, M + 46, y - 80, result, "Sans", 12.5)
         y -= 118
 
 
-def s12_analyst(c):
-    frame(c, 12, "Co dostaje analityk Ewy", "Wydanie")
+def s14_analyst(c):
+    frame(c, 14, "Co dostaje analityk Ewy", "Wydanie")
     para(c, "Jeden folder (zip), jedno polecenie, Python 3.9+ i nic więcej.", M, 420, 860)
     code(c, "python3 ev_shortlist.py --trips trips.csv --vans vans.csv --params params.csv --out results/",
          M, 368, 864)
@@ -341,24 +442,28 @@ def s12_analyst(c):
         "<font name='Mono'>RERUN.md</font>: kroki, jak czytać powody, co zrobić przy błędzie.",
         "Błąd = jedna linia <font name='Mono'>ERROR</font>, bez śladu stosu.",
         "Zip sprawdzony w pustym katalogu: wynik bajt w bajt jak u nas.",
-    ], 660, 330, 250, MID, gap=10)
+    ], 660, 330, 250, MID, gap=8)
 
 
-def s13_close(c):
-    frame(c, 13, "Podsumowanie", "Na koniec")
+def s15_close(c):
+    frame(c, 15, "Podsumowanie", "Na koniec")
     bullets(c, [
         "<b>Rekomendacja:</b> kupić 8 EV z dotacją (2 × Cargo L, 6 × Cargo S), wszystkie w North; wynik 95 637 PLN w 5 lat.",
+        "<b>Kluczowe założenia:</b> 95. percentyl dnia w 60% WLTP, najcięższy ładunek jako limit, "
+        "bez ładowania w dzień, zakup z dotacją, horyzont 5 lat.",
         "<b>Ryzyko:</b> dane tylko z lata. Uruchomić narzędzie na eksporcie z IV kwartału przed zakupem.",
-        "<b>Proces:</b> założenia z godzinami, kontrakt między torami, parametry zamiast kodu, liczby policzone dwa razy.",
-        "<b>Dowód:</b> zmiana wymagań w połowie dnia zajęła ok. 20 minut, a analityk uruchamia całość bez nas.",
+        "<b>Proces:</b> zmiana wymagań w połowie dnia zajęła ok. 20 minut, a analityk uruchamia całość bez nas.",
     ], M, 420, 860, gap=14)
-    c.setFont("Sans-Bold", 28)
-    c.setFillColor(ACCENT)
-    c.drawString(M, 110, "Pytania?")
+    c.setFillColor(BRAND)
+    c.roundRect(M, 88, 180, 50, 12, stroke=0, fill=1)
+    c.setFont("Sans-Bold", 22)
+    c.setFillColor(colors.white)
+    c.drawString(M + 26, 106, "Pytania?")
 
 
-SLIDES = [s01_title, s02_answer, s03_handoff, s04_questions, s05_data, s06_feasibility,
-          s07_change, s08_money, s09_sensitivity, s10_parallel, s11_demo, s12_analyst, s13_close]
+SLIDES = [s01_title, s02_answer, s03_range, s04_money_assumptions, s05_data_assumptions, s06_winter,
+          s07_feasibility, s08_money, s09_sensitivity, s10_log, s11_change, s12_parallel,
+          s13_demo, s14_analyst, s15_close]
 
 
 def main():

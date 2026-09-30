@@ -1,116 +1,129 @@
 # Skrypt prezentacji — tekst do czytania
 
-Do pliku `PREZENTACJA.pdf` (13 slajdów, jeden slajd = jedna strona). Czas: 15 minut — ok. 10 minut proces, 3 minuty demo, 2 minuty zapasu. Podział osób i czasu według `PREZENTACJA.md` (plan toru C).
+Do pliku `PREZENTACJA.pdf` (15 slajdów, jeden slajd = jedna strona, barwy i logo JellyTech). Czas: 15 minut — ok. 10,5 minuty treść, 2,5 minuty demo, 2 minuty na pytania.
+
+Zasady:
+
+- Nie mówimy, kto za co odpowiadał, i nie opisujemy danych wejściowych — każdy zespół dostał te same. Mówimy o **założeniach, które przyjęliśmy**, o wyniku i o procesie.
+- Tekst jest napisany do mówienia — krótkie zdania, liczby zaokrąglone tak, jak się je mówi.
+- Nazwy plików czytamy tak, jak są, i raz tłumaczymy. Bez skrótów roboczych (A19, D15) — pełnym zdaniem.
+- W nawiasach kwadratowych: co robić, nie czytać.
 
 Liczby: narzędzie uruchomione na `devel` 35d8e0b na oryginalnym eksporcie (30.09.2026). Jeśli po zamrożeniu o 14:45 coś się zmieni, podmienić je tutaj i w `build_slides.py`.
 
-Zasady czytania:
-
-- Tekst jest napisany do mówienia — krótkie zdania, liczby zaokrąglone tak, jak się je mówi.
-- Nazwy plików czytamy tak, jak są (`shortlist.csv` — „szortlist”), i raz tłumaczymy.
-- Na głos nie używamy skrótów roboczych (A6, D3, „tor B”) — mówimy pełnym zdaniem.
-- W nawiasach kwadratowych: co robić, nie czytać.
-
 ---
 
-## Slajd 1 — Tytuł · Walerian · 0:00–0:15
+## Slajd 1 — Tytuł · 0:00–0:15
 
-Dzień dobry. Jesteśmy JellyTech: Wojtek zajmował się danymi, Rafał wykonalnością, a ja ekonomią i dokumentami. Odpowiemy na pytanie Ewy — które vany mogą przejść na prąd — i pokażemy, jak do tej odpowiedzi doszliśmy.
+Dzień dobry, jesteśmy JellyTech. Odpowiemy na pytanie Ewy — które vany mogą przejść na prąd — powiemy, na jakich założeniach oparliśmy odpowiedź, i pokażemy, jak do niej doszliśmy.
 
-## Slajd 2 — Odpowiedź na początek · Walerian · 0:15–1:00
+## Slajd 2 — Odpowiedź na początek · 0:15–1:00
 
-Zaczynamy od odpowiedzi. Rekomendujemy osiem aut elektrycznych, kupionych z dotacją, wszystkie ładowane w bazie North. W pięć lat, już po zapłaceniu za auta, dają razem około dziewięćdziesiąt pięć i pół tysiąca złotych.
+Zaczynamy od odpowiedzi. Rekomendujemy osiem aut elektrycznych, kupionych z dotacją, wszystkie ładowane w bazie North. W pięć lat, już po zapłaceniu za auta, dają razem około dziewięćdziesięciu pięciu i pół tysiąca złotych.
 
-Po prawej jest cała lista, od największego wyniku. Dwa vany dostają większy model, Cargo L, sześć — mniejszy Cargo S. Trzy z nich to vany z bazy South, które będą nocować w North.
+Po prawej cała lista, od największego wyniku. Dwa vany dostają większy model, Cargo L, sześć — mniejszy Cargo S. Trzy z nich to vany z bazy South, które będą nocować w North.
 
 I jedno zdanie, które zarząd powinien usłyszeć od razu: bez trzydziestoprocentowej dotacji żaden z tych vanów się nie zwraca.
 
-## Slajd 3 — Handoff jako dziennik decyzji · Walerian · 1:00–2:00
+## Slajd 3 — Założenia: zasięg i ładowność · 1:00–2:15
 
-Dziś liczył się proces, więc pokażę, jak go prowadziliśmy. Od pierwszej godziny mamy jeden dokument przekazania, który działa jak dziennik. Każde założenie i każda decyzja ma godzinę, powód i status. Na koniec dnia to dwadzieścia cztery założenia i szesnaście decyzji.
+Ten wynik stoi na założeniach — pokażemy je, zanim pokażemy liczby.
 
-Założenie, które Ewa zmieniła, nie znika. Na przykład nasze rano: zasięg zimowy to pięćdziesiąt siedem procent zasięgu katalogowego. O dwunastej piętnaście Ewa podała swoją regułę i stare założenie dostało status „zmienione” z odsyłaczem do nowego. Ewa dostaje ten sam rejestr po angielsku, w pliku z założeniami — dokładnie to, o co prosiła: co założyliśmy i mniej więcej kiedy.
+Najważniejsze dotyczy zasięgu. Van przechodzi, jeśli jego dziewięćdziesiąty piąty percentyl dnia — czyli dzień, którego nie przekracza w dziewięćdziesięciu pięciu procentach dni — mieści się w sześćdziesięciu procentach zasięgu katalogowego. To reguła Ewy. Dla Cargo S daje sto pięćdziesiąt sześć kilometrów, dla Cargo L dwieście dwadzieścia osiem. Dzień to suma wszystkich tras vana — a vany dwuzmianowe nie ładują się w przerwie, więc cały ich dzień musi się zmieścić na jednym ładowaniu nocnym.
 
-## Slajd 4 — Pięć pytań do Ewy · Walerian · 2:00–3:00
+Zużycie energii bierzemy od dealera i dokładamy dziesięć procent na zimę. Starzenie baterii po pięciu latach traktujemy jako test warunków skrajnych, nie jako regułę listy.
 
-Mieliśmy limit pięciu pytań. Przy każdym od razu napisaliśmy, co przyjmiemy, jeśli odpowiedź nie przyjdzie na czas. Dzięki temu brak odpowiedzi nigdy nas nie zatrzymał.
+Ładowność to twardy limit: auto musi unieść najcięższy ładunek, jaki ten van kiedykolwiek wiózł. I chłodnie zostają na dieslu w pierwszym roku.
 
-Nie pytaliśmy o rzeczy, które da się rozstrzygnąć z danych. Van P-17 i P-17B to ten sam van — ta sama trasa, ten sam kierowca, jeden kończy, gdy drugi zaczyna. Chłodnie odpadają i bez pytania, bo pięć z sześciu wozi więcej, niż uniesie którykolwiek model elektryczny. Ewa potwierdziła wszystkie trzy wnioski. Pięć pytań poszło na to, czego z danych nie wyczytamy: ładowarki, dotację, zasięg zimą, leasingi i los wycofanych diesli.
+## Slajd 4 — Założenia: ładowanie i wynik finansowy · 2:15–3:30
 
-## Slajd 5 — Dane i liczby kontrolne · Wojtek · 3:00–5:00
+Druga grupa założeń: ładowanie i pieniądze.
 
-Ewa napisała, że CFO najpierw sprawdzi trzy liczby. Dlatego policzyliśmy je dwa razy, dwiema metodami.
+North będzie miał dziesięć punktów ładowania, jeden samochód na punkt. South nie ma żadnego, ale do trzech vanów stamtąd może nocować w North. Gdy chętnych jest więcej, wybieramy te z najwyższym wynikiem. Ładujemy w nocy, po taryfie nocnej.
 
-Z prawie trzech tysięcy wierszy zostaje dwa tysiące siedemset siedemdziesiąt siedem kursów — dwieście dwadzieścia dwa to dokładne duplikaty. Razem trzysta czterdzieści cztery tysiące dziewięćset pięćdziesiąt dwa kilometry i trzydzieści osiem ocenionych vanów.
+Wynik liczymy tak, jak patrzy zarząd: pięć lat oszczędności na paliwie i serwisie, minus cena auta po dotacji, minus opłata za wcześniejsze zakończenie leasingu diesla. Raty obecnych diesli i ich wartość odsprzedaży pomijamy — tak chciała Ewa.
 
-Pierwszy raz liczy to skrypt w Pythonie. Drugi raz — niezależnie, samymi narzędziami powłoki, bez Pythona. Wyszło to samo, ale po drodze trafiliśmy na pułapkę: przy polskich ustawieniach regionalnych `awk` obcina ułamki i daje o ponad tysiąc kilometrów mniej. Gdybyśmy liczyli tylko raz, nie zauważylibyśmy tego.
+Auta kupujemy, nie leasingujemy: dotacja jest tylko przy zakupie, a Cargo S po dotacji kosztuje sto pięć tysięcy, podczas gdy sześćdziesiąt rat leasingu to sto siedemdziesiąt cztery. Leasing diesla, który kończy się w ciągu dwunastu miesięcy, po prostu wygasa — granicę liczymy włącznie, to nasza interpretacja. I na listę trafia tylko van z dodatnim wynikiem.
 
-I zasada, której trzymaliśmy się w całym narzędziu: nic po cichu. Ujemny odczyt licznika P-27 zastępujemy odczytem z GPS, ale z ostrzeżeniem w raporcie. Połączenie P-17 z P-17B też jest w raporcie.
+## Slajd 5 — Założenia: dane i narzędzie · 3:30–4:15
 
-## Slajd 6 — Wykonalność według reguł Ewy · Rafał · 5:00–7:00
+Kilka założeń o danych i o tym, kto będzie używał narzędzia.
 
-Teraz: który van w ogóle może jeździć na prądzie. Stosujemy reguły Ewy.
+Przyjmujemy, że trasy i ładunki są takie same przez cały rok — roczne kilometry skalujemy z długości okresu w danych. To założenie sprawdzi eksport z czwartego kwartału. Dystans bierzemy z licznika, a GPS tylko wtedy, gdy licznik jest pusty albo ujemny — zawsze z ostrzeżeniem. P-17 i P-17B to ten sam van.
 
-Zasięg: dziewięćdziesiąty piąty percentyl dziennego przebiegu vana — czyli dzień, którego van nie przekracza w dziewięćdziesięciu pięciu procentach dni — musi się zmieścić w sześćdziesięciu procentach zasięgu katalogowego. Dla Cargo S to sto pięćdziesiąt sześć kilometrów, dla Cargo L dwieście dwadzieścia osiem.
+O narzędziu zakładamy, że analityk Ewy zna wiersz poleceń i ma Pythona, a kolejny eksport ma te same kolumny. Tych dwóch rzeczy Ewa jeszcze nie potwierdziła — dlatego gdy kolumny brakuje, narzędzie mówi to wprost, zamiast zgadywać.
 
-Ładowność to twardy limit: auto musi unieść najcięższy ładunek, jaki ten van wiózł w danych. Vany dwuzmianowe nie ładują się w dzień, więc liczymy cały ich dzień na jednym ładowaniu nocnym. South nie ma ładowarek, ale do trzech vanów stamtąd może nocować w North.
+## Slajd 6 — Skąd 60%? · 4:15–5:00
 
-Po prawej widać lejek. Z trzydziestu ośmiu vanów piętnaście przechodzi zasięg i ładowność. Dziewięć z nich ma dodatni wynik w pięć lat. Osiem mieści się w limitach — dziewiąty, P-31, jest na plusie, ale byłby czwartym vanem z South. Model dla każdego vana wybiera narzędzie: ten, który w pięć lat daje lepszy wynik. Każdy van, który odpadł, ma w pliku z wszystkimi vanami zapisany powód.
+Skąd sześćdziesiąt procent? To liczba Ewy, ale rano, zanim ją podała, policzyliśmy własną. Dzień projektowy minus dziesięć stopni. Temperatura zabiera około trzydziestu procent zasięgu, ładunek około dziesięciu, i zostawiamy dziesięć procent rezerwy na powrót do bazy. Razem wyszło pięćdziesiąt siedem procent — każda liczba ze źródłem.
 
-## Slajd 7 — Odpowiedzi Ewy o 12:00 · Walerian · 7:00–8:30
+Dzięki temu, gdy Ewa podała sześćdziesiąt, wiedzieliśmy, że to rozsądna liczba na styczeń z marginesem — i ile ryzyka za sobą niesie.
 
-Około dwunastej przyszły odpowiedzi Ewy i zmieniły prawie wszystko. Rano mieliśmy najgorszy dzień w pięćdziesięciu siedmiu procentach, doładowanie w przerwie między trasami, sześć ładowarek i oszczędność liczoną rocznie. Wynik: trzy vany. Po odpowiedziach: percentyl zamiast najgorszego dnia, sześćdziesiąt procent, bez ładowania w dzień, dziesięć ładowarek i wynik w pięć lat po zapłaceniu za auto. Wynik: osiem vanów.
+## Slajd 7 — Wykonalność: 38 → 8 · 5:00–6:00
 
-Ważne jest, ile to kosztowało. Większość zmian to były nowe wartości w pliku z parametrami, nie nowy kod. Całość zajęła około dwudziestu minut, a wynik sprawdziły niezależnie dwie osoby — zgodnie co do złotówki. Przy okazji nasze poranne pięćdziesiąt siedem procent, liczone ze źródeł, pokazało, że sześćdziesiąt procent Ewy to rozsądna liczba.
+Teraz wynik. Z trzydziestu ośmiu vanów piętnaście mieści się w zasięgu i ładowności. Dziewięć z nich zwraca się w pięć lat. Osiem mieści się w limitach — dziewiąty, P-31, jest na plusie, ale byłby czwartym vanem z South.
 
-## Slajd 8 — Skąd 95 637 PLN · Walerian · 8:30–9:00
+Model dla każdego vana wybiera narzędzie: ten, który w pięć lat daje lepszy wynik. A każdy van, który nie trafił na listę, ma w pliku ze wszystkimi vanami zapisany powód — nic nie znika po cichu.
 
-Skąd ta kwota. Osiem vanów przez pięć lat oszczędza na eksploatacji — paliwo minus prąd plus tańszy serwis — około miliona złotych. Odejmujemy cenę aut po dotacji: dziewięćset trzy tysiące. I opłatę za wcześniejsze zakończenie leasingu jednego diesla, P-25: prawie dziewięć tysięcy. Zostaje dziewięćdziesiąt pięć i pół tysiąca.
+## Slajd 8 — Skąd 95 637 PLN · 6:00–7:00
 
-Dwie uwagi. Po pierwsze — CFO pytała o vany, które jeżdżą najwięcej. Osiem z dziesięciu takich vanów ma dzień dłuższy niż dwieście kilometrów, a zasięg Cargo S to sto pięćdziesiąt sześć. Po drugie — P-30 i P-21 w swoje najdłuższe dni przekraczają ten zasięg o kilka kilometrów. Dlatego radzimy zostawić dwa wycofane diesle jako rezerwę.
+Skąd ta kwota. Osiem vanów przez pięć lat oszczędza na eksploatacji — paliwo minus prąd plus tańszy serwis — około miliona złotych. Odejmujemy cenę aut po dotacji: dziewięćset trzy tysiące. I opłatę za wcześniejsze zakończenie jednego leasingu, P-25: prawie dziewięć tysięcy. Zostaje dziewięćdziesiąt pięć i pół tysiąca.
 
-## Slajd 9 — Reguła zasięgu decyduje o liście · Walerian · 9:00–9:30
+Dwie uwagi. Po pierwsze — pojawił się pomysł, żeby wymieniać vany, które jeżdżą najwięcej. Osiem z dziesięciu takich vanów ma dzień dłuższy niż dwieście kilometrów, a zasięg Cargo S to sto pięćdziesiąt sześć. Po drugie — P-30 i P-21 w swoje najdłuższe dni przekraczają ten zasięg o kilka kilometrów. Dlatego radzimy zostawić dwa wycofane diesle jako rezerwę.
 
-Ta tabela pokazuje, co się stanie, gdy zmienimy jedną regułę. Najgorszy dzień zamiast percentyla — czyli „żaden van nigdy nie zawiedzie” — daje sześć vanów i niecałe sześćdziesiąt tysięcy. Pięćdziesiąt pięć procent zamiast sześćdziesięciu — trzy vany. Baterie po pięciu latach — dwa.
+## Slajd 9 — Reguła zasięgu decyduje o liście · 7:00–7:45
+
+Ta tabela pokazuje, co się stanie, gdy zmienimy jedno założenie. Najgorszy dzień zamiast percentyla — czyli „żaden van nigdy nie zawiedzie” — daje sześć vanów i niecałe sześćdziesiąt tysięcy. Pięćdziesiąt pięć procent zamiast sześćdziesięciu — trzy vany. Baterie po pięciu latach — dwa.
 
 Kompromis między finansami a operacjami jest więc wart około trzydziestu sześciu tysięcy złotych. To decyzja o tym, ile ryzyka firma przyjmuje, a nie o rachunkach. Dwa duże Cargo L zostają na liście w każdym wariancie zasięgu.
 
-## Slajd 10 — Trzy tory równolegle · Rafał · 9:30–10:00
+## Slajd 10 — Każde założenie ma godzinę, powód i status · 7:45–8:45
 
-Krótko o tym, jak we trzech pracowaliśmy równolegle. Każdy miał swój zakres i swoje pliki. Wspólny kontrakt mówił, co sobie przekazujemy — funkcje, kolumny i kto jest właścicielem którego pliku — więc scalanie odbywało się bez konfliktów. Wspólna konstytucja mówiła, jak piszemy: język, format błędów, zaokrąglenia, zasady pracy z gitem. Pliki testowe w formacie kontraktu pozwoliły mi i Walerianowi zacząć, zanim Wojtek skończył czyszczenie danych. A każdy próg ma test tuż pod, na i tuż nad progiem; na GitHubie testy uruchamiają się przy każdym wypchnięciu.
+Jak pracowaliśmy. Od pierwszej godziny prowadziliśmy jeden dziennik: każde założenie i każda decyzja ma godzinę, powód i status. Na koniec dnia to dwadzieścia cztery założenia i szesnaście decyzji. Założenie, które się zmieniło, nie znika — dostaje status „zmienione” i następcę. Ewa dostaje ten sam rejestr po angielsku: co założyliśmy i mniej więcej kiedy.
 
-## Slajd 11 — Demo · Rafał (klawiatura), Wojtek (komentarz) · 10:00–12:30
+Mieliśmy limit pięciu pytań do Ewy. Przy każdym od razu napisaliśmy, co przyjmiemy bez odpowiedzi, więc brak odpowiedzi nigdy nas nie zatrzymał. Nie pytaliśmy o to, co da się rozstrzygnąć z danych: że P-17 i P-17B to ten sam van i że chłodnie odpadają już na ładowności. Ewa potwierdziła oba wnioski.
 
-[Rafał przełącza na terminal w katalogu z rozpakowanym zipem. Polecenia wkleja z `RERUN.md` albo z `DEMO.md`. Gdyby coś padło — pokazuje pliki z `demo_backup/`.]
+## Slajd 11 — Odpowiedzi Ewy o 12:00 · 8:45–9:45
 
-**Wojtek, krok 1:** Tak wygląda uruchomienie na oryginalnym eksporcie. [Rafał uruchamia.] Na ekranie raport z czyszczenia, ostrzeżenie o liczniku P-27 i trzy liczby kontrolne: trzydzieści osiem, dwa tysiące siedemset siedemdziesiąt siedem, trzysta czterdzieści cztery tysiące dziewięćset pięćdziesiąt dwa. Na liście osiem vanów — ten sam wynik, który jest w wątku.
+Około dwunastej przyszły odpowiedzi Ewy i zmieniły prawie wszystko. Rano mieliśmy najgorszy dzień w pięćdziesięciu siedmiu procentach, doładowanie w przerwie, sześć ładowarek i oszczędność liczoną rocznie — wynik: trzy vany. Po odpowiedziach: percentyl, sześćdziesiąt procent, bez ładowania w dzień, dziesięć ładowarek i pięć lat po zapłaceniu za auto — wynik: osiem vanów.
 
-**Wojtek, krok 2:** Teraz zmieniamy jedną liczbę w pliku parametrów: percentyl z dziewięćdziesięciu pięciu na sto, czyli najgorszy dzień — reguła „żaden van nigdy nie zawiedzie”. Zero zmian w kodzie. [Rafał uruchamia z `params_p100.csv`.] Wypadają P-30 i P-21, zostaje sześć vanów, wynik spada z dziewięćdziesięciu pięciu do pięćdziesięciu dziewięciu tysięcy.
+Ważne jest, ile to kosztowało. Większość zmian to były nowe wartości w pliku z parametrami, nie nowy kod. Całość zajęła około dwudziestu minut, a wynik sprawdziliśmy drugą, niezależną metodą — zgodnie co do złotówki.
 
-**Wojtek, krok 3:** I tak będzie wyglądał następny kwartał — sześć tygodni danych, nowy van, zepsuty licznik. [Rafał uruchamia na `fresh_trips.csv`.] Narzędzie samo liczy okres — czterdzieści jeden dni — i przelicza roczne kilometry. Ostrzega o nieznanym vanie P-39, o ujemnym liczniku P-13 i o kursie P-21 bez dystansu. Niczego nie poprawia po cichu. Na liście siedem vanów.
+## Slajd 12 — Praca równoległa bez konfliktów · 9:45–10:30
 
-## Slajd 12 — Co dostaje analityk Ewy · Wojtek · 12:30–13:00
+Pracowaliśmy równolegle i bez konfliktów dzięki czterem rzeczom. Kontrakt mówił, co sobie przekazujemy — funkcje, kolumny i do kogo należy który plik. Konstytucja mówiła, jak piszemy: język, format błędów, zaokrąglenia, zasady pracy z gitem. Każda liczba siedzi w pliku z parametrami, więc odpowiedź Ewy to zmiana wartości, a nie kodu. I weryfikacja: liczby kontrolne policzyliśmy dwa razy dwiema metodami, a każdy próg ma test tuż pod, na i tuż nad progiem. Testy uruchamiają się automatycznie na GitHubie przy każdym wypchnięciu.
 
-Ewa pytała, co jej analityk otworzy i co wpisze. Otworzy jeden folder z zipa i wpisze jedno polecenie — to, które przed chwilą widzieliście. Potrzebuje tylko Pythona. Dostaje dwa pliki w formacie importu Ewy, pełną listę vanów z powodami i raport z czyszczenia. Edytuje tylko plik z parametrami. Instrukcja mówi krok po kroku, co zrobić i jak czytać powody, a każdy błąd to jedna czytelna linia zamiast komunikatu programisty. Zip sprawdziliśmy w pustym katalogu, tak jak zrobi to analityk — wynik jest identyczny co do bajtu.
+## Slajd 13 — Demo · 10:30–13:00
 
-## Slajd 13 — Podsumowanie · Walerian · 13:00–13:30
+[Przełączyć na terminal w katalogu z rozpakowanym zipem. Polecenia wklejać z `RERUN.md` albo z `DEMO.md`. Gdyby coś padło — pokazać pliki z `demo_backup/`.]
 
-Podsumowując. Rekomendujemy kupić osiem aut elektrycznych z dotacją: dwa Cargo L i sześć Cargo S, wszystkie w North. W pięć lat to około dziewięćdziesięciu pięciu i pół tysiąca złotych na plusie.
+**Krok 1.** Tak wygląda uruchomienie na oryginalnym eksporcie. [Uruchomić.] Na ekranie raport, ostrzeżenie o liczniku P-27 i trzy liczby kontrolne: trzydzieści osiem, dwa tysiące siedemset siedemdziesiąt siedem, trzysta czterdzieści cztery tysiące dziewięćset pięćdziesiąt dwa. Na liście osiem vanów — ten sam wynik, który jest w wątku.
 
-Główne ryzyko: mamy dane tylko z lata. Zanim firma kupi auta, warto uruchomić narzędzie na eksporcie z czwartego kwartału — analityk zrobi to sam.
+**Krok 2.** Teraz zmieniamy jedno założenie w pliku parametrów: percentyl z dziewięćdziesięciu pięciu na sto, czyli najgorszy dzień. Zero zmian w kodzie. [Uruchomić z `params_p100.csv`.] Wypadają P-30 i P-21, zostaje sześć vanów, wynik spada z dziewięćdziesięciu pięciu do pięćdziesięciu dziewięciu tysięcy.
 
-A o procesie świadczy jedno: zmiana wymagań w połowie dnia zajęła nam około dwudziestu minut. Dziękujemy — chętnie odpowiemy na pytania.
+**Krok 3.** I tak będzie wyglądał następny kwartał — sześć tygodni danych, nowy van, zepsuty licznik. [Uruchomić na `fresh_trips.csv`.] Narzędzie samo liczy okres — czterdzieści jeden dni — i przelicza roczne kilometry. Ostrzega o nieznanym vanie P-39, o ujemnym liczniku P-13 i o kursie P-21 bez dystansu. Niczego nie poprawia po cichu. Na liście siedem vanów.
+
+## Slajd 14 — Co dostaje analityk Ewy · 13:00–13:30
+
+Ewa pytała, co jej analityk otworzy i co wpisze. Otworzy jeden folder z zipa i wpisze jedno polecenie — to, które przed chwilą widzieliście. Potrzebuje tylko Pythona. Dostaje listę w formacie importu Ewy, podsumowanie, pełną listę vanów z powodami i raport z czyszczenia. Edytuje tylko plik z parametrami. Każdy błąd to jedna czytelna linia. Zip sprawdziliśmy w pustym katalogu, tak jak zrobi to analityk — wynik identyczny co do bajtu.
+
+## Slajd 15 — Podsumowanie · 13:30–14:00
+
+Podsumowując. Rekomendujemy kupić osiem aut elektrycznych z dotacją: dwa Cargo L i sześć Cargo S, wszystkie w North — około dziewięćdziesięciu pięciu i pół tysiąca złotych na plusie w pięć lat.
+
+Ten wynik stoi na kilku założeniach: dziewięćdziesiąty piąty percentyl dnia w sześćdziesięciu procentach zasięgu, najcięższy ładunek jako limit, bez ładowania w dzień, zakup z dotacją i horyzont pięciu lat. Każde z nich to jedna wartość w pliku parametrów.
+
+Główne ryzyko: mamy dane tylko z lata. Zanim firma kupi auta, warto uruchomić narzędzie na eksporcie z czwartego kwartału — analityk zrobi to sam. Dziękujemy, chętnie odpowiemy na pytania.
 
 ---
 
-## Pytania, których się spodziewamy (13:30–15:00)
+## Pytania, których się spodziewamy (14:00–15:00)
 
-Odpowiedzi do powiedzenia własnymi słowami; pełna lista w `PREZENTACJA.md`.
-
-| Pytanie | Kto | Odpowiedź |
-|---|---|---|
-| Dlaczego osiem, skoro dotacja jest na dziesięć? | Walerian | Reguły przechodzi piętnaście vanów. Sześć z nich nie zwraca się w pięć lat — to głównie vany z małym przebiegiem albo z opłatą za leasing. P-31 jest na plusie, ale nie mieści się w limicie trzech vanów z South. W North zostają dwie wolne ładowarki. |
-| Skąd 95. percentyl i 60%? | Rafał | To reguła Ewy: „styczeń plus margines”. Nasze niezależne oszacowanie rano dało 57% — temperatura, ładunek i rezerwa, ze źródłami w pliku z założeniami. |
-| Co, jeśli P-30 albo P-21 nie da rady w styczniu? | Rafał | Ich najdłuższe dni to 166 i 159 km przy 156 km zasięgu. Dlatego rezerwowe diesle. Przy regule „najgorszy dzień” wypadają — to pokazał krok 2 demo. |
-| Czemu zakup, a nie leasing? | Walerian | Dotacja jest tylko przy zakupie. Cargo S po dotacji kosztuje 105 tysięcy, a 60 rat leasingu — 174 tysiące. |
-| Czy analityk poradzi sobie bez was? | Wojtek | Pokazaliśmy to w kroku 3 demo. Test z samej instrukcji robi osoba, która nie pisała skryptu. |
+| Pytanie | Odpowiedź |
+|---|---|
+| Dlaczego osiem, skoro dotacja jest na dziesięć? | Założenia przechodzi piętnaście vanów. Sześć z nich nie zwraca się w pięć lat — głównie vany z małym przebiegiem albo z opłatą za leasing. P-31 jest na plusie, ale nie mieści się w limicie trzech vanów z South. W North zostają dwie wolne ładowarki. |
+| Skąd 95. percentyl i 60%? | To reguła Ewy: „styczeń plus margines”. Nasze niezależne oszacowanie dało 57% — slajd 6. |
+| Co, jeśli P-30 albo P-21 nie da rady w styczniu? | Ich najdłuższe dni to 166 i 159 km przy 156 km zasięgu. Dlatego rezerwowe diesle. Przy regule „najgorszy dzień” wypadają — krok 2 demo. |
+| Czemu zakup, a nie leasing? | Dotacja tylko przy zakupie. Cargo S po dotacji 105 tysięcy, 60 rat leasingu 174 tysiące. |
+| Które założenie jest najsłabsze? | Że trasy są takie same przez cały rok — mamy dane tylko z lata. Dlatego zalecamy uruchomienie na eksporcie z IV kwartału. |
+| Czy analityk poradzi sobie bez was? | Pokazaliśmy to w kroku 3 demo; zip sprawdziliśmy w pustym katalogu. |
