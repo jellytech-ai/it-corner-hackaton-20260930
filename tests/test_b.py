@@ -73,6 +73,11 @@ class PipelineOnFixtures(unittest.TestCase):
         self.assertEqual(s["total_km"], "344952")
         self.assertEqual(s["recommended_count"], str(len(read(os.path.join(self.out, "shortlist.csv")))))
 
+    def test_all_vans_money_is_integer_or_blank(self):
+        for r in read(os.path.join(self.out, "all_vans.csv")):
+            for k in ("annual_km", "annual_fuel_saving_pln", "saving_pln"):
+                self.assertRegex(r[k], r"^(-?\d+)?$", (r["van_id"], k))
+
     def test_all_vans_has_every_van(self):
         rows = read(os.path.join(self.out, "all_vans.csv"))
         self.assertEqual(len(rows), 38)

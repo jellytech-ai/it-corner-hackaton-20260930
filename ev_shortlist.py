@@ -21,6 +21,18 @@ SUMMARY_FIGURES = ["vans_assessed", "trips_counted", "total_km", "recommended_co
                    "annual_fuel_saving_pln", "saving_pln", "saving_basis"]
 NUMERIC_PROFILE = {"km_period", "worst_day_km", "max_load_kg", "days", "trips",
                    "payload_kg", "two_shift_days", "monthly_lease_pln", "year"}
+INT_COLS = {"annual_km", "annual_fuel_saving_pln", "saving_pln"}
+
+
+def export_format(row):
+    """KONTRAKT 7: range_check_km z 1 miejscem, km i kwoty jako liczby calkowite."""
+    out = dict(row)
+    for k in INT_COLS & set(out):
+        if out[k] != "":
+            out[k] = round(float(out[k]))
+    if out.get("range_check_km", "") != "":
+        out["range_check_km"] = "%.1f" % float(out["range_check_km"])
+    return out
 
 
 def read_csv(path):
@@ -148,8 +160,8 @@ def run(trips_path, vans_path, params_path, out_dir, fixture_mode=False):
     econ = economics(profile, feas, params, period_days(trips))
 
     ranked = rank(feas, econ, int(params["max_evs_grant"]), depot_limits(params))
-    shortlist = [{**r, "rank": i + 1, "reason": r.get("reason", r.get("reject_reason", "")),
-                 "range_check_km": "%.1f" % r["range_check_km"]}
+    shortlist = [export_format({**r, "rank": i + 1,
+                                "reason": r.get("reason", r.get("reject_reason", ""))})
                  for i, r in enumerate(ranked)]
 
     summary = [
@@ -164,7 +176,8 @@ def run(trips_path, vans_path, params_path, out_dir, fixture_mode=False):
 
     feas_by = {f["van_id"]: f for f in feas}
     econ_by = {e["van_id"]: e for e in econ}
-    all_rows = [{**p, **feas_by[p["van_id"]], **econ_by[p["van_id"]]} for p in profile]
+    all_rows = [export_format({**p, **feas_by[p["van_id"]], **econ_by[p["van_id"]]})
+                for p in profile]
 
     os.makedirs(out_dir, exist_ok=True)
     write_csv(os.path.join(out_dir, "shortlist.csv"), SHORTLIST_COLS, shortlist)
