@@ -1,0 +1,39 @@
+van_id,feasible,ev_model,ev_depot,range_check_km,midday_charging,day_tariff_share,reject_reason
+P-01,no,,North,271.4,no,0,payload; range
+P-02,no,,South,124.3,no,0,payload; no chargers at depot
+P-03,no,,North,153.2,no,0,refrigerated; payload; range
+P-04,no,,North,150.9,no,0,range
+P-05,no,Volta Cargo S,South,143.6,no,0,no chargers at depot
+P-06,no,,North,116.5,no,0,payload
+P-07,no,,South,163.5,no,0,refrigerated; payload; range; no chargers at depot
+P-08,yes,Volta Cargo L,North,190.0,no,0,
+P-09,no,,North,260.6,no,0,range
+P-10,no,Volta Cargo S,South,144.0,no,0,no chargers at depot
+P-11,no,,North,133.7,no,0,payload
+P-12,no,Volta Cargo L,South,201.4,no,0,no chargers at depot
+P-13,no,,North,148.8,no,0,range
+P-14,yes,Volta Cargo S,North,148.0,no,0,
+P-15,no,,South,131.0,no,0,payload; no chargers at depot
+P-16,no,,North,173.7,no,0,range
+P-17B,no,,South,158.5,no,0,payload; range; no chargers at depot
+P-18,no,,South,123.6,no,0,payload; no chargers at depot
+P-19,no,,North,150.2,no,0,refrigerated; range
+P-20,no,Volta Cargo S,South,142.5,no,0,no chargers at depot
+P-21,no,,North,158.6,no,0,range
+P-22,no,,North,149.8,no,0,payload; range
+P-23,no,,South,148.4,no,0,refrigerated; payload; range; no chargers at depot
+P-24,no,,North,301.6,no,0,range
+P-25,no,Volta Cargo S,South,148.2,no,0,no chargers at depot
+P-26,yes,Volta Cargo S,North,141.8,no,0,
+P-27,no,,South,157.1,no,0,payload; range; no chargers at depot
+P-28,no,,North,160.3,no,0,range
+P-29,no,,South,271.2,no,0,range; no chargers at depot
+P-30,no,,North,166.2,no,0,range
+P-31,no,,South,150.4,no,0,range; no chargers at depot
+P-32,no,,South,148.8,no,0,range; no chargers at depot
+P-33,no,,North,207.7,no,0,range
+P-34,no,,South,157.3,no,0,refrigerated; payload; range; no chargers at depot
+P-35,no,,North,144.2,no,0,refrigerated; payload
+P-36,no,,South,253.4,no,0,range; no chargers at depot
+P-37,no,,North,263.8,no,0,range
+P-38,no,,South,285.1,no,0,payload; range; no chargers at depot

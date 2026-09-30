@@ -1,0 +1,68 @@
+# TOR C — Ekonomia i dokumenty
+
+Najpierw przeczytaj: `KONTRAKT.md`, potem `HANDOFF.md` sekcje 1, 2, 6 i 9.
+
+## Cel
+
+Policzyć dla każdego vana roczne km i oszczędności, a potem napisać wszystko, co Ewa i zarząd przeczytają: notatkę, założenia, instrukcję. Jesteś też właścicielem `HANDOFF.md` i rejestru decyzji.
+
+## Twoje pliki
+
+`economics.py`, `tests/test_c.py`, `RERUN.md`, `BOARD_NOTE.md`, `ASSUMPTIONS.md`, `HANDOFF.md`, ten plik.
+
+## Dane na start
+
+`fixtures/van_profile.csv` i `fixtures/feasibility.csv` (uproszczony wzór; prawdziwy wynik da tor B o 12:20).
+
+## Zadania
+
+| # | Do kiedy | Zadanie | Gotowe, gdy |
+|---|---|---|---|
+| C1 | 11:40 | **decyzja o podstawie `saving_pln`** (patrz niżej) — uzgodnić z zespołem | zapisane w dzienniku i w `saving_basis` |
+| C2 | 12:00 | `annual_km` = `km_period` × `days_per_year` ÷ `period_days` | P-26: 8580 km × 365 ÷ 90 ≈ 34 797 km |
+| C3 | 12:15 | `annual_fuel_saving_pln` = koszt diesla − koszt ładowania | test na jednym vanie policzonym ręcznie |
+| C4 | 12:20 | wypchnięcie gałęzi `tor-c` z `economics` zwracającym oba pola | B scala na M1 |
+| C5 | 13:00 | `saving_pln` według uzgodnionej podstawy; `saving_basis` jako jedno zdanie po angielsku | suma po shortliście zgadza się z `summary.csv` |
+| C6 | 13:00 | szkic `RERUN.md` (EN) | 5–7 kroków, bez odwołań do nas |
+| C7 | 13:30–14:00 | odpowiedzi Ewy (dotacja, wyjście z leasingu, los diesla) → parametry i formuła; wpis do `HANDOFF.md` sekcja 10 | ponowne uruchomienie |
+| C8 | 14:45 | `BOARD_NOTE.md` (EN, 1 strona): rekomendacja, liczby, dlaczego nie „te, co jeżdżą najwięcej”, ryzyko zimy, wrażliwość, co dalej | liczby z zamrożonego uruchomienia |
+| C9 | 15:15 | `ASSUMPTIONS.md` (EN): założenia A1–A17 i decyzje D1–D5 z godzinami, plus „co byśmy zapytali dalej” | zgodne z `HANDOFF.md` |
+| C10 | 15:15 | `RERUN.md` poprawiony po teście toru A | A potwierdza |
+| C11 | 15:40 | komplet dokumentów w wątku; plan prezentacji (kto mówi co) | — |
+
+## Formuły (wszystkie wartości z `params.csv`)
+
+- **Koszt diesla / rok** = `annual_km` × `fuel_l_per_100km.<model>` ÷ 100 × `diesel_price_pln_per_l`
+- **Koszt ładowania / rok** = `annual_km` × `ev.<model>.kwh_per_100km` ÷ 100 × `winter_energy_uplift` × cena, gdzie cena = (1 − `day_tariff_share`) × nocna + `day_tariff_share` × dzienna
+- **Oszczędność na serwisie / rok** = `annual_km` × (`maintenance_diesel_pln_per_km` − `maintenance_ev_pln_per_km`)
+
+Przykład kontrolny, P-14 (Brona D35 Long → Cargo S, 5623 km w 90 dni):
+`annual_km` ≈ 22 804; diesel ≈ 12 926 PLN; ładowanie ≈ 3 492 PLN; **oszczędność na paliwie ≈ 9 434 PLN**; serwis ≈ 4 561 PLN.
+
+## Decyzja C1 — podstawa `saving_pln` (najważniejsza w tym torze)
+
+Problem: oszczędność na paliwie i serwisie to ok. 14 000 PLN rocznie na van, a leasing Cargo S kosztuje 34 800 PLN rocznie. Liczona „wprost” wymiana jest na minusie dla każdego vana. Wynik zależy od tego, **z czym porównujemy**.
+
+| Wariant | Co wliczamy | Uwaga |
+|---|---|---|
+| 1. Tylko eksploatacja | paliwo + serwis, rocznie | proste i sprawdzalne, ale pomija koszt EV, o który zarząd zapyta |
+| 2. Pełny koszt, 5 lat | (paliwo + serwis) × 5 − 60 rat leasingu EV + uniknięte raty diesla do końca jego leasingu | uczciwe; vany własne wychodzą na minusie bez dotacji |
+| 3. Wymiana i tak konieczna | jak wariant 2, ale diesel z kończącym się leasingiem lub stary (np. rocznik do 2018) i tak byłby zastąpiony nowym dieslem w leasingu | najbliższe rzeczywistości, wymaga założenia o racie nowego diesla (w danych: 2390–3240 PLN/mies.) |
+
+Propozycja: **wariant 2 jako `saving_pln`**, z dotacją jako osobnym parametrem (`grant_pln_per_van`, domyślnie 0 do odpowiedzi Ewy), a w notatce jedno zdanie o wariancie 3. `annual_fuel_saving_pln` pozostaje czystą różnicą paliwo − ładowanie, zgodnie z definicją Ewy.
+
+Nowe parametry zgłoś torowi A (właściciel `params.csv`): `grant_pln_per_van`, `saving_horizon_years`, ewentualnie `diesel_resale_pln`, `lease_exit_share`.
+
+## Rejestr decyzji
+
+Zbierasz wpisy z dzienników w `TOR-A-dane.md` i `TOR-B-wykonalnosc.md` przy każdym scaleniu (12:20, 13:50, 14:45) i przenosisz do `HANDOFF.md` sekcje 6 i 10.
+
+## Czego nie robisz
+
+Czyszczenia danych, filtrów, rankingu, zapisu plików wynikowych.
+
+## Dziennik
+
+| Godzina | Decyzja / zdarzenie |
+|---|---|
+| | |

@@ -94,7 +94,7 @@ UTF-8 CSV, przecinek, wiersz nagłówka, kropka dziesiętna, bez separatorów ty
 |---|---|---|
 | `vans_assessed` | 39 identyfikatorów | **38** (jeśli P-17 = P-17B) |
 | `trips_counted` | 2999 | **2777** |
-| `total_km` (licznik) | 372 059 | **344 653** (zawiera błędny wiersz −208,6; po korekcie będzie o ok. 300–420 km więcej) |
+| `total_km` (licznik) | 372 059 | **344 952** (wiersz P-27 z 13.08 liczony z GPS 90,3 km — reguła domyślna, do potwierdzenia w torze A) |
 
 ---
 
@@ -275,6 +275,17 @@ Wnioski wstępne:
 
 Stan na 11:10. Kroki 1–3 z wersji 0.1 (repo, profil danych, założenia zimowe) są zrobione; pytania do Ewy gotowe do wysłania.
 
+### Dokumenty robocze torów
+
+| Plik | Dla kogo |
+|---|---|
+| `KONTRAKT.md` | wszyscy: stanowisko pracy, własność plików, interfejsy, schematy tabel, godziny scalania |
+| `TOR-A-dane.md` | tor A: zadania z godzinami, reguły czyszczenia, decyzje |
+| `TOR-B-wykonalnosc.md` | tor B: filtry, ranking, eksport, integracja |
+| `TOR-C-ekonomia-dokumenty.md` | tor C: formuły, podstawa `saving_pln`, dokumenty |
+| `params.csv` | wspólne parametry (właściciel: A) |
+| `fixtures/` | pliki testowe w formacie kontraktu — B i C pracują na nich od razu |
+
 ### Krok 0 — wspólny kontrakt (wszyscy, 15 min)
 
 Bez tego tory nie są niezależne. Ustalamy i zapisujemy:
@@ -386,6 +397,7 @@ Demo w trzech krokach:
 | D3 | 10:50 | Ładowność EV to twardy limit, sprawdzany na maksimum z danych; nie pytamy Ewy i nie proponujemy rozkładania ładunku na dwa auta | Ładowność znamionowa to granica prawna; Witold: EV „musi unieść to, co vany wożą dziś”; rozłożenie ładunku oznacza zmianę tras i dodatkowy kurs. Vany odpadające przez pojedyncze dni powyżej 1050 kg (P-06, P-02, P-18: 1 dzień; P-22: 2; P-11: 3) pokazujemy w notatce jako „blisko progu” |
 | D4 | 10:50 | Sezonowość przyjmujemy jako założenie A12, bez pytania Ewy | Ewa nie ma danych z zimy; narzędzie zweryfikuje to na eksporcie za IV kwartał |
 | D5 | 11:13 | Narzędzie to jeden plik `ev_shortlist.py` bez zależności, z parametrami w `params.csv`; roczne km liczone z długości okresu w danych | Ewa: „a script is enough”, materiały idą do wątku jako pliki, analityk uruchamia bez nas |
+| D6 | 11:20 | Korekta D5: narzędzie to jeden katalog i jedno polecenie, ale cztery pliki `.py` (`data.py`, `feasibility.py`, `economics.py`, `ev_shortlist.py`) | trzy osoby nie mogą równolegle edytować jednego pliku; do wątku trafia zip |
 
 ### Otwarte
 
@@ -418,3 +430,4 @@ Demo w trzech krokach:
 | 11:10 | Harmonogram z terminem 16:00 i lista cięć (sekcja 9) |
 | 11:13 | Zakres narzędzia dla analityka i scenariusz prezentacji (sekcja 9, D5) |
 | 11:13 | A17: analityk jest techniczny i ma Pythona |
+| 11:20 | Dokumenty torów, `KONTRAKT.md`, `params.csv` i pliki testowe; D6 |

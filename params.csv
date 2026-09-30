@@ -1,0 +1,32 @@
+parameter,value
+diesel_price_pln_per_l,5.20
+fuel_l_per_100km.Brona D35,9.6
+fuel_l_per_100km.Brona D35 Long,10.9
+fuel_l_per_100km.Kestrel Cargo 3.5,11.8
+maintenance_diesel_pln_per_km,0.34
+maintenance_ev_pln_per_km,0.14
+electricity_night_pln_per_kwh,0.58
+electricity_day_pln_per_kwh,0.92
+winter_energy_uplift,1.10
+ev.Volta Cargo S.range_wltp_km,260
+ev.Volta Cargo S.payload_kg,1050
+ev.Volta Cargo S.kwh_per_100km,24
+ev.Volta Cargo S.price_pln,150000
+ev.Volta Cargo S.lease_pln_per_month,2900
+ev.Volta Cargo L.range_wltp_km,380
+ev.Volta Cargo L.payload_kg,880
+ev.Volta Cargo L.kwh_per_100km,27
+ev.Volta Cargo L.price_pln,195000
+ev.Volta Cargo L.lease_pln_per_month,3770
+ev_lease_months,60
+winter_range_factor,0.57
+winter_temp_factor,0.70
+winter_payload_factor,0.90
+charger_kw,22
+midday_connect_minutes,15
+chargers.North,6
+chargers.South,0
+max_evs_grant,10
+exclude_refrigerated,yes
+van_alias.P-17,P-17B
+days_per_year,365
