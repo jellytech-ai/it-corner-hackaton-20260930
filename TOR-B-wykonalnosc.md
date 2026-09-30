@@ -59,6 +59,14 @@ Czyszczenia danych, kosztów i oszczędności, dokumentów.
 | 11:35 | B1 gotowe: `ev_shortlist.py` (CLI, potok, 4 pliki) z zaślepkami A/B/C wyłączającymi się, gdy pojawi się `data.py`/`feasibility.py`/`economics.py`; testy w `tests/test_b.py` |
 | 11:45 | B2 gotowe: `feasibility.assess` — chłodnia, ładowność, zasięg zimowy najgorszego dnia, punkty w bazie; zgodne z całym `fixtures/feasibility.csv`. Reguła wyboru: `ev_model` = najtańszy model (po `price_pln`) spełniający ładowność i zasięg; gdy żaden nie pasuje, `reject_reason` wymienia braki najtańszego modelu. Porównania z tolerancją 1e-9 (260 × 0,57 w float = 148,20000000000002). Chłodnie: `ev_model` puste. |
 | 11:50 | B3 gotowe: dobór modelu = najtańszy po `price_pln` spełniający ładowność i zasięg (P-26, P-14 → Cargo S; P-08 bez doładowania → Cargo L). Test, że kolejność idzie z `params.csv`. |
+| 11:55 | B4 gotowe: liczby kontrolne potwierdzone niezależnie z surowego `trips.csv` (bez Pythona): 2999 wierszy surowych → **2777 / 344952 / 38**. Polecenie niżej. Uwaga: przy regule „wartość bezwzględna” dla P-27 13.08 `total_km` byłoby 345070 (+118) — liczba zależy od decyzji toru A. |
+
+```sh
+tail -n +2 trips.csv | sort -u | awk -F, '
+  { km = ($5 == "" || $5 <= 0) ? $6 : $5; tot += km; n++
+    v = ($2 == "P-17") ? "P-17B" : $2; vans[v] = 1 }
+  END { printf "trips_counted=%d total_km=%.0f vans=%d\n", n, tot, length(vans) }'
+```
 
 ## Pytania na koniec pracy
 
@@ -67,3 +75,4 @@ Czyszczenia danych, kosztów i oszczędności, dokumentów.
 | Q1 | Chłodnia: wpisywać `ev_model`, jeśli technicznie pasuje? Wpływa na to, czy C liczy dla niej ekonomię w `all_vans.csv` | puste — żaden oferowany EV nie ma agregatu |
 | Q2 | `reject_reason` przy braku modelu: braki najtańszego modelu (zgodne ze wzorem) czy braki każdego modelu osobno (np. P-04: „S: range; L: payload”)? | braki najtańszego |
 | Q3 | P-14 „na progu” (decyzja 1): opis ląduje w `reason` dopiero w B9, bo wzór ma puste `reject_reason` dla wykonalnych | B9 |
+| Q4 | P-27 13.08 (licznik −208,6): GPS 90,3 (344952) czy wartość bezwzględna (345070)? Decyzja toru A; B potwierdził obie wersje | GPS |
