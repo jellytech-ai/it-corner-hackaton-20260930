@@ -19,7 +19,7 @@ All times are CEST on 30 Sep 2026. "Confirmed by you" means your lunch answers s
 
 | # | When | Assumption | Status |
 |---|---|---|---|
-| A19 | 12:15 | **Your rule:** a van qualifies if its **95th-percentile day** fits within **60% of the EV's WLTP range**: Volta Cargo S 156 km, Cargo L 228 km. The 95th-percentile day is taken from the van's daily totals (all its routes on a day added up), with linear interpolation as in Excel's `PERCENTILE.INC`. `range_check_km` in `shortlist.csv` is this figure. | confirmed by you |
+| A19 | 12:15 | **Your rule:** a van qualifies if its **95th-percentile day** fits within **60% of the EV's WLTP range**: Volta Cargo S 156 km, Cargo L 228 km. The 95th-percentile day is taken from the van's daily totals (all its routes on a day added up), with linear interpolation as in Excel's `PERCENTILE.INC`. Only days on which the van drove are counted; days without trips are not counted as zero. `range_check_km` in `shortlist.csv` is this figure. | rule confirmed by you; which days count is our choice (you asked us to choose, 15:05) |
 | A4, A6 | 10:15, 10:30 | Our morning rule was stricter: the van's worst day within 57% of WLTP. It is replaced by A19; the build-up below shows why 60% is a reasonable January figure. | replaced by A19 |
 | A7 | 10:30 | After 5 years battery ageing takes a further × 0.87, so 60% of WLTP becomes about 52%. Shown in the board note as a stress test, not used for the shortlist. | accepted |
 | A8 | 10:30 | Energy use is the dealer's figure plus 10% over the year for winter. | accepted |
@@ -40,6 +40,7 @@ How our morning estimate of winter range was built (it came out at 57%, close to
 | # | When | Assumption | Status |
 |---|---|---|---|
 | A9 | 10:30 | The EV's rated payload must cover **the heaviest load the van carried** on any route in the telematics export (the load weight recorded for each route). No seasonal margin. | confirmed by you |
+| A25 | 15:20 | The load weight recorded for each route is **goods only, without the driver**. The dealer states the EV payload "with a driver on board", so the two figures compare directly and we add nothing for the driver. If the recorded weight included the driver, fewer vans would fit. | accepted (you asked us to choose, 15:12) |
 | A10 | 10:42 | Refrigerated vans (P-03, P-07, P-19, P-23, P-34, P-35) stay diesel in year 1. | confirmed by you |
 
 ## Charging
@@ -63,8 +64,8 @@ How our morning estimate of winter range was built (it came out at 57%, close to
 
 | # | When | Assumption | Status |
 |---|---|---|---|
-| A17 | 11:13 | Your analyst is comfortable with the command line, has Python 3 and can edit `params.csv`. | accepted (not confirmed by you) |
-| A18 | 12:12 | The next export has the same two files with the same column names; only the rows and the period change. If a column is missing, the tool stops and names it. | accepted (not confirmed by you) |
+| A17 | 11:13 | Your analyst is comfortable with the command line, has Python 3 and can edit `params.csv`. | accepted; at 15:09 you said "I live in Excel… one command to rerun it", so `RERUN.md` explains how to open a terminal and how to open the results in Excel |
+| A18 | 12:12 | The next export has the same two files with the same column names; only the rows and the period change. If a column is missing, the tool stops and names it. | accepted (you asked us to choose, 15:09) |
 
 ## Decisions
 
@@ -94,6 +95,9 @@ How our morning estimate of winter range was built (it came out at 57%, close to
 | lunch | Winter range | 95th-percentile day within 60% of WLTP. | A19 |
 | lunch | Diesel leases | Leases ending within 12 months are not renewed; ending early costs 3 monthly fees. | A22 |
 | lunch (answers to other teams) | Saving basis, model choice, two-shift vans, fridge vans, odometer, P-17 | Five years, EV after grant, lease exit fee, no diesel lease payments or resale; the better model over five years; no charging between routes; fridge vans out in year 1; trust the odometer; P-17B replaced P-17. | D13, D14, A21, A10, A3, A2 |
+| 15:09 | How many vans | "As many as make sense, and the grant stops at 10." | 8 vans stay: only vans that pay back in five years are listed (D15) |
+| 15:09 | Analyst and rerun | "I live in Excel. Give me CSV, XLSX if you like, and one command to rerun it." | A17; one command in `RERUN.md` |
+| 15:05–15:12 (answers to us and other teams) | Same files next quarter, scaling km to a year, winter mileage, which South vans, which days count for the percentile, whether the load includes the driver | "Pick the one that makes sense and put it in your assumptions list." | A18, A12, A23, A19, A25 |
 
 ## What we would ask next
 

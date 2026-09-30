@@ -43,7 +43,7 @@ After the first run Python creates a `__pycache__` folder next to the scripts. T
 
    Keep the file as CSV with a comma separator and a dot as the decimal mark.
 
-3. **Run the tool** from the tool folder:
+3. **Run the tool** from the tool folder. To open a command window there: on Windows, open the folder in File Explorer, type `cmd` in the address bar and press Enter; on a Mac, open Terminal, type `cd ` followed by a space, drag the folder into the window and press Enter. Then copy the line below, paste it and press Enter:
 
    ```
    python3 ev_shortlist.py --trips trips.csv --vans vans.csv --params params.csv --out results/
@@ -53,7 +53,7 @@ After the first run Python creates a `__pycache__` folder next to the scripts. T
 
 5. **Read the warnings in `results/data_report.txt`.** Lines starting with `WARNING` need a look; nothing is dropped silently. The report lists removed duplicates, applied van aliases, rows where GPS distance replaced a broken odometer reading, trips of vans that are not in the register (left out of the figures), registered vans without trips, and the date range used. If an unknown van appears, add it to `vans.csv` or to `van_alias` in `params.csv` and run again.
 
-6. **Use the results** in `results/`:
+6. **Use the results** in `results/`. The CSV files open in Excel; if the columns do not split, use Data → From Text/CSV and choose comma as the separator. Do not save them back over the originals from Excel.
 
    | File | What it holds |
    |---|---|
