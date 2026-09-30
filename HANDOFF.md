@@ -272,17 +272,17 @@ Wnioski wstępne:
 
 ## 9. Plan (3 deweloperów, praca równoległa)
 
-Stan na 11:06. Kroki 1–3 z wersji 0.1 (repo, profil danych, założenia zimowe) są zrobione; pytania do Ewy gotowe do wysłania.
+Stan na 11:10. Kroki 1–3 z wersji 0.1 (repo, profil danych, założenia zimowe) są zrobione; pytania do Ewy gotowe do wysłania.
 
 ### Krok 0 — wspólny kontrakt (wszyscy, 15 min)
 
 Bez tego tory nie są niezależne. Ustalamy i zapisujemy:
 
-- **`config`** — jeden plik z parametrami (ceny, spalanie, współczynnik zimowy, ładowność i zasięg EV, liczba punktów ładowania, mapowanie P-17 → P-17B).
+- **`config`** (plik `params.csv`) — jeden plik z parametrami (ceny, spalanie, współczynnik zimowy, ładowność i zasięg EV, liczba punktów ładowania, mapowanie P-17 → P-17B).
 - **`van_profile`** — tabela pośrednia, jeden wiersz na van: `van_id, model, depot, refrigerated, ownership, lease_end, monthly_lease_pln, days, km_13w, worst_day_km, max_load_kg, two_shift`. Tor A ją produkuje, tory B i C ją czytają.
 - **`feasibility`** — wynik toru B: `van_id, feasible, ev_model, ev_depot, range_check_km, reject_reason`. Tor C ją czyta.
 - Do czasu, aż tor A odda prawdziwe dane, B i C pracują na tabeli z sekcji 5 jako danych testowych.
-- Język, struktura katalogów, jedno polecenie uruchamiające całość.
+- Jeden plik `ev_shortlist.py` bez zewnętrznych bibliotek; tory pracują nad osobnymi funkcjami i scalają je do tego pliku (szczegóły w „Narzędzie dla analityka”).
 
 ### Trzy tory
 
@@ -294,14 +294,32 @@ Bez tego tory nie są niezależne. Ustalamy i zapisujemy:
 
 Integracja (ranking i eksport `shortlist.csv` + `summary.csv`) należy do toru B, bo jest końcem potoku. Dokumenty należą do toru C.
 
-### Kamienie milowe
+### Harmonogram — twardy termin: koniec przed 16:00
 
-| Kiedy | Co | Kto |
-|---|---|---|
-| M0, zaraz | kontrakt + wysłanie pytań do Ewy | wszyscy |
-| M1, przed lunchem | liczby kontrolne potwierdzone; częściowa shortlista i `summary.csv` do wątku | A liczby, B shortlista, C oszczędność na paliwie |
-| M2, po lunchu | odpowiedzi Ewy naniesione na `config` i założenia; ponowne uruchomienie | wszyscy |
-| M3, przed prezentacjami | komplet: oba CSV, notatka, instrukcja, założenia; test ponownego uruchomienia; prezentacja | wszyscy |
+Założenie: lunch ok. 13:00 (godzina niepotwierdzona — jeśli jest inna, przesuwamy M1 i M2, reszta zostaje).
+
+| Godzina | Kamień | Co | Kto |
+|---|---|---|---|
+| 11:10–11:25 | M0 | kontrakt (`config`, `van_profile`, `feasibility`), podział torów | wszyscy |
+| do 11:50 | | trzy liczby kontrolne gotowe i przeliczone drugi raz | A + osoba z B lub C |
+| do 12:30 | M1 | częściowa shortlista i `summary.csv` w wątku — podgląd dla CFO | A liczby, B shortlista, C oszczędność na paliwie |
+| 12:30–13:00 | | pełny potok działa jednym poleceniem na prawdziwych danych | B integruje |
+| 13:00–13:30 | | lunch, odpowiedzi Ewy | |
+| 13:30–14:00 | M2 | odpowiedzi Ewy naniesione na `config` i założenia; ponowne uruchomienie | wszyscy |
+| 14:00–14:45 | | analiza wrażliwości, pełna ekonomia, szkic notatki i instrukcji | B, C; A pomaga C przy dokumentach |
+| **14:45** | **zamrożenie liczb** | po tej godzinie zmieniamy tylko błędy, nie założenia | wszyscy |
+| 14:45–15:15 | | test ponownego uruchomienia przez osobę, która nie pisała skryptu; notatka i założenia (EN) na czysto | A testuje, C pisze |
+| 15:15–15:40 | M3 | komplet w wątku: oba CSV, notatka, instrukcja, założenia | wszyscy |
+| 15:40–16:00 | | prezentacja procesu (kto mówi co) i zapas | wszyscy |
+
+### Co tniemy, jeśli brakuje czasu (w tej kolejności)
+
+1. Plik XLSX obok CSV (mile widziany, nie wymagany).
+2. Wariant po 5 latach degradacji (0,49) — zostaje jedno zdanie w notatce.
+3. Pełne porównanie zakup/leasing — zostaje jeden wariant z opisaną podstawą w `saving_basis`.
+4. Analiza wrażliwości skrócona do trzech progów bez osobnych tabel per van.
+
+Nie tniemy: liczb kontrolnych, formatu obu CSV, instrukcji uruchomienia, listy założeń z godzinami.
 
 ### Zabezpieczenia
 
@@ -310,12 +328,49 @@ Integracja (ranking i eksport `shortlist.csv` + `summary.csv`) należy do toru B
 - **Jeden właściciel rejestru założeń.** Tor C dopisuje każdą decyzję z godziną do sekcji 6 i 10; pozostali zgłaszają je od razu.
 - **Parametry tylko w `config`.** Odpowiedzi Ewy po lunchu mają się sprowadzać do zmiany wartości, nie kodu.
 
-### Wymagania wobec narzędzia
+### Narzędzie dla analityka
 
-- Jedno polecenie, wejście: `trips.csv` i `vans.csv` z dowolnego kwartału.
-- Parametry (ceny, współczynnik zimowy, ładowność, liczba punktów ładowania) w jednym pliku konfiguracyjnym, nie w kodzie.
-- Raport z czyszczenia danych: ile duplikatów, jakie nieznane `van_id`, jakie wiersze odrzucone — żeby analityk widział, co się zmieniło w nowym eksporcie.
-- Uwaga techniczna: systemowy `python3` nie ma `pandas`. Albo piszemy na samej bibliotece standardowej, albo dokładamy `requirements.txt` i instrukcję z venv.
+Co mówi README:
+
+| Wymóg | Cytat | Wniosek |
+|---|---|---|
+| Ponowne uruchomienie | „Something I can rerun next quarter on a fresh export. My analyst will rerun this next quarter without you.” | działa na innym okresie i innych danych, bez naszej pomocy |
+| Forma | „A script is enough.” | bez interfejsu i serwera |
+| Pokaz | „show me it rerunning, and post the instructions to run it” | pokazujemy uruchomienie, instrukcja trafia do wątku |
+| Komplet | „Whatever my analyst needs to rerun it without you.” | skrypt, parametry, instrukcja, założenia |
+| Dostawa | „Everything you deliver goes into your thread. Sharing your code or repository is voluntary.” | wszystko musi dać się wrzucić na Slacka jako pliki |
+| Ocena | „The focus of today is your process, not the app.” | demo krótkie, większość czasu na proces |
+
+Decyzje projektowe (D5, 11:13):
+
+- **Jeden plik `ev_shortlist.py`, tylko biblioteka standardowa Pythona.** Bez instalacji; da się wkleić do wątku.
+- **Parametry w `params.csv`** (kolumny `parameter,value`): ceny, spalanie, dane EV, współczynnik zimowy, liczba punktów ładowania, mapowanie P-17 → P-17B. Analityk edytuje je w Excelu, nie w kodzie.
+- **Jedno polecenie:** `python3 ev_shortlist.py --trips trips.csv --vans vans.csv --params params.csv --out wyniki/`
+- **Wyniki:** `shortlist.csv`, `summary.csv`, `all_vans.csv` (każdy van z powodem przyjęcia lub odrzucenia), `data_report.txt` (co wyczyszczono).
+- **Roczne km z długości okresu w danych**, nie ze stałego mnożnika × 4 (doprecyzowanie A12) — następny eksport może mieć inną liczbę tygodni.
+- **Ostrzeżenia zamiast cichych poprawek:** nieznany `van_id`, ujemny przebieg, brak kolumny, duplikaty — wszystko trafia do `data_report.txt`.
+- **Liczby kontrolne na ekranie** po każdym uruchomieniu.
+- Ryzyko: nie wiemy, czy analityk ma Pythona. Wariant zapasowy (XLSX) jest pierwszy na liście cięć.
+
+Do wątku trafia: `ev_shortlist.py`, `params.csv`, `RERUN.md` (krótka instrukcja po angielsku), lista założeń, wynik uruchomienia jako dowód.
+
+### Prezentacja (15 min)
+
+Podział: ok. 10 min proces, 3 min demo, 2 min zapasu.
+
+Proces:
+
+- dokument handoff jako żywy dziennik decyzji,
+- selekcja pytań do Ewy: które odpadły i dlaczego (P-17 i chłodnie rozstrzygnięte z danych),
+- założenia z godzinami i źródłami (współczynnik zimowy),
+- liczby kontrolne liczone dwa razy,
+- trzy równoległe tory z kontraktem.
+
+Demo w trzech krokach:
+
+1. Uruchomienie na oryginalnym eksporcie — wynik zgodny z plikami w wątku.
+2. Zmiana jednego parametru w `params.csv` (np. próg zimowy 0,57 → 0,65) i ponowne uruchomienie — shortlista się zmienia.
+3. Uruchomienie na „świeżym eksporcie” (spreparowany plik z innym okresem i nieznanym vanem) — skrypt przelicza roczne km i zgłasza ostrzeżenie. Plik powstaje przy teście ponownego uruchomienia o 14:45.
 
 ---
 
@@ -329,6 +384,7 @@ Integracja (ranking i eksport `shortlist.csv` + `summary.csv`) należy do toru B
 | D2 | 10:42 | P-17 łączymy z P-17B bez pytania Ewy | patrz założenie A2 |
 | D3 | 10:50 | Ładowność EV to twardy limit, sprawdzany na maksimum z danych; nie pytamy Ewy i nie proponujemy rozkładania ładunku na dwa auta | Ładowność znamionowa to granica prawna; Witold: EV „musi unieść to, co vany wożą dziś”; rozłożenie ładunku oznacza zmianę tras i dodatkowy kurs. Vany odpadające przez pojedyncze dni powyżej 1050 kg (P-06, P-02, P-18: 1 dzień; P-22: 2; P-11: 3) pokazujemy w notatce jako „blisko progu” |
 | D4 | 10:50 | Sezonowość przyjmujemy jako założenie A12, bez pytania Ewy | Ewa nie ma danych z zimy; narzędzie zweryfikuje to na eksporcie za IV kwartał |
+| D5 | 11:13 | Narzędzie to jeden plik `ev_shortlist.py` bez zależności, z parametrami w `params.csv`; roczne km liczone z długości okresu w danych | Ewa: „a script is enough”, materiały idą do wątku jako pliki, analityk uruchamia bez nas |
 
 ### Otwarte
 
@@ -358,3 +414,5 @@ Integracja (ranking i eksport `shortlist.csv` + `summary.csv`) należy do toru B
 | 10:53 | Propozycja pytań do Ewy spisana (PL + EN), dokument wypchnięty do repo zespołu |
 | 11:06 | Plan na 3 deweloperów (sekcja 9) |
 | 11:09 | Pytania wysłane do Ewy |
+| 11:10 | Harmonogram z terminem 16:00 i lista cięć (sekcja 9) |
+| 11:13 | Zakres narzędzia dla analityka i scenariusz prezentacji (sekcja 9, D5) |
