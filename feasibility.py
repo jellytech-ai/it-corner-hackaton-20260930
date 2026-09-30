@@ -95,14 +95,27 @@ def _longer_route_of_worst_day(days):
 
 # --- assessment ------------------------------------------------------------------
 
+# max_south_vans_at_north: vans from this depot may be based at the other one (Ewa, 30.09)
+MOVE_FROM, MOVE_TO = "South", "North"
+
+
+def midday_allowed(params):
+    """Return True when two-route vans may charge at the depot between routes."""
+    value = params.get("midday_charging_allowed", "")
+    if value not in ("yes", "no"):
+        raise ValueError("Missing parameter 'midday_charging_allowed' in params.csv")
+    return value == "yes"
+
+
 def model_failures(van, spec, params, days=None):
     """Return (failed checks among 'payload' and 'range', whether midday charging is needed)."""
     fails = []
     if float(van["max_load_kg"]) > spec["payload_kg"] + EPS:
         fails.append("payload")
     midday = False
-    if float(van["worst_day_km"]) > winter_range_km(spec, params) + EPS:
-        if days and any(len(d) > 1 for d in days) and not failed_days(days, spec, params):
+    if float(van["range_day_km"]) > winter_range_km(spec, params) + EPS:
+        if (midday_allowed(params) and days and any(len(d) > 1 for d in days)
+                and not failed_days(days, spec, params)):
             midday = True
         else:
             fails.append("range")
@@ -120,12 +133,13 @@ def near_miss(van, days, spec, params):
             return None
         notes.append("payload over on %d days" % payload_days)
     full = winter_range_km(spec, params)
-    worst = float(van["worst_day_km"])
-    if worst > full + EPS:
-        excess = (worst / full - 1) * 100
-        failed = len(failed_days(days, spec, params)) if any(len(d) > 1 for d in days) else 0
+    check = float(van["range_day_km"])
+    if check > full + EPS:
+        excess = (check / full - 1) * 100
+        two_route = midday_allowed(params) and any(len(d) > 1 for d in days)
+        failed = len(failed_days(days, spec, params)) if two_route else 0
         if excess <= param(params, "near_miss_range_pct") + EPS:
-            notes.append("range +%.1f%% (%.1f/%.1f km)" % (excess, worst, full))
+            notes.append("range +%.1f%% (%.1f/%.1f km)" % (excess, check, full))
         elif 0 < failed <= max_days:
             notes.append("range fails %d days with midday charging" % failed)
         else:
@@ -138,72 +152,101 @@ def feasible_reason(van, spec, midday, params):
     if midday:
         return "midday charging between routes; 0 failed days"
     full = winter_range_km(spec, params)
-    margin = full - float(van["worst_day_km"])
+    margin = full - float(van["range_day_km"])
     note = "range margin %.1f km (%.1f%%)" % (margin, margin / full * 100)
     if margin / full * 100 < param(params, "at_threshold_pct"):
         note = "at threshold: " + note
     return note
 
 
-def assess(profile, trips, params):
-    """Return the feasibility table: one row per van in the profile.
+def _ev_depot(van, params):
+    """Return (depot where the EV would be based, note) or (own depot, '') when it has no chargers."""
+    depot = van["depot"]
+    if param(params, "chargers." + depot) > 0:
+        return depot, ""
+    if (depot == MOVE_FROM and param(params, "max_south_vans_at_north") > 0
+            and param(params, "chargers." + MOVE_TO) > 0):
+        return MOVE_TO, "%s van based at %s, routes unchanged" % (MOVE_FROM, MOVE_TO)
+    return depot, ""
 
-    ev_model is the cheapest model that carries the van's max load and covers every day
-    in winter range (with midday charging on two-route days, A16). When no model fits,
-    reject_reason lists what the cheapest model fails, plus any near misses.
-    """
+
+def fitting_models(van, days, params):
+    """Return [(model, needs midday charging)] for every model that carries the load and covers the range."""
+    if not days:
+        return []
+    out = []
+    for model, spec in ev_models(params).items():
+        fails, midday = model_failures(van, spec, params, days)
+        if not fails:
+            out.append((model, midday))
+    return out
+
+
+def assess_van(van, trips, params, model=None):
+    """Return the feasibility row for one van, for the given fitting model or the cheapest one."""
     models = ev_models(params)
     cheapest = next(iter(models.values()))
     if params.get("exclude_refrigerated", "") not in ("yes", "no"):
         raise ValueError("Missing parameter 'exclude_refrigerated' in params.csv")
-    exclude_refr = params["exclude_refrigerated"] == "yes"
-    rows = []
-    for van in profile:
-        days = van_days(trips, van["van_id"])
-        refrigerated = exclude_refr and van["refrigerated"] == "yes"
-        fit, midday = "", False
-        if days:
-            for model, spec in models.items():
-                fails, needs_midday = model_failures(van, spec, params, days)
-                if not fails:
-                    fit, midday = model, needs_midday
-                    break
-        reasons = []
-        if not days:
-            reasons.append("no trips in this export")
-        if refrigerated:
-            reasons.append("refrigerated")
-        if days and not fit:
-            reasons += model_failures(van, cheapest, params, days)[0]
-        if param(params, "chargers." + van["depot"]) <= 0:
-            reasons.append("no chargers at depot")
-        feasible = "no" if reasons else "yes"
-        near = [] if refrigerated or fit or not days else [
-            "%s %s" % (m, "; ".join(n)) for m, spec in models.items()
-            for n in [near_miss(van, days, spec, params)] if n]
-        if near:
-            reasons.append("near miss: " + " | ".join(near))
-        rows.append({
-            "van_id": van["van_id"],
-            "feasible": feasible,
-            "ev_model": "" if refrigerated else fit,
-            "ev_depot": van["depot"],
-            "range_check_km": (_longer_route_of_worst_day(days) if midday
-                               else float(van["worst_day_km"])),
-            "midday_charging": "yes" if midday else "no",
-            "day_tariff_share": day_tariff_share(days, models[fit], params) if midday else 0,
-            "reject_reason": "; ".join(reasons),
-            "reason": feasible_reason(van, models[fit], midday, params) if fit else "",
-        })
-    return rows
+    days = van_days(trips, van["van_id"])
+    refrigerated = params["exclude_refrigerated"] == "yes" and van["refrigerated"] == "yes"
+    fits = fitting_models(van, days, params)
+    chosen = [f for f in fits if f[0] == model] or fits[:1]
+    fit, midday = chosen[0] if chosen else ("", False)
+    ev_depot, depot_note = _ev_depot(van, params)
+
+    reasons = []
+    if not days:
+        reasons.append("no trips in this export")
+    if refrigerated:
+        reasons.append("refrigerated")
+    if days and not fit:
+        reasons += model_failures(van, cheapest, params, days)[0]
+    if param(params, "chargers." + ev_depot) <= 0:
+        reasons.append("no chargers at depot")
+    feasible = "no" if reasons else "yes"
+    near = [] if refrigerated or fit or not days else [
+        "%s %s" % (m, "; ".join(n)) for m, spec in models.items()
+        for n in [near_miss(van, days, spec, params)] if n]
+    if near:
+        reasons.append("near miss: " + " | ".join(near))
+    reason = ""
+    if fit:
+        reason = "; ".join(x for x in (feasible_reason(van, models[fit], midday, params),
+                                       depot_note) if x)
+    return {
+        "van_id": van["van_id"],
+        "feasible": feasible,
+        "ev_model": "" if refrigerated else fit,
+        "ev_depot": ev_depot,
+        "range_check_km": (_longer_route_of_worst_day(days) if midday
+                           else float(van["range_day_km"])),
+        "midday_charging": "yes" if midday else "no",
+        "day_tariff_share": day_tariff_share(days, models[fit], params) if midday else 0,
+        "reject_reason": "; ".join(reasons),
+        "reason": reason,
+        "fit_models": "" if refrigerated else "; ".join(m for m, _ in fits),
+    }
+
+
+def assess(profile, trips, params):
+    """Return the feasibility table: one row per van in the profile.
+
+    A model fits when it carries the heaviest load the van carried and the van's
+    range_day_km (95th-percentile day) fits in its winter range; with midday charging
+    allowed, two-route days may top up between routes (A16). ev_model is the cheapest
+    fitting model here; the entry point replaces it with the one that saves more (Ewa).
+    When no model fits, reject_reason lists what the cheapest model fails, plus near misses.
+    """
+    return [assess_van(van, trips, params) for van in profile]
 
 
 def sensitivity(profile, trips, params, factors):
     """Return, for each winter range factor, how many vans pass and which.
 
     feasible_* is the full assessment; fit_* are vans with an ev_model, i.e. a model fits
-    whatever the charging points at the depot (e.g. South). Only winter_range_factor
-    changes; the winter consumption used for midday charging stays as in params.csv.
+    whatever the charging points at the depot. Only winter_range_factor changes; the
+    shortlist limits (charging points, grant, South vans at North) are not applied here.
     """
     rows = []
     for factor in factors:

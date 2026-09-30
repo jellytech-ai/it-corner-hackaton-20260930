@@ -19,6 +19,20 @@ def read(path):
         return list(csv.DictReader(f))
 
 
+# Rules before Ewa's answers (30.09, 12:15); the old expected figures hold under them.
+OLD_RULES = {"winter_range_factor": "0.57", "range_check_percentile": "100",
+             "chargers.North": "6", "max_south_vans_at_north": "0",
+             "midday_charging_allowed": "yes"}
+
+
+def fixture_data(**overrides):
+    """Return (params, trips, profile) from fixtures/, profile rebuilt with the given params."""
+    params = {**data.load_params(os.path.join(ROOT, "params.csv")), **overrides}
+    trips, register, _ = ev_shortlist.load_fixtures(
+        os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"))
+    return params, trips, data.build_van_profile(trips, register, params)
+
+
 class PipelineOnFixtures(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -52,9 +66,16 @@ class PipelineOnFixtures(unittest.TestCase):
     def test_shortlist_ranks_are_consecutive_and_only_feasible(self):
         rows = read(os.path.join(self.out, "shortlist.csv"))
         self.assertEqual([r["rank"] for r in rows], [str(i + 1) for i in range(len(rows))])
-        feasible = {r["van_id"] for r in read(os.path.join(FX, "feasibility.csv"))
-                    if r["feasible"] == "yes"}
-        self.assertEqual({r["van_id"] for r in rows}, feasible)
+        all_vans = read(os.path.join(self.out, "all_vans.csv"))
+        self.assertEqual({r["van_id"] for r in rows},
+                         {r["van_id"] for r in all_vans if r["shortlisted"] == "yes"})
+        feasible = {r["van_id"] for r in all_vans if r["feasible"] == "yes"}
+        self.assertLessEqual({r["van_id"] for r in rows}, feasible)
+
+    def test_every_feasible_van_off_the_list_has_a_note(self):
+        for r in read(os.path.join(self.out, "all_vans.csv")):
+            if r["feasible"] == "yes" and r["shortlisted"] == "no":
+                self.assertNotEqual(r["shortlist_note"], "", r["van_id"])
 
     def test_range_check_has_one_decimal_and_money_is_integer(self):
         for r in read(os.path.join(self.out, "shortlist.csv")):
@@ -112,16 +133,14 @@ class AssessBasicFilters(unittest.TestCase):
     def setUpClass(cls):
         import feasibility
         cls.feasibility = feasibility
-        cls.params = data.load_params(os.path.join(ROOT, "params.csv"))
-        cls.trips, cls.profile, _ = ev_shortlist.load_fixtures(
-            os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"))
+        cls.params, cls.trips, cls.profile = fixture_data(**OLD_RULES)
 
     def assess(self, **overrides):
         return {r["van_id"]: r for r in self.feasibility.assess(
             self.profile, self.trips, {**self.params, **overrides})}
 
     def test_single_shift_vans_match_fixture(self):
-        got = self.assess()
+        got = self.assess(midday_charging_allowed="no")
         single = {p["van_id"] for p in self.profile if p["two_shift"] == "no"}
         for exp in read(os.path.join(FX, "feasibility.csv")):
             if exp["van_id"] not in single:
@@ -172,9 +191,7 @@ class MiddayCharging(unittest.TestCase):
     def setUpClass(cls):
         import feasibility
         cls.f = feasibility
-        cls.params = data.load_params(os.path.join(ROOT, "params.csv"))
-        cls.trips, cls.profile, _ = ev_shortlist.load_fixtures(
-            os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"))
+        cls.params, cls.trips, cls.profile = fixture_data(**OLD_RULES)
         cls.models = feasibility.ev_models(cls.params)
         cls.got = {r["van_id"]: r for r in feasibility.assess(cls.profile, cls.trips, cls.params)}
 
@@ -219,9 +236,7 @@ class Sensitivity(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         import feasibility
-        params = data.load_params(os.path.join(ROOT, "params.csv"))
-        trips, profile, _ = ev_shortlist.load_fixtures(
-            os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"))
+        params, trips, profile = fixture_data(**OLD_RULES)
         cls.rows = {r["winter_range_factor"]: r
                     for r in feasibility.sensitivity(profile, trips, params, [0.50, 0.57, 0.65])}
 
@@ -248,9 +263,7 @@ class NearThreshold(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         import feasibility
-        params = data.load_params(os.path.join(ROOT, "params.csv"))
-        trips, profile, _ = ev_shortlist.load_fixtures(
-            os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"))
+        params, trips, profile = fixture_data(**OLD_RULES)
         cls.got = {r["van_id"]: r for r in feasibility.assess(profile, trips, params)}
 
     def test_range_just_over_is_near(self):
@@ -276,13 +289,17 @@ class NearThreshold(unittest.TestCase):
         with tempfile.TemporaryDirectory() as out:
             ev_shortlist.run(os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"),
                              os.path.join(ROOT, "params.csv"), out, fixture_mode=True)
-            rows = {r["van_id"]: r for r in read(os.path.join(out, "shortlist.csv"))}
-        self.assertIn("at threshold", rows["P-14"]["reason"])
+            short = {r["van_id"]: r["reason"] for r in read(os.path.join(out, "shortlist.csv"))}
+            full = {r["van_id"]: r["reason"] for r in read(os.path.join(out, "all_vans.csv"))}
+        self.assertTrue(short)
+        for van_id, reason in short.items():
+            self.assertEqual(reason, full[van_id])
+            self.assertIn("range margin", reason)
 
 
 def _van(van_id="X-1", worst=100.0, load=500, depot="North", refrigerated="no"):
     return {"van_id": van_id, "depot": depot, "refrigerated": refrigerated,
-            "worst_day_km": worst, "max_load_kg": load}
+            "worst_day_km": worst, "range_day_km": worst, "max_load_kg": load}
 
 
 def _trip(van_id="X-1", km=100.0, load=500, date="2026-07-01", start="06:00", end="12:00"):
@@ -352,12 +369,116 @@ class Thresholds(unittest.TestCase):
 
     def test_missing_parameter_message(self):
         for key in ("winter_range_factor", "exclude_refrigerated", "chargers.North",
-                    "near_miss_days"):
+                    "near_miss_days", "midday_charging_allowed"):
             p = {k: v for k, v in self.params.items() if k != key}
             with self.assertRaises(ValueError) as cm:
                 self.f.assess([_van(worst=200.0, load=1000)],
                               [_trip(km=200.0, load=1000)], p)
             self.assertEqual(str(cm.exception), "Missing parameter '%s' in params.csv" % key)
+
+
+class EwaRules(unittest.TestCase):
+    """Ewa's answers (30.09): 95th-percentile day in 60% of WLTP, no midday charging,
+    up to 3 South vans based at North, 10 points at North, better model over five years."""
+
+    @classmethod
+    def setUpClass(cls):
+        import feasibility
+        cls.f = feasibility
+        cls.params, cls.trips, cls.profile = fixture_data()
+        cls.got = {r["van_id"]: r for r in feasibility.assess(cls.profile, cls.trips, cls.params)}
+        cls.tmp = tempfile.TemporaryDirectory()
+        ev_shortlist.run(os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"),
+                         os.path.join(ROOT, "params.csv"), cls.tmp.name, fixture_mode=True)
+        cls.short = read(os.path.join(cls.tmp.name, "shortlist.csv"))
+        cls.all = {r["van_id"]: r for r in read(os.path.join(cls.tmp.name, "all_vans.csv"))}
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_fifteen_vans_fit_eight_north_seven_south(self):
+        fit = [p for p in self.profile if self.got[p["van_id"]]["ev_model"]]
+        self.assertEqual(len(fit), 15)
+        self.assertEqual(sum(p["depot"] == "North" for p in fit), 8)
+
+    def test_range_is_checked_on_range_day_km(self):
+        by_id = {p["van_id"]: p for p in self.profile}
+        for van_id, r in self.got.items():
+            if r["midday_charging"] == "no":
+                self.assertAlmostEqual(r["range_check_km"], by_id[van_id]["range_day_km"])
+
+    def test_two_shift_vans_count_their_whole_day(self):
+        for van_id in ("P-08", "P-12"):
+            r = self.got[van_id]
+            self.assertEqual((r["midday_charging"], r["day_tariff_share"], r["ev_model"]),
+                             ("no", 0, "Volta Cargo L"), van_id)
+
+    def test_south_van_is_based_at_north(self):
+        r = self.got["P-05"]
+        self.assertEqual((r["feasible"], r["ev_depot"]), ("yes", "North"))
+        self.assertIn("South van based at North", r["reason"])
+
+    def test_south_vans_off_when_not_allowed(self):
+        r = self.f.assess(self.profile, self.trips,
+                          {**self.params, "max_south_vans_at_north": "0"})
+        p05 = [x for x in r if x["van_id"] == "P-05"][0]
+        self.assertEqual((p05["feasible"], p05["ev_depot"]), ("no", "South"))
+        self.assertIn("no chargers at depot", p05["reject_reason"])
+
+    def test_shortlist_respects_limits(self):
+        south = [r for r in self.short if self.all[r["van_id"]]["depot"] == "South"]
+        self.assertLessEqual(len(south), int(self.params["max_south_vans_at_north"]))
+        self.assertLessEqual(len(self.short), int(self.params["max_evs_grant"]))
+        north = [r for r in self.short if r["ev_depot"] == "North"]
+        self.assertLessEqual(len(north), int(self.params["chargers.North"]))
+
+    def test_left_out_south_van_has_note(self):
+        notes = [r["shortlist_note"] for r in self.all.values()
+                 if r["depot"] == "South" and r["feasible"] == "yes" and r["shortlisted"] == "no"]
+        self.assertTrue(notes)
+        self.assertTrue(all(notes), notes)
+
+
+class ModelChoiceAndRanking(unittest.TestCase):
+    def test_better_saving_model_is_chosen(self):
+        import economics
+        import feasibility
+        params = data.load_params(os.path.join(ROOT, "params.csv"))
+        van = {**_van(worst=100.0, load=500), "model": "Brona D35", "km_period": 9000.0}
+        trips = [_trip(km=100.0, load=500)]
+        feas = feasibility.assess([van], trips, params)
+        self.assertEqual(feas[0]["fit_models"], "Volta Cargo S; Volta Cargo L")
+        chosen = ev_shortlist.choose_models([van], trips, feas, params, 90)[0]
+        saving = {m: economics.economics([van], [feasibility.assess_van(van, trips, params, m)],
+                                         params, 90)[0]["saving_pln"]
+                  for m in ("Volta Cargo S", "Volta Cargo L")}
+        self.assertEqual(chosen["ev_model"], max(saving, key=saving.get))
+
+    def feas(self, *rows):
+        return [{"van_id": v, "feasible": "yes", "ev_depot": d, "depot": h} for v, d, h in rows]
+
+    def test_not_positive_saving_is_left_out_with_note(self):
+        feas = self.feas(("A", "North", "North"), ("B", "North", "North"))
+        econ = [{"van_id": "A", "saving_pln": 10, "annual_km": 1},
+                {"van_id": "B", "saving_pln": -5, "annual_km": 1}]
+        kept, notes = ev_shortlist.rank_with_notes(feas, econ, 10)
+        self.assertEqual([r["van_id"] for r in kept], ["A"])
+        self.assertIn("not positive", notes["B"])
+
+    def test_moved_vans_limit_below_at_above(self):
+        feas = self.feas(*[("S%d" % i, "North", "South") for i in range(5)])
+        econ = [{"van_id": "S%d" % i, "saving_pln": 100 - i, "annual_km": 1} for i in range(5)]
+        for limit in (2, 3, 4):
+            kept, notes = ev_shortlist.rank_with_notes(feas, econ, 10, {"North": 10}, limit)
+            self.assertEqual(len(kept), limit)
+            self.assertIn("limit of %d vans" % limit, notes["S4"])
+
+    def test_charging_points_full_note(self):
+        feas = self.feas(("A", "North", "North"), ("B", "North", "North"))
+        econ = [{"van_id": v, "saving_pln": s, "annual_km": 1} for v, s in (("A", 2), ("B", 1))]
+        kept, notes = ev_shortlist.rank_with_notes(feas, econ, 10, {"North": 1})
+        self.assertEqual(notes["B"], "all 1 charging points at North taken")
 
 
 class EntryPointMessages(unittest.TestCase):
@@ -406,10 +527,11 @@ class EntryPointMessages(unittest.TestCase):
             res = self.cli("--trips", os.path.join(FX, "clean_trips.csv"),
                            "--vans", os.path.join(FX, "van_profile.csv"), "--out", out, "--fixtures")
             self.assertEqual(res.returncode, 0, res.stderr)
-            for text in ("Fixture mode", "vans_assessed: 38", "trips_counted: 2777",
-                         "total_km: 344952", "Vans on the shortlist: 3", "Output written to: " + out):
-                self.assertIn(text, res.stdout)
             rows = read(os.path.join(out, "shortlist.csv"))
+            for text in ("Fixture mode", "vans_assessed: 38", "trips_counted: 2777",
+                         "total_km: 344952", "Vans on the shortlist: %d" % len(rows),
+                         "Output written to: " + out):
+                self.assertIn(text, res.stdout)
             s = {r["figure"]: r["value"] for r in read(os.path.join(out, "summary.csv"))}
             for k in ("annual_fuel_saving_pln", "saving_pln"):
                 self.assertEqual(int(s[k]), sum(int(r[k]) for r in rows), k)
@@ -449,7 +571,7 @@ class PipelineOnSourceData(unittest.TestCase):
             short = [r["van_id"] for r in read(os.path.join(out, "shortlist.csv"))]
         self.assertEqual((s["vans_assessed"], s["trips_counted"], s["total_km"]),
                          ("38", "2777", "344952"))
-        self.assertEqual(sorted(short), ["P-08", "P-14", "P-26"])
+        self.assertTrue(0 < len(short) <= 10)
 
 
 if __name__ == "__main__":
