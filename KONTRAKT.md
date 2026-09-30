@@ -58,7 +58,8 @@ Wszystkie tabele to `list[dict]` z kluczami jak kolumny poniżej. Liczby jako `f
 # data.py (tor A)
 load_params(path) -> dict[str, str]
 load_and_clean(trips_path, vans_path, params) -> (trips, vans, report)   # report: list[str]
-build_van_profile(trips, vans) -> list[dict]
+build_van_profile(trips, vans, params) -> list[dict]   # params wymagane od 12:15 (percentyl dnia)
+percentile(values, pct) -> float              # interpolacja liniowa jak PERCENTILE.INC w Excelu
 control_figures(trips, profile) -> dict      # vans_assessed, trips_counted, total_km
 period_days(trips) -> int                    # liczba dni kalendarzowych od pierwszej do ostatniej daty włącznie
 
@@ -85,10 +86,11 @@ saving_basis(params) -> str
 
 ### `van_profile` (A → B, C) — wzór: `fixtures/van_profile.csv`
 
-`van_id, model, year, depot, ownership, lease_end, monthly_lease_pln, refrigerated, payload_kg, days, trips, km_period, worst_day_km, max_load_kg, two_shift, two_shift_days`
+`van_id, model, year, depot, ownership, lease_end, monthly_lease_pln, refrigerated, payload_kg, days, trips, km_period, worst_day_km, range_day_km, max_load_kg, two_shift, two_shift_days`
 
 - jeden wiersz na van z rejestru (38)
-- `worst_day_km` = najwyższa suma km jednego dnia
+- `worst_day_km` = najwyższa suma km jednego dnia (informacyjnie)
+- `range_day_km` = percentyl `range_check_percentile` dziennych sum km — **to tę wartość porównujemy z zasięgiem** (reguła Ewy: 95. percentyl)
 
 ### `feasibility` (B → C) — wzór: `fixtures/feasibility.csv`
 
@@ -141,3 +143,45 @@ tail -n +2 ../it-corner-hackathon-20260930/trips.csv | LC_ALL=C sort -u | LC_ALL
 ## 10. Komunikaty narzędzia
 
 Zasady języka, błędów (`ERROR:`), ostrzeżeń (`WARNING:`), liczb, CSV i gita są w `KONSTYTUCJA.md` (sekcje 2–8). Przy sprzeczności wygrywa konstytucja.
+
+
+## 10. Zmiany po odpowiedziach Ewy (12:15) — obowiązują wszystkie tory
+
+Źródło: wątek „9” i wątki innych zespołów w Discussions repo organizatorów; zweryfikowane 12:08. Pełna lista: `HANDOFF.md` sekcja 10.
+
+### Co zrobił tor A (gałąź `tor-a`, jeszcze nie na `devel`)
+
+- `van_profile` ma nową kolumnę `range_day_km` (95. percentyl dnia, interpolacja liniowa).
+- `build_van_profile` przyjmuje `params`; wywołanie bez `params` daje `range_day_km` = `worst_day_km`.
+- `params.csv`: zmienione `winter_range_factor` 0.57 → 0.60 i `chargers.North` 6 → 10; nowe parametry poniżej.
+- `fixtures/van_profile.csv` wygenerowany na nowo.
+
+| Parametr | Wartość | Reguła Ewy |
+|---|---|---|
+| `winter_range_factor` | 0.60 | „fits within 60% of the EV's WLTP range” |
+| `range_check_percentile` | 95 | „its 95th-percentile day” |
+| `chargers.North` | 10 | 6 dziś + 4 zamówione; jeden EV na punkt |
+| `max_south_vans_at_north` | 3 | do 3 vanów z South może stacjonować w North, trasy bez zmian |
+| `midday_charging_allowed` | no | vany dwuzmianowe: „no time to charge. Count their whole day” |
+| `grant_share_of_price` | 0.30 | 30% ceny zakupu, tylko przy zakupie |
+| `saving_horizon_years` | 5 | „The board looks at five years” |
+| `lease_exit_fee_months` | 3 | wcześniejsze wyjście z leasingu = 3 raty |
+| `lease_free_exit_within_months` | 12 | leasing kończący się w ciągu 12 miesięcy: bez opłaty |
+| `lease_reference_date` | 2026-09-30 | data, od której liczymy 12 miesięcy; analityk zmienia ją co kwartał |
+
+### Co muszą zrobić tory B i C (9 testów w `test_b.py` nie przechodzi na nowych parametrach — dlatego `tor-a` nie jest scalony do `devel`)
+
+| Tor | Zmiana |
+|---|---|
+| B | przekazywać `params` do `build_van_profile`; zasięg porównywać z `range_day_km`, nie z `worst_day_km`; `range_check_km` = `range_day_km` |
+| B | doładowanie między trasami tylko gdy `midday_charging_allowed = yes` (dziś: wyłączone) |
+| B | `ev_depot` = `North` dla vanów z South, najwyżej `max_south_vans_at_north`; limit punktów `chargers.North` |
+| B + C | model EV: ten z lepszym wynikiem w 5 lat spośród przechodzących filtry, nie najtańszy |
+| C | `saving_pln` = `saving_horizon_years` × (paliwo − ładowanie + różnica serwisu) − cena EV × (1 − `grant_share_of_price`) − opłata za wyjście z leasingu; bez rat diesla i wartości odsprzedaży |
+| C | opłata za wyjście = `lease_exit_fee_months` × rata, gdy leasing kończy się później niż `lease_free_exit_within_months` od `lease_reference_date`; inaczej 0 |
+| C | `BOARD_NOTE.md`, `ASSUMPTIONS.md`, `RERUN.md`, `PREZENTACJA.md`: nowe reguły; w tekstach dla Ewy nie używać nazwy `max_load_kg`, tylko opis („the heaviest load the van carried”) |
+| B | ranking: malejąco po `saving_pln`; do decyzji, czy na shortlistę trafiają vany z ujemnym wynikiem |
+
+### Podgląd wyniku według nowych reguł (obliczenie pomocnicze toru A, nie wynik narzędzia)
+
+15 vanów przechodzi zasięg i ładowność (8 w North, 7 w South), 9 ma dodatni wynik w 5 lat. Przy limicie 3 vanów z South: P-30, P-21, P-08 (Cargo L), P-13, P-04 z North oraz P-12 (Cargo L), P-05, P-25 z South — 8 vanów, razem ok. 95 600 PLN w 5 lat. P-26 i P-14 z dotychczasowej shortlisty wychodzą na minus (−6 904 i −35 025 PLN).

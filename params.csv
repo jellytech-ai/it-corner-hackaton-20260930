@@ -19,14 +19,22 @@ ev.Volta Cargo L.kwh_per_100km,27
 ev.Volta Cargo L.price_pln,195000
 ev.Volta Cargo L.lease_pln_per_month,3770
 ev_lease_months,60
-winter_range_factor,0.57
+winter_range_factor,0.60
+range_check_percentile,95
 winter_temp_factor,0.70
 winter_payload_factor,0.90
 charger_kw,22
 midday_connect_minutes,15
-chargers.North,6
+chargers.North,10
 chargers.South,0
+max_south_vans_at_north,3
+midday_charging_allowed,no
 max_evs_grant,10
+grant_share_of_price,0.30
+saving_horizon_years,5
+lease_exit_fee_months,3
+lease_free_exit_within_months,12
+lease_reference_date,2026-09-30
 exclude_refrigerated,yes
 van_alias.P-17,P-17B
 days_per_year,365

@@ -95,6 +95,28 @@ class SyntheticExport(unittest.TestCase):
         self.assertEqual(figures, {"vans_assessed": 1, "trips_counted": 3, "total_km": 300})
         self.assertEqual(data.period_days(trips), 2)
 
+    def test_percentile_is_linear_like_excel(self):
+        self.assertEqual(data.percentile([10, 20, 30, 40], 100), 40)
+        self.assertEqual(data.percentile([10, 20, 30, 40], 50), 25)
+        self.assertAlmostEqual(data.percentile([10, 20, 30, 40], 95), 38.5)
+        self.assertEqual(data.percentile([7], 95), 7)
+        self.assertEqual(data.percentile([], 95), 0.0)
+
+    def test_range_day_uses_percentile_from_params(self):
+        lines = ["2026-10-%02d,V-1,A,R1,%d.0,1.0,05:00,11:00,20,800" % (d, 100 + d) for d in range(1, 22)]
+        trips, vans, _ = self.run_clean(lines)
+        worst = {p["van_id"]: p for p in data.build_van_profile(trips, vans)}["V-1"]
+        p95 = {p["van_id"]: p for p in data.build_van_profile(trips, vans, {"range_check_percentile": "95"})}["V-1"]
+        self.assertEqual((worst["worst_day_km"], worst["range_day_km"]), (121.0, 121.0))
+        self.assertEqual((p95["worst_day_km"], p95["range_day_km"]), (121.0, 120.0))
+
+    def test_bad_percentile_parameter_is_a_clear_error(self):
+        trips, vans, _ = self.run_clean(["2026-10-01,V-1,A,R1,100.0,99.0,05:00,11:00,20,800"])
+        with self.assertRaisesRegex(ValueError, "Missing parameter 'range_check_percentile'"):
+            data.build_van_profile(trips, vans, {})
+        with self.assertRaisesRegex(ValueError, "must be a number above 0"):
+            data.build_van_profile(trips, vans, {"range_check_percentile": "abc"})
+
     def test_missing_params_file(self):
         with self.assertRaises(FileNotFoundError):
             data.load_params("/nonexistent/params.csv")
@@ -107,7 +129,7 @@ class RealExport(unittest.TestCase):
         cls.params = data.load_params(os.path.join(ROOT, "params.csv"))
         cls.trips, cls.vans, cls.report = data.load_and_clean(
             os.path.join(SOURCE, "trips.csv"), os.path.join(SOURCE, "vans.csv"), cls.params)
-        cls.profile = data.build_van_profile(cls.trips, cls.vans)
+        cls.profile = data.build_van_profile(cls.trips, cls.vans, cls.params)
 
     def test_check_figures(self):
         self.assertEqual(data.control_figures(self.trips, self.profile),

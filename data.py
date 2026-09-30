@@ -23,7 +23,7 @@ VAN_COLUMNS = ["van_id", "model", "year", "depot", "ownership", "lease_end",
                "monthly_lease_pln", "refrigerated", "payload_kg"]
 CLEAN_TRIP_COLUMNS = ["date", "van_id", "driver", "route_id", "km", "km_source",
                       "start_time", "end_time", "stops", "max_load_kg"]
-PROFILE_COLUMNS = VAN_COLUMNS + ["days", "trips", "km_period", "worst_day_km",
+PROFILE_COLUMNS = VAN_COLUMNS + ["days", "trips", "km_period", "worst_day_km", "range_day_km",
                                  "max_load_kg", "two_shift", "two_shift_days"]
 
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -194,8 +194,32 @@ def period_days(trips):
     return (date.fromisoformat(max(dates)) - date.fromisoformat(min(dates))).days + 1
 
 
-def build_van_profile(trips, vans):
-    """One row per van in the register, with PROFILE_COLUMNS."""
+def percentile(values, pct):
+    """Percentile with linear interpolation (same as Excel PERCENTILE.INC); 100 gives the maximum."""
+    if not values:
+        return 0.0
+    ordered = sorted(values)
+    position = (len(ordered) - 1) * pct / 100.0
+    low = int(math.floor(position))
+    high = min(low + 1, len(ordered) - 1)
+    return ordered[low] + (ordered[high] - ordered[low]) * (position - low)
+
+
+def build_van_profile(trips, vans, params=None):
+    """One row per van in the register, with PROFILE_COLUMNS.
+
+    range_day_km is the daily distance compared with the EV range: the
+    range_check_percentile (from params) of the van's daily totals. Without
+    params it equals worst_day_km.
+    """
+    pct = 100.0
+    if params is not None:
+        if params.get("range_check_percentile", "") == "":
+            raise ValueError("Missing parameter 'range_check_percentile' in params.csv")
+        pct = _to_float(params["range_check_percentile"])
+        if pct is None or not 0 < pct <= 100:
+            raise ValueError("Parameter 'range_check_percentile' must be a number above 0 and up to 100, "
+                             f"got '{params['range_check_percentile']}'")
     by_day = defaultdict(lambda: defaultdict(list))
     for t in trips:
         by_day[t["van_id"]][t["date"]].append(t)
@@ -211,6 +235,7 @@ def build_van_profile(trips, vans):
             "trips": sum(len(day) for day in days.values()),
             "km_period": round(math.fsum(day_km), 1),
             "worst_day_km": round(max(day_km), 1) if day_km else 0.0,
+            "range_day_km": round(percentile(day_km, pct), 1),
             "max_load_kg": max(loads) if loads else 0,
             "two_shift": "yes" if two_shift_days else "no",
             "two_shift_days": two_shift_days,
@@ -248,7 +273,7 @@ def main(argv=None):
     except (FileNotFoundError, ValueError) as err:
         print(f"ERROR: {err}", file=sys.stderr)
         return 1
-    profile = build_van_profile(trips, vans)
+    profile = build_van_profile(trips, vans, params)
     print("\n".join(report))
     print("\nCheck figures")
     for name, value in control_figures(trips, profile).items():
