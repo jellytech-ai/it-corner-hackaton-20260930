@@ -1,7 +1,7 @@
 """Track A tests. Run from the repo root: python3 -m unittest tests.test_a -v
 
 The checks against the real export need the organisers' repo next to this one
-(or HACKATHON_DATA pointing at it); they are skipped when it is missing.
+(or EV_SOURCE_DIR pointing at it); they are skipped when it is missing.
 """
 import csv
 import os
@@ -14,7 +14,7 @@ sys.path.insert(0, ROOT)
 
 import data  # noqa: E402
 
-SOURCE = os.environ.get("HACKATHON_DATA", os.path.join(ROOT, "..", "it-corner-hackathon-20260930"))
+SOURCE = os.environ.get("EV_SOURCE_DIR", os.path.join(ROOT, "..", "it-corner-hackathon-20260930"))
 HAS_SOURCE = os.path.exists(os.path.join(SOURCE, "trips.csv"))
 
 TRIP_HEADER = "date,van_id,driver,route_id,odometer_km,gps_km,start_time,end_time,stops,max_load_kg"

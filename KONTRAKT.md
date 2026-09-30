@@ -4,6 +4,8 @@ Stan: 30.09.2026, 11:20. Ten plik czyta każdy tor przed startem. Zmiana kontrak
 
 Kontekst, założenia (A1–A17) i decyzje (D1–D5): `HANDOFF.md`.
 
+Jak piszemy (język, format błędów i ostrzeżeń, zaokrąglenia, CSV, git, słownik): **`KONSTYTUCJA.md`** — obowiązuje wszystkie tory.
+
 ## 1. Stanowisko pracy
 
 ```
