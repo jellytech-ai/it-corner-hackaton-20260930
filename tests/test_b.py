@@ -91,6 +91,14 @@ class Ranking(unittest.TestCase):
         ranked = ev_shortlist.rank(feas, econ, limit=3)
         self.assertEqual([r["van_id"] for r in ranked], ["B", "C", "A"])
 
+    def test_depot_charger_limit_cuts_per_depot(self):
+        feas = [{"van_id": v, "feasible": "yes", "ev_depot": d}
+                for v, d in (("A", "North"), ("B", "North"), ("C", "North"), ("D", "West"))]
+        econ = [{"van_id": v, "saving_pln": s, "annual_km": 0}
+                for v, s in (("A", 400), ("B", 300), ("C", 200), ("D", 100))]
+        ranked = ev_shortlist.rank(feas, econ, limit=10, depot_limits={"North": 2, "West": 5})
+        self.assertEqual([r["van_id"] for r in ranked], ["A", "B", "D"])
+
 
 class AssessBasicFilters(unittest.TestCase):
     @classmethod

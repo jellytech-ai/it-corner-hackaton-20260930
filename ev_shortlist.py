@@ -98,11 +98,29 @@ def _pick(module, name, stub):
 
 # --- ranking ----------------------------------------------------------------
 
-def rank(feasibility, economics, limit):
-    """Wykonalne vany malejaco po saving_pln, remis malejaco po annual_km, ucinane do limitu."""
+def depot_limits(params):
+    """{baza: liczba punktow} z kluczy chargers.<baza> (decyzja 4: jeden punkt na van)."""
+    return {k.split(".", 1)[1]: int(float(v)) for k, v in params.items()
+            if k.startswith("chargers.")}
+
+
+def rank(feasibility, economics, limit, depot_limits=None):
+    """Wykonalne vany malejaco po saving_pln, remis malejaco po annual_km.
+
+    Ucinane do limitu dotacji i do liczby punktow ladowania w bazie vana.
+    """
     econ = {e["van_id"]: e for e in economics}
     rows = [{**f, **econ.get(f["van_id"], {})} for f in feasibility if f["feasible"] == "yes"]
     rows.sort(key=lambda r: (-r.get("saving_pln", 0), -r.get("annual_km", 0), r["van_id"]))
+    if depot_limits is not None:
+        used = {}
+        kept = []
+        for r in rows:
+            depot = r["ev_depot"]
+            if used.get(depot, 0) < depot_limits.get(depot, 0):
+                used[depot] = used.get(depot, 0) + 1
+                kept.append(r)
+        rows = kept
     return rows[:limit]
 
 
@@ -125,7 +143,7 @@ def run(trips_path, vans_path, params_path, out_dir):
     feas = assess(profile, trips, params)
     econ = economics(profile, feas, params, period_days(trips))
 
-    ranked = rank(feas, econ, int(params.get("max_evs_grant", 10)))
+    ranked = rank(feas, econ, int(params["max_evs_grant"]), depot_limits(params))
     shortlist = [{**r, "rank": i + 1, "reason": r.get("reason", r.get("reject_reason", "")),
                  "range_check_km": "%.1f" % r["range_check_km"]}
                  for i, r in enumerate(ranked)]
