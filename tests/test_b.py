@@ -92,6 +92,50 @@ class Ranking(unittest.TestCase):
         self.assertEqual([r["van_id"] for r in ranked], ["B", "C", "A"])
 
 
+class AssessBasicFilters(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import feasibility
+        cls.feasibility = feasibility
+        cls.params = ev_shortlist._stub_load_params(os.path.join(ROOT, "params.csv"))
+        cls.trips, cls.profile, _ = ev_shortlist._stub_load_and_clean(
+            os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"), cls.params)
+
+    def assess(self, **overrides):
+        return {r["van_id"]: r for r in self.feasibility.assess(
+            self.profile, self.trips, {**self.params, **overrides})}
+
+    def test_single_shift_vans_match_fixture(self):
+        got = self.assess()
+        single = {p["van_id"] for p in self.profile if p["two_shift"] == "no"}
+        for exp in read(os.path.join(FX, "feasibility.csv")):
+            if exp["van_id"] not in single:
+                continue
+            r = got[exp["van_id"]]
+            self.assertEqual(
+                {k: str(r[k]) for k in exp if k != "range_check_km"},
+                {k: v for k, v in exp.items() if k != "range_check_km"}, exp["van_id"])
+            self.assertAlmostEqual(r["range_check_km"], float(exp["range_check_km"]))
+
+    def test_exactly_on_threshold_passes(self):
+        self.assertEqual(self.assess()["P-14"]["feasible"], "yes")  # 148.0 przy 148.2
+
+    def test_winter_factor_comes_from_params(self):
+        r = self.assess(winter_range_factor="0.65")  # Cargo S: 169 km
+        self.assertEqual(r["P-04"]["feasible"], "yes")
+        self.assertEqual(r["P-04"]["ev_model"], "Volta Cargo S")
+
+    def test_refrigerated_rule_from_params(self):
+        self.assertIn("refrigerated", self.assess()["P-19"]["reject_reason"])
+        self.assertNotIn("refrigerated",
+                         self.assess(exclude_refrigerated="no")["P-19"]["reject_reason"])
+
+    def test_depot_chargers_from_params(self):
+        r = self.assess(**{"chargers.South": "3"})
+        self.assertEqual(r["P-05"]["feasible"], "yes")
+        self.assertEqual(r["P-05"]["reject_reason"], "")
+
+
 class Cli(unittest.TestCase):
     def test_cli_runs(self):
         with tempfile.TemporaryDirectory() as out:

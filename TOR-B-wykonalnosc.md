@@ -57,3 +57,12 @@ Czyszczenia danych, kosztów i oszczędności, dokumentów.
 | Godzina | Decyzja / zdarzenie |
 |---|---|
 | 11:35 | B1 gotowe: `ev_shortlist.py` (CLI, potok, 4 pliki) z zaślepkami A/B/C wyłączającymi się, gdy pojawi się `data.py`/`feasibility.py`/`economics.py`; testy w `tests/test_b.py` |
+| 11:45 | B2 gotowe: `feasibility.assess` — chłodnia, ładowność, zasięg zimowy najgorszego dnia, punkty w bazie; zgodne z całym `fixtures/feasibility.csv`. Reguła wyboru: `ev_model` = najtańszy model (po `price_pln`) spełniający ładowność i zasięg; gdy żaden nie pasuje, `reject_reason` wymienia braki najtańszego modelu. Porównania z tolerancją 1e-9 (260 × 0,57 w float = 148,20000000000002). Chłodnie: `ev_model` puste. |
+
+## Pytania na koniec pracy
+
+| # | Pytanie | Stan / domyślnie |
+|---|---|---|
+| Q1 | Chłodnia: wpisywać `ev_model`, jeśli technicznie pasuje? Wpływa na to, czy C liczy dla niej ekonomię w `all_vans.csv` | puste — żaden oferowany EV nie ma agregatu |
+| Q2 | `reject_reason` przy braku modelu: braki najtańszego modelu (zgodne ze wzorem) czy braki każdego modelu osobno (np. P-04: „S: range; L: payload”)? | braki najtańszego |
+| Q3 | P-14 „na progu” (decyzja 1): opis ląduje w `reason` dopiero w B9, bo wzór ma puste `reject_reason` dla wykonalnych | B9 |
