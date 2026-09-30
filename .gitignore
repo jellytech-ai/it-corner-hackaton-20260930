@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Wyniki uruchomień narzędzia (generowane przez ev_shortlist.py)
+wyniki/
+out/
+
+# Paczka do wątku (B11)
+*.zip
+
+# System / edytory / lokalne notatki sesji
+.DS_Store
+.vscode/
+.idea/
+.cursor/
+.remember/
+.local
+.claude/settings.local.json
+*.mcp.json
+*.mcp.*.json
+logs/

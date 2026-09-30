@@ -125,3 +125,13 @@ Z plików testowych (pandas, poza repo). Tor A ma je odtworzyć w czystym Python
 | `total_km` | 344952 |
 | `vans_assessed` | 38 |
 | okres | 2026-06-15 do 2026-09-12 (90 dni) |
+
+Potwierdzone 11:33 przez `data.py` i niezależnie poleceniem powłoki. Uwaga: `awk` wymaga `LC_ALL=C`, inaczej przy polskich ustawieniach regionalnych obcina ułamki.
+
+```
+tail -n +2 ../it-corner-hackathon-20260930/trips.csv | LC_ALL=C sort -u | LC_ALL=C awk -F, '{n++; s+=($5>0)?$5:$6; v[($2=="P-17")?"P-17B":$2]=1} END{c=0; for(k in v)c++; printf "trips=%d total_km=%.1f vans=%d\n", n, s, c}'
+```
+
+## 9. Stan toru A (11:35)
+
+`data.py` jest gotowy i zgodny z plikami w `fixtures/`. Tory B i C mogą importować `data` po scaleniu gałęzi `tor-a`; interfejs bez zmian względem sekcji 5. Komunikaty i raport są po angielsku.
