@@ -172,7 +172,8 @@ Każde założenie ma godzinę przyjęcia; Ewa chce wiedzieć „co i mniej wię
 | A13 | — | Ładowanie nocne w taryfie 0,58 PLN/kWh; jeden punkt = jeden van | do potwierdzenia (vany dwuzmianowe wracają ok. 20:40, startują ok. 04:30) |
 | A14 | — | Limit EV w North = 6 (liczba punktów), South = 0 | czeka na Ewę (pyt. 1) |
 | A16 | 10:50 | Vany dwuzmianowe (świt + popołudnie: P-08, P-09, P-12, P-24, P-36) doładowują się w bazie między trasami z punktu 22 kW. Zimą daje to ok. 58 km zasięgu na godzinę ładowania dla Cargo S i ok. 51 km dla Cargo L; odliczamy 15 min na podłączenie. Test: pierwsza trasa ≤ zasięg zimowy oraz stan po doładowaniu ≥ druga trasa, dla każdego dnia z danych. Wymaga: powrotu do bazy między trasami, wolnego punktu w dzień, energii w taryfie dziennej (0,92 PLN/kWh) | przyjęte; skutki w sekcji 8 |
-| A17 | 11:13 | Analityk Ewy jest osobą techniczną i ma Pythona 3; uruchamia skrypt z wiersza poleceń i edytuje `params.csv` | przyjęte (niepotwierdzone przez Ewę) |
+| A17 | 11:13 | Analityk Ewy jest osobą techniczną i ma Pythona 3; uruchamia skrypt z wiersza poleceń i edytuje `params.csv` | przyjęte (niepotwierdzone przez Ewę); **do wpisania w odpowiedzi dla Ewy** — sekcja 7 |
+| A18 | 12:12 | Struktura danych się nie zmieni: kolejny eksport ma te same pliki (`trips.csv`, `vans.csv`) i te same nazwy kolumn co dzisiejszy. Zmieniają się tylko wiersze i okres. Gdy kolumny brakuje, narzędzie zatrzymuje się z komunikatem `ERROR: … missing column(s) …` | przyjęte; **do wpisania w odpowiedzi dla Ewy** — sekcja 7 |
 | A15 | 11:26 | Podstawa `saving_pln` = **wariant 1, tylko eksploatacja, rocznie**: (koszt diesla − koszt ładowania) + (serwis diesla − serwis EV), z `params.csv`. Nie wliczamy raty leasingu ani ceny zakupu EV, rat diesla ani dotacji. Serwis: diesel 0,34 PLN/km (dane firmy, jedna stawka niezależnie od rocznika), EV 0,14 PLN/km (**szacunek dealera**); w `vans.csv` brak kosztów serwisu per van. `annual_fuel_saving_pln` zostaje czystą różnicą paliwo − ładowanie | przyjęte (decyzja D7) |
 
 ### Skąd 0,57 × WLTP (A6–A8)
@@ -232,6 +233,47 @@ Uwaga: pytanie 3 jest najsłabsze (Ewa w trasie raczej nie zapyta Witolda ani de
 Status: **wysłane 30.09 ok. 11:09**, czekamy na odpowiedzi. Odpowiedzi wpisać do sekcji 10.
 
 Jeśli Ewa nie odpowie na czas: działamy na założeniach z sekcji 6 i zapisujemy to wprost.
+
+### Do wpisania w odpowiedzi dla Ewy (dopisane 12:12) — jeszcze niewysłane
+
+Ewa zapytała o 12:03: „my analyst will rerun this next quarter without you. What will they open, and what will they type?”. W odpowiedzi w naszym wątku muszą się znaleźć trzy rzeczy:
+
+| # | Co wpisać | Założenie |
+|---|---|---|
+| 1 | Analityk ma zainstalowanego Pythona 3 (3.9 lub nowszy); niczego więcej nie instaluje | A17 |
+| 2 | Dostarczamy README (`RERUN.md`) z instrukcją uruchomienia skryptu krok po kroku: co otworzyć, co wpisać, co sprawdzić | D5, D6 |
+| 3 | Struktura danych się nie zmieni: te same dwa pliki CSV z tymi samymi kolumnami; gdy kolumny zabraknie, skrypt powie której | A18 |
+
+Szkic odpowiedzi (EN), do wklejenia po uzgodnieniu:
+
+```
+Hi Ewa,
+
+Your analyst opens one folder and types one command.
+
+What they open: the folder we post here as a zip. It holds the script, a
+parameter file (params.csv) and a README.
+
+What they type:
+  python3 ev_shortlist.py --trips trips.csv --vans vans.csv --params params.csv --out results/
+
+What they get: shortlist.csv and summary.csv in your import format, plus a
+list of every van with the reason it is in or out, and a data report that
+says what was cleaned. The three check figures are printed on screen.
+
+We are assuming three things. Tell us if any is wrong:
+1. Your analyst has Python 3 installed (3.9 or newer). Nothing else needs
+   installing.
+2. The README is what they follow. It says step by step what to open, what
+   to type and what to check, including which prices and dates to update
+   in params.csv each quarter.
+3. The data keeps its structure: the same two CSV files with the same
+   column names as today. If a column is missing, the script stops and
+   names it; it never guesses.
+
+Thanks,
+JellyTech
+```
 
 ---
 
