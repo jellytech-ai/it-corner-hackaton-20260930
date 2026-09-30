@@ -70,12 +70,12 @@ Limits of this estimate: the large temperature studies are mostly passenger cars
 |---|---|---|---|
 | D1 | 10:42 | Refrigerated vans are not in the first round. | 5 of 6 carry more than 1,050 kg on 22–40 days a quarter (up to 1,247–1,284 kg), above both EV payloads. The sixth (P-19, max 996 kg) has a 150 km worst day, above the 148 km winter range. The dealer offers no refrigerated version, and drivers doubt the cooling unit can run on the battery. |
 | D2 | 10:42 | P-17 is merged into P-17B without asking you. | see A2 |
-| D3 | 10:50 | EV payload is a hard limit checked on the highest load in the data; we do not propose splitting loads across two vans. | Rated payload is a legal limit; operations require the EV to carry what the vans carry today; splitting loads means changing routes. Vans that fail on 1–3 days only are listed as "near the limit". |
+| D3 | 10:50 | EV payload is a hard limit checked on the highest load in the data; we do not propose splitting loads across two vans. | Rated payload is a legal limit; operations require the EV to carry what the vans carry today; splitting loads means changing routes. Vans that fail on 1–3 days only are listed as near misses. |
 | D4 | 10:50 | Seasonality is handled as assumption A12, without asking you. | There is no winter data; the Q4 rerun will check it. |
 | D5 | 11:13 | The tool is a Python script with no dependencies, with all values in `params.csv`, and annual km scaled from the period in the export. | "A script is enough"; everything goes into the Slack thread as files; the analyst reruns it alone. |
-| D8 | 11:25 | A missing or non-positive odometer value is replaced by GPS with a warning; a row with neither is rejected with a warning. | No trip is lost silently; the control figures (344,952 km) are counted this way. |
+| D8 | 11:25 | A missing or non-positive odometer value is replaced by GPS with a warning; a row with neither is rejected with a warning. | No trip is lost silently; the check figures (344,952 km) are counted this way. |
 | D9 | 11:25 | Trips of a van that is not in the register (after aliases) are left out of the figures, with a warning saying what to add to `vans.csv` or `van_alias`. | A future export may contain a new van; you should see it rather than get silently changed numbers. |
-| D10 | 11:25 | `vans_assessed` counts registered vans with at least one trip; a registered van without trips gets a warning. | The control figure matches what was actually assessed. |
+| D10 | 11:25 | `vans_assessed` counts registered vans with at least one trip; a registered van without trips gets a warning. | The check figure matches what was actually assessed. |
 | D6 | 11:20 | The tool is one folder and one command, split into four `.py` files. | Cleaning, feasibility and savings are kept apart so each can be checked separately. |
 | D7 | 11:26 | `saving_pln` = annual operating saving (see A15). | Simple and checkable from the rates in `params.csv`, with no guesses about the grant, lease exit or a new diesel's price. The full cost of the EV (Cargo S lease about 34,800 PLN a year against about 14,000 PLN operating saving) is set out in the board note. |
 

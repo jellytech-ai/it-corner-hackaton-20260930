@@ -402,7 +402,7 @@ Demo w trzech krokach:
 | D9 | 11:25 | Kursy vana spoza rejestru (po aliasach) nie wchodzą do liczb; ostrzeżenie mówi, co dopisać do `vans.csv` lub `van_alias` | następny eksport może mieć nowego vana; analityk ma to zobaczyć, a nie dostać cicho zmienione liczby |
 | D10 | 11:25 | `vans_assessed` = vany z rejestru z co najmniej jednym kursem; van bez kursów dostaje ostrzeżenie | liczba kontrolna musi odpowiadać temu, co naprawdę oceniliśmy |
 | D11 | 11:35 | Raport i komunikaty narzędzia są po angielsku | czyta je analityk Ewy |
-| D12 | 11:41 | Konstytucja komunikatów narzędzia: `KONTRAKT.md` sekcja 10 (K1–K7) — angielski, `ERROR:` bez tracebacka, `WARNING:` w raporcie, liczby kontrolne na ekranie | analityk ma naprawić problem bez czytania kodu i bez nas (A17) |
+| D12 | 11:50 | Wspólne zasady języka, błędów, liczb, CSV i gita w `KONSTYTUCJA.md` (m.in. angielski dla analityka, `ERROR:` bez śladu stosu, `WARNING:` w raporcie, liczby kontrolne na ekranie, słownik pojęć). Pierwszeństwo: README Ewy > konstytucja > `KONTRAKT.md`. 11:44 tor C dopisał: każdy nowy komunikat ma wiersz w `RERUN.md` | analityk ma naprawić problem bez czytania kodu i bez nas (A17); dokumenty mają wyglądać jak dzieło jednego zespołu |
 | D6 | 11:20 | Korekta D5: narzędzie to jeden katalog i jedno polecenie, ale cztery pliki `.py` (`data.py`, `feasibility.py`, `economics.py`, `ev_shortlist.py`) | trzy osoby nie mogą równolegle edytować jednego pliku; do wątku trafia zip |
 
 ### Otwarte
@@ -440,4 +440,5 @@ Demo w trzech krokach:
 | 11:35 | Tor A: `data.py` wypchnięte na `tor-a` |
 | 11:37 | Tor C: szkice `RERUN.md` i `ASSUMPTIONS.md`; decyzje toru A przeniesione do rejestru |
 | 11:40 | `handoff-wstepna-analiza` (A + B) scalone do `tor-c`; pełny potok na `trips.csv`: shortlista P-08, P-26, P-14; `saving_pln` razem 64 552 PLN/rok |
-| 11:41 | Konstytucja komunikatów (D12) w `KONTRAKT.md` sekcja 10; do poprawy w `ev_shortlist.py` (tor B): K1, K3, K6 |
+| 11:42 | `tor-c` scalone do `handoff-wstepna-analiza`; `KONSTYTUCJA.md` (D12) zastępuje szkic sekcji 10 w `KONTRAKT.md` |
+| 11:44 | Tor C: uzupełnienie `KONSTYTUCJA.md` (komunikaty → `RERUN.md`), dokumenty EN zgodne ze słownikiem (check figures, near miss) |
