@@ -61,3 +61,28 @@ def assess(profile, trips, params):
             "reject_reason": "; ".join(reasons),
         })
     return rows
+
+
+def sensitivity(profile, trips, params, factors):
+    """Dla kazdego progu zimowego: ile vanow przechodzi i ktore.
+
+    feasible_* = pelna ocena jak w assess; fit_* = vany z dobranym ev_model,
+    czyli pasujace technicznie niezaleznie od ladowarek w bazie (np. South).
+    Zmienia sie tylko winter_range_factor; zuzycie zimowe w symulacji A16 zostaje.
+    """
+    rows = []
+    for factor in factors:
+        p = {**params, "winter_range_factor": str(factor)}
+        res = assess(profile, trips, p)
+        feasible = sorted(r["van_id"] for r in res if r["feasible"] == "yes")
+        fit = sorted(r["van_id"] for r in res if r["ev_model"])
+        rows.append({
+            "winter_range_factor": factor,
+            "winter_range_km": "; ".join("%s %.1f" % (m, winter_range_km(s, p))
+                                         for m, s in ev_models(p).items()),
+            "feasible_count": len(feasible),
+            "feasible_vans": " ".join(feasible),
+            "fit_count": len(fit),
+            "fit_vans": " ".join(fit),
+        })
+    return rows

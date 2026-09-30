@@ -147,6 +147,33 @@ class AssessBasicFilters(unittest.TestCase):
         self.assertEqual(r["P-26"]["ev_model"], "Volta Cargo L")
 
 
+class Sensitivity(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import feasibility
+        params = ev_shortlist._stub_load_params(os.path.join(ROOT, "params.csv"))
+        trips, profile, _ = ev_shortlist._stub_load_and_clean(
+            os.path.join(FX, "clean_trips.csv"), os.path.join(FX, "van_profile.csv"), params)
+        cls.rows = {r["winter_range_factor"]: r
+                    for r in feasibility.sensitivity(profile, trips, params, [0.50, 0.57, 0.65])}
+
+    def test_one_row_per_factor(self):
+        self.assertEqual(sorted(self.rows), [0.50, 0.57, 0.65])
+
+    def test_baseline_matches_assess(self):
+        r = self.rows[0.57]
+        self.assertEqual(r["feasible_vans"], "P-08 P-14 P-26")
+        self.assertEqual(r["feasible_count"], 3)
+
+    def test_more_vans_pass_with_higher_factor(self):
+        counts = [self.rows[f]["feasible_count"] for f in (0.50, 0.57, 0.65)]
+        self.assertEqual(counts, sorted(counts))
+        self.assertGreater(counts[2], counts[1])
+
+    def test_fit_ignoring_chargers_includes_south(self):
+        self.assertIn("P-25", self.rows[0.57]["fit_vans"].split())
+
+
 class Cli(unittest.TestCase):
     def test_cli_runs(self):
         with tempfile.TemporaryDirectory() as out:

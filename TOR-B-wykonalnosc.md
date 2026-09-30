@@ -68,6 +68,15 @@ tail -n +2 trips.csv | sort -u | awk -F, '
   END { printf "trips_counted=%d total_km=%.0f vans=%d\n", n, tot, length(vans) }'
 ```
 | 12:05 | B6 gotowe (przed B5 — scalenie czeka na gałęzie A i C o 12:20): symulacja A16 w `feasibility.py` (`van_days`, `simulate_day`, `failed_days`). Odtworzone wszystkie liczby z HANDOFF sekcja 8: P-08/P-12 Cargo S 0 dni, P-09 S 26 / L 2, P-36 S 11 / L 0, P-24 S 43 / L 9. Wynik: P-08 → Cargo S z doładowaniem (`day_tariff_share` 0,484); P-12 → Cargo S, ale South bez ładowarek. `range_check_km` przy doładowaniu = dłuższa trasa najgorszego dnia (za KONTRAKT 6; P-08: 104,8). Doładowanie w przerwie liczone do pełna, maks. tyle, ile zużyła trasa 1. |
+| 12:15 | B8 gotowe: `feasibility.sensitivity(profile, trips, params, factors)`. Tabela dla C (dane z fixtures): |
+
+| Próg | Zasięg S / L | Wykonalne (North) | Pasują technicznie (także South) |
+|---|---|---|---|
+| 0,49 | 127,4 / 186,2 | 0 | 0 |
+| 0,50 | 130,0 / 190,0 | 1: P-08 (Cargo L, 190,0 km — dokładnie na progu) | 1 |
+| **0,57** | 148,2 / 216,6 | **3: P-08, P-14, P-26** | 8: + P-05, P-10, P-12, P-20, P-25 |
+| 0,65 | 169,0 / 247,0 | 8: P-04, P-08, P-13, P-14, P-21, P-26, P-28, P-30 | 15: + P-05, P-10, P-12, P-20, P-25, P-31, P-32 |
+
 
 ## Pytania na koniec pracy
 
@@ -80,3 +89,5 @@ tail -n +2 trips.csv | sort -u | awk -F, '
 | Q5 | `day_tariff_share`: doładowanie w przerwie do pełna (P-08 0,484, P-12 0,476) czy tylko brakujące km (0,112 / 0,153)? Różnica ok. 0,34 PLN/kWh na ~1/3 energii — ważne dla C | do pełna (kierowca podłącza i ładuje; ostrożniej dla kosztu) |
 | Q6 | `range_check_km` przy doładowaniu: KONTRAKT 6 mówi „dłuższa z dwóch tras”, decyzja 2 w tym pliku mówi „suma km najgorszego dnia”. Wdrożone wg KONTRAKTU — C musi to opisać w `ASSUMPTIONS.md` | dłuższa trasa |
 | Q7 | A16: czy vany dwuzmianowe faktycznie wracają do bazy między trasami? Dane pokazują tylko godziny (HANDOFF 8) | zakładamy, że tak |
+| Q8 | Wrażliwość zmienia tylko `winter_range_factor`; zużycie zimowe w symulacji A16 (`winter_temp_factor` × `winter_payload_factor` = 0,63) zostaje stałe. Czy te dwa współczynniki mają być spójne (0,57 vs 0,63)? | zostawiamy osobno, jak w HANDOFF |
+| Q9 | `__pycache__/*.pyc` są śledzone w git (ktoś uruchomił pytest → zmiany w drzewie). Dodać `.gitignore`? Plik bez właściciela w KONTRAKT | do decyzji przy scaleniu |
