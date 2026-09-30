@@ -72,3 +72,4 @@ Czyszczenia danych, filtrów, rankingu, zapisu plików wynikowych.
 | 11:26 | **C1: wariant 1** — `saving_pln` = paliwo − ładowanie + (0,34 − 0,14) PLN/km × `annual_km`; bez leasingu, zakupu i dotacji (D7, A15). P-14: 13 995 PLN/rok. `saving_basis()` gotowe. Nowych parametrów dla toru A brak |
 | 11:31 | `tor-c` wypchnięte (C4 gotowe przed 12:20) |
 | 11:40 | C6: szkic `RERUN.md` (6 kroków + rozwiązywanie problemów). Do sprawdzenia po scaleniu: komunikaty „missing column” (A) i zawartość ekranu (B). `economics()` przy braku parametru rzuca `ValueError` z nazwą klucza i `params.csv` — **prośba do A i B o ten sam styl komunikatów** |
+| 11:50 | C9: szkic `ASSUMPTIONS.md` (EN) z A1–A17, D1–D7 i 7 pytaniami „co byśmy zapytali dalej” (5 z listy do Ewy + powrót dwuzmianowych do bazy + historia serwisu). A13 i A14 bez godziny, jak w `HANDOFF.md` |
