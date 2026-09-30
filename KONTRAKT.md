@@ -69,6 +69,8 @@ sensitivity(profile, trips, params, factors) -> list[dict]
 
 # economics.py (tor C)
 economics(profile, feasibility, params, period_days) -> list[dict]
+saving_for_model(van, ev_model, day_tariff_share, params, period_days)   # wynik w 5 lat dla jednego modelu; B używa do wyboru modelu (D14)
+lease_exit_fee(...)                                                       # opłata za wcześniejsze wyjście z leasingu
 saving_basis(params) -> str
 
 # ev_shortlist.py (tor B)
@@ -94,11 +96,13 @@ saving_basis(params) -> str
 
 ### `feasibility` (B → C) — wzór: `fixtures/feasibility.csv`
 
-`van_id, feasible, ev_model, ev_depot, range_check_km, midday_charging, day_tariff_share, reject_reason`
+`van_id, feasible, ev_model, ev_depot, range_check_km, midday_charging, day_tariff_share, reject_reason, reason, fit_models`
 
 - `feasible`: `yes`/`no`; `ev_model` puste, jeśli żaden model nie pasuje
 - `range_check_km`: dystans porównany z zasięgiem (najgorszy dzień; dla doładowania między trasami — dłuższa z dwóch tras najgorszego dnia, do opisania w założeniach)
 - `day_tariff_share`: jaka część energii jest ładowana w dzień (0 bez doładowania między trasami)
+- `reason` (dopisane 12:35, Q11/Q18): jedno zdanie po angielsku dla vana wykonalnego, np. `range margin 10.9 km (7.0%)`; trafia do kolumny `reason` w `shortlist.csv`. Puste dla niewykonalnych — ich powód jest w `reject_reason`
+- `fit_models` (dopisane 12:35, Q21): wszystkie modele EV, które przechodzą filtry, rozdzielone `; `; z nich tor C wybiera ten o lepszym wyniku w 5 lat (`economics.saving_for_model`)
 - **wzór w `fixtures/` jest uproszczony** (bez doładowania między trasami, South odrzucony) — służy tylko do pracy toru C, zanim B odda prawdziwy wynik
 
 ### `economics` (C → B)
@@ -113,8 +117,11 @@ saving_basis(params) -> str
 |---|---|
 | `shortlist.csv` | format Ewy: `rank, van_id, ev_model, ev_depot, range_check_km, annual_km, annual_fuel_saving_pln, saving_pln, reason` |
 | `summary.csv` | `figure,value`: `vans_assessed, trips_counted, total_km, recommended_count, annual_fuel_saving_pln, saving_pln, saving_basis` |
-| `all_vans.csv` | `van_profile` + `feasibility` + `economics` dla wszystkich 38 vanów |
+| `all_vans.csv` | wszystkie vany z rejestru; kolumny w tej kolejności: `van_profile` (17 kolumn, w tym `range_day_km`), potem `feasible, ev_model, ev_depot, range_check_km, midday_charging, day_tariff_share, reject_reason, reason, fit_models`, potem `annual_km, annual_fuel_saving_pln, saving_pln`, na końcu `shortlisted, shortlist_note` |
 | `data_report.txt` | raport z czyszczenia (A) |
+
+- `shortlisted` (dopisane 12:35, Q21): `yes` / `no` — czy van jest w `shortlist.csv`.
+- `shortlist_note`: dla vana wykonalnego, który nie trafił na listę — dlaczego (limit punktów, limit vanów z South, ujemny wynik); inaczej puste.
 
 Format: UTF-8, przecinek, kropka dziesiętna, bez separatorów tysięcy; `range_check_km` z 1 miejscem po przecinku, kwoty i km jako liczby całkowite.
 
@@ -185,3 +192,14 @@ Zasady języka, błędów (`ERROR:`), ostrzeżeń (`WARNING:`), liczb, CSV i git
 ### Podgląd wyniku według nowych reguł (obliczenie pomocnicze toru A, nie wynik narzędzia)
 
 15 vanów przechodzi zasięg i ładowność (8 w North, 7 w South), 9 ma dodatni wynik w 5 lat. Przy limicie 3 vanów z South: P-30, P-21, P-08 (Cargo L), P-13, P-04 z North oraz P-12 (Cargo L), P-05, P-25 z South — 8 vanów, razem ok. 95 600 PLN w 5 lat. P-26 i P-14 z dotychczasowej shortlisty wychodzą na minus (−6 904 i −35 025 PLN).
+
+
+## 11. Uzgodnienia z torem B (12:35)
+
+| Pytanie B | Rozstrzygnięcie toru A |
+|---|---|
+| Q10: parametry `near_miss_range_pct`, `near_miss_days`, `at_threshold_pct` dopisane przez B do `params.csv` | zaakceptowane, zostają w `params.csv` |
+| Q11, Q18: kolumna `reason` w `feasibility` | dopisana do sekcji 6; kolejność kolumn w kontrakcie odpowiada kodowi |
+| Q21: `fit_models`, `shortlisted`, `shortlist_note`, `range_day_km` w `all_vans.csv` | dopisane do sekcji 6 i 7 |
+
+Kontrola krzyżowa: shortlista z `devel` o 12:33 (8 vanów, `saving_pln` razem 95 637 PLN w 5 lat) zgadza się co do złotówki z niezależnym obliczeniem toru A z 12:10 (sekcja 10).

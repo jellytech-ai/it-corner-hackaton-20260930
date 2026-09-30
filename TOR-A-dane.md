@@ -80,3 +80,5 @@ Oczekiwany wynik na `fixtures/fresh_trips.csv` (test ponownego uruchomienia): ok
 | 12:15 | A7: `params.csv` według reguł Ewy (0,60 × WLTP, 95. percentyl, 10 punktów w North, 3 vany z South, dotacja 30%, 5 lat, wyjście z leasingu 3 raty) |
 | 12:15 | Nowa kolumna `range_day_km` w `van_profile`; percentyl z interpolacją liniową (jak `PERCENTILE.INC` w Excelu, żeby analityk mógł to sprawdzić w arkuszu) |
 | 12:15 | `tor-a` nie jest scalony do `devel`: nowe wartości parametrów wywracają 9 testów toru B, dopóki B i C nie przejdą na nowe reguły (KONTRAKT sekcja 10) |
+| 12:35 | Q10, Q11, Q18, Q21 toru B rozstrzygnięte: parametry progu „blisko” zaakceptowane; kolumny `reason`, `fit_models`, `shortlisted`, `shortlist_note` dopisane do KONTRAKT 6 i 7 |
+| 12:35 | Kontrola krzyżowa: wynik narzędzia na `devel` (8 vanów, 95 637 PLN w 5 lat) identyczny z niezależnym obliczeniem toru A |
