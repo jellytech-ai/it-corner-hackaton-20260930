@@ -80,6 +80,7 @@ tail -n +2 trips.csv | sort -u | awk -F, '
 | 12:20 | Uwaga: commit B6 (`f52d8c4`) zawierał tylko dziennik — Cursor nadpisał `feasibility.py` i `tests/test_b.py` nieaktualnym buforem przed `git add`. Kod B6 odtworzony w `08808c7`. Od teraz po każdym commicie sprawdzam `git show --stat`. |
 | 12:25 | B9 gotowe: vany niewykonalne mają w `reject_reason` dopisek `near threshold: <model> …` (zasięg ≤ 10% ponad próg, 1–3 dni ponad ładowność albo 1–3 dni nieudane z doładowaniem). Nowa kolumna `reason` (poza KONTRAKT 6, trafia do `all_vans.csv` i `shortlist.csv`): zapas zasięgu, `at threshold` przy zapasie < 1% (P-14: 0,2 km; P-25: 0,0 km), albo „midday charging”. Blisko progu: North — P-13 (+0,4%), P-04 (+1,8%), P-21 (+7,0%), P-28 (+8,2%), P-06 i P-02 (1 dzień ładunku), P-22 (2 dni + 1,1%), P-11 (3 dni), P-09 (Cargo L, 2 dni nieudane); South — P-32, P-31, P-18, P-27. |
 | 12:30 | Przygotowanie B7: `rank` ucina też po `chargers.<baza>` (decyzja 4: jeden punkt na van), limit dotacji z `max_evs_grant` bez domyślnej wartości w kodzie. Przy progu 0,65 wykonalnych w North jest 8 > 6 punktów → na liście 6. |
+| 12:35 | Próba B5 (lokalnie, bez pushu): `tor-b` + `origin/tor-a` (5ff97af) + `origin/tor-c` (c54b3de) scalają się bez konfliktów; testy A/B/C zielone; pełny przebieg na surowych danych: 2777 / 344952 / 38, shortlista P-08 (29 204), P-26 (21 353), P-14 (13 995), `saving_pln` razem 64 552, `annual_fuel_saving_pln` 43 566. Poprawki po próbie: tryb `--fixtures` (testy B na plikach testowych nie mogą iść przez czyszczenie A), zaokrąglanie km i kwot przy eksporcie (C zwraca float), `.gitignore` + usunięcie `.pyc` z repo. Test `PipelineOnSourceData` czyta dane z `EV_SOURCE_DIR` albo `../it-corner-hackathon-20260930/`. |
 
 ## Pytania na koniec pracy
 
@@ -93,8 +94,11 @@ tail -n +2 trips.csv | sort -u | awk -F, '
 | Q6 | `range_check_km` przy doładowaniu: KONTRAKT 6 mówi „dłuższa z dwóch tras”, decyzja 2 w tym pliku mówi „suma km najgorszego dnia”. Wdrożone wg KONTRAKTU — C musi to opisać w `ASSUMPTIONS.md` | dłuższa trasa |
 | Q7 | A16: czy vany dwuzmianowe faktycznie wracają do bazy między trasami? Dane pokazują tylko godziny (HANDOFF 8) | zakładamy, że tak |
 | Q8 | Wrażliwość zmienia tylko `winter_range_factor`; zużycie zimowe w symulacji A16 (`winter_temp_factor` × `winter_payload_factor` = 0,63) zostaje stałe. Czy te dwa współczynniki mają być spójne (0,57 vs 0,63)? | zostawiamy osobno, jak w HANDOFF |
-| Q9 | `__pycache__/*.pyc` są śledzone w git (ktoś uruchomił pytest → zmiany w drzewie). Dodać `.gitignore`? Plik bez właściciela w KONTRAKT | do decyzji przy scaleniu |
+| Q9 | `.gitignore` dodany w `tor-b`; `tor-a` nadal commituje `__pycache__/data.cpython-311.pyc` i `tests/__pycache__/test_a.cpython-311.pyc` — przy scaleniu `git rm --cached` | zrobić przy B5 |
 | Q10 | Tor A: dopisać do `params.csv` progi B9 — `near_range_pct,10`, `near_payload_days,3`, `at_threshold_pct,1` (teraz domyślne w kodzie, bo `params.csv` należy do A) | wiadomość do A przy scaleniu |
 | Q11 | Kolumna `reason` w `feasibility` wykracza poza KONTRAKT 6 — dopisać ją do kontraktu (C nie musi jej używać) | dopisać |
 | Q12 | Język opisów w `reason`/`reject_reason`: angielski jak we wzorze, czy polski dla Ewy („na progu”, decyzja 1)? | angielski |
 | Q13 | P-25 (South) jest dokładnie na progu (148,2 = 148,2) — gdyby Ewa pozwoliła na EV z South w North, to kandydat najbardziej ryzykowny | pokazać w notatce |
+| Q14 | `annual_km` (tor C) = km z okresu ÷ 90 dni kalendarzowych × 365, niezależnie od liczby dni pracy (P-08: 11 670 km → 47 329 km/rok). Czy to zamierzone (vany jeżdżą też w weekendy/dni bez danych)? | pytanie do C |
+| Q15 | Raport A: „gps_km missing: 15” po deduplikacji vs 17 w HANDOFF sekcja 4 (surowe) — ujednolicić opis w `HANDOFF.md` | pytanie do C/A |
+| Q16 | Scalenie B5 do `handoff-wstepna-analiza` i push — wymaga zgody (gałąź wspólna) | czeka na 12:20 |
