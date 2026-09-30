@@ -7,7 +7,7 @@ import unittest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from economics import economics, saving_basis  # noqa: E402
+from economics import economics, lease_exit_fee, saving_basis, saving_for_model  # noqa: E402
 
 
 def read_csv(name):
@@ -29,6 +29,7 @@ class EconomicsFixtureTest(unittest.TestCase):
         self.profile = read_csv("fixtures/van_profile.csv")
         self.feasibility = read_csv("fixtures/feasibility.csv")
         self.rows = by_van(economics(self.profile, self.feasibility, self.params, 90))
+        self.rows_profile = by_van(self.profile)
 
     def test_annual_km_scales_period_to_year(self):
         # P-26: 8579.7 km in 90 days -> x 365 / 90
@@ -77,13 +78,42 @@ class EconomicsFixtureTest(unittest.TestCase):
             places=6,
         )
 
-    def test_saving_pln_is_annual_fuel_plus_maintenance_saving(self):
-        # Decision C1 / D7: variant 1, operating costs only, per year
+    def test_saving_pln_is_five_years_running_minus_ev_after_grant(self):
+        # Ewa: five years of running saving, minus EV price after the 30% grant, minus lease exit fee.
+        # P-14: lease ends 2027-03-31, within 12 months of 2026-09-30, so no exit fee.
         km = 5623.2 * 365 / 90
-        maintenance = km * (0.34 - 0.14)
-        row = self.rows["P-14"]
-        self.assertAlmostEqual(row["saving_pln"], row["annual_fuel_saving_pln"] + maintenance, places=6)
-        self.assertEqual(round(row["saving_pln"]), 13995)
+        running = self.rows["P-14"]["annual_fuel_saving_pln"] + km * (0.34 - 0.14)
+        self.assertAlmostEqual(self.rows["P-14"]["saving_pln"], 5 * running - 150000 * 0.70, places=6)
+        self.assertEqual(round(self.rows["P-14"]["saving_pln"]), -35025)
+
+    def test_saving_pln_subtracts_exit_fee_for_long_lease(self):
+        # P-26: lease ends 2028-06-30, beyond 12 months: 3 monthly fees of 2890
+        km = 8579.7 * 365 / 90
+        running = self.rows["P-26"]["annual_fuel_saving_pln"] + km * (0.34 - 0.14)
+        self.assertAlmostEqual(self.rows["P-26"]["saving_pln"], 5 * running - 105000 - 3 * 2890, places=6)
+        self.assertEqual(round(self.rows["P-26"]["saving_pln"]), -6904)
+
+    def test_saving_pln_uses_the_model_from_feasibility(self):
+        # P-08 goes to Volta Cargo L in the fixture: 27 kWh/100 km, 195000 PLN, owned (no fee)
+        km = 11670.2 * 365 / 90
+        fuel = km * 11.8 / 100 * 5.20 - km * 27 / 100 * 1.10 * 0.58
+        expected = 5 * (fuel + km * 0.20) - 195000 * 0.70
+        self.assertAlmostEqual(self.rows["P-08"]["saving_pln"], expected, places=6)
+
+    def test_horizon_and_grant_come_from_params(self):
+        params = dict(self.params, saving_horizon_years="4", grant_share_of_price="0")
+        rows = by_van(economics(self.profile, self.feasibility, params, 90))
+        km = 5623.2 * 365 / 90
+        running = rows["P-14"]["annual_fuel_saving_pln"] + km * 0.20
+        self.assertAlmostEqual(rows["P-14"]["saving_pln"], 4 * running - 150000, places=6)
+
+    def test_saving_for_model_compares_models_for_one_van(self):
+        van = self.rows_profile["P-08"]
+        s = saving_for_model(van, "Volta Cargo S", 0, self.params, 90)
+        l = saving_for_model(van, "Volta Cargo L", 0, self.params, 90)
+        self.assertAlmostEqual(l["saving_pln"], self.rows["P-08"]["saving_pln"], places=6)
+        self.assertGreater(s["saving_pln"], l["saving_pln"])  # S is cheaper and uses less energy
+        self.assertEqual(set(s), {"annual_km", "annual_fuel_saving_pln", "saving_pln"})
 
     def test_unknown_diesel_model_names_the_missing_parameter(self):
         profile = [dict(r) for r in self.profile]
@@ -96,12 +126,52 @@ class EconomicsFixtureTest(unittest.TestCase):
         self.assertIn("params.csv", str(ctx.exception))
 
 
+class LeaseExitFeeTest(unittest.TestCase):
+    PARAMS = {"lease_exit_fee_months": "3", "lease_free_exit_within_months": "12",
+              "lease_reference_date": "2026-09-30"}
+
+    def fee(self, ownership, lease_end, monthly="2000"):
+        van = {"ownership": ownership, "lease_end": lease_end, "monthly_lease_pln": monthly}
+        return lease_exit_fee(van, self.PARAMS)
+
+    def test_owned_van_has_no_fee(self):
+        self.assertEqual(self.fee("owned", "", ""), 0)
+
+    def test_lease_ending_just_before_twelve_months_is_free(self):
+        self.assertEqual(self.fee("leased", "2027-09-29"), 0)
+
+    def test_lease_ending_exactly_at_twelve_months_is_free(self):
+        self.assertEqual(self.fee("leased", "2027-09-30"), 0)
+
+    def test_lease_ending_just_after_twelve_months_costs_three_fees(self):
+        self.assertEqual(self.fee("leased", "2027-10-01"), 6000)
+
+    def test_reference_at_month_end_is_clamped(self):
+        params = dict(self.PARAMS, lease_reference_date="2027-02-28", lease_free_exit_within_months="1")
+        van = {"ownership": "leased", "lease_end": "2027-03-28", "monthly_lease_pln": "1000"}
+        self.assertEqual(lease_exit_fee(van, params), 0)
+        van["lease_end"] = "2027-03-29"
+        self.assertEqual(lease_exit_fee(van, params), 3000)
+
+    def test_bad_lease_end_names_the_van_field(self):
+        van = {"van_id": "P-99", "ownership": "leased", "lease_end": "31.05.2027", "monthly_lease_pln": "1"}
+        with self.assertRaises(ValueError) as ctx:
+            lease_exit_fee(van, self.PARAMS)
+        self.assertIn("P-99", str(ctx.exception))
+        self.assertIn("lease_end", str(ctx.exception))
+
 class SavingBasisTest(unittest.TestCase):
+    def test_saving_basis_follows_params(self):
+        params = dict(read_params(), saving_horizon_years="4", grant_share_of_price="0.25")
+        text = saving_basis(params)
+        self.assertIn("4 years", text)
+        self.assertIn("25% grant", text)
+
     def test_saving_basis_is_one_english_sentence_naming_what_is_counted(self):
         text = saving_basis(read_params())
         self.assertTrue(text.endswith("."))
         self.assertEqual(text.count(". "), 0)
-        for word in ("fuel", "maintenance", "per year", "lease"):
+        for word in ("5 years", "fuel", "maintenance", "30% grant", "lease exit fee", "3 monthly"):
             self.assertIn(word, text)
         self.assertNotIn(",", text)  # stays one field in summary.csv
 
