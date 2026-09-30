@@ -30,18 +30,32 @@ _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _TIME_RE = re.compile(r"^\d{2}:\d{2}$")
 
 
+_DECIMAL_COMMA_RE = re.compile(r"^-?\d+,\d+$")
+
+
+def _semicolon_hint(fieldnames):
+    """Extra sentence for the usual cause of a broken header: a spreadsheet saved the CSV with semicolons."""
+    if fieldnames and any(";" in (name or "") for name in fieldnames):
+        return ". The file uses semicolons; save it as CSV with a comma separator and a dot as the decimal mark"
+    return ""
+
+
 def load_params(path):
     """Read params.csv (columns parameter,value) into a dict of strings."""
     try:
         with open(path, newline="", encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
             if reader.fieldnames is None or [c.strip() for c in reader.fieldnames[:2]] != ["parameter", "value"]:
-                raise ValueError(f"{path}: expected header 'parameter,value'")
+                raise ValueError(f"{path}: expected header 'parameter,value'" + _semicolon_hint(reader.fieldnames))
             params = {}
             for row in reader:
                 key = (row["parameter"] or "").strip()
                 if key:
-                    params[key] = (row["value"] or "").strip()
+                    value = (row["value"] or "").strip()
+                    if _DECIMAL_COMMA_RE.match(value):
+                        raise ValueError(f"Parameter '{key}' in params.csv has a decimal comma '{value}'; "
+                                         f"use a dot: {value.replace(',', '.')}")
+                    params[key] = value
     except FileNotFoundError:
         raise FileNotFoundError(f"Parameter file not found: {path}") from None
     if not params:
@@ -56,7 +70,8 @@ def _read_csv(path, required, label):
             header = [c.strip() for c in (reader.fieldnames or [])]
             missing = [c for c in required if c not in header]
             if missing:
-                raise ValueError(f"{label} file {path}: missing column(s) {', '.join(missing)}")
+                raise ValueError(f"{label} file {path}: missing column(s) {', '.join(missing)}"
+                                 + _semicolon_hint(reader.fieldnames))
             return [{k.strip(): (v or "").strip() for k, v in row.items() if k is not None} for row in reader]
     except FileNotFoundError:
         raise FileNotFoundError(f"{label} file not found: {path}") from None

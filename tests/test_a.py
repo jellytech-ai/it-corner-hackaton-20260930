@@ -117,6 +117,32 @@ class SyntheticExport(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "must be a number above 0"):
             data.build_van_profile(trips, vans, {"range_check_percentile": "abc"})
 
+    def write_params(self, tmp, text):
+        path = os.path.join(tmp, "p.csv")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(text)
+        return path
+
+    def test_params_saved_with_semicolons_says_so(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaisesRegex(ValueError, "uses semicolons; save it as CSV with a comma"):
+                data.load_params(self.write_params(tmp, "parameter;value\nwinter_range_factor;0,60\n"))
+
+    def test_decimal_comma_in_a_parameter_names_the_parameter(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaisesRegex(ValueError, "Parameter 'winter_range_factor' .* decimal comma '0,60'; use a dot: 0.60"):
+                data.load_params(self.write_params(tmp, 'parameter,value\nwinter_range_factor,"0,60"\n'))
+
+    def test_trips_saved_with_semicolons_says_so(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            trips_path, vans_path = os.path.join(tmp, "t.csv"), os.path.join(tmp, "v.csv")
+            with open(trips_path, "w", encoding="utf-8") as f:
+                f.write(TRIP_HEADER.replace(",", ";") + "\n")
+            with open(vans_path, "w", encoding="utf-8") as f:
+                f.write("\n".join(VANS) + "\n")
+            with self.assertRaisesRegex(ValueError, "missing column.*uses semicolons"):
+                data.load_and_clean(trips_path, vans_path, {})
+
     def test_missing_params_file(self):
         with self.assertRaises(FileNotFoundError):
             data.load_params("/nonexistent/params.csv")
