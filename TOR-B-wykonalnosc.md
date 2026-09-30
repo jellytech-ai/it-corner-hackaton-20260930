@@ -141,6 +141,11 @@ Near miss przy 0,60: ładunek — P-02, P-06, P-18 (1 dzień), P-22, P-27 (2), P
 | `range_check_percentile` 100 (najgorszy dzień) | 6: bez P-30, P-21 | 59 482 |
 | `max_south_vans_at_north` 0 | 5: P-30, P-21, P-08, P-13, P-04 | 56 414 |
 
+| 12:20 | B11 próba na sucho: zip z plikami wymienionymi w `RERUN.md` („What is in the folder”), rozpakowany w pustym katalogu z `trips.csv` i `vans.csv`, polecenie z kroku 3 `RERUN.md` bez zmian → kod 0, 8 vanów; `shortlist.csv`, `summary.csv`, `all_vans.csv`, `data_report.txt` bajt w bajt jak z repo. Zip nie trafia do repo (`.gitignore`); budujemy go po zamrożeniu (14:45) poleceniem niżej. Uwaga dla C: po uruchomieniu w folderze analityka powstaje `__pycache__/` — można wspomnieć w `RERUN.md`, że to normalne |
+
+```sh
+zip -j ev_shortlist_tool.zip ev_shortlist.py data.py feasibility.py economics.py params.csv RERUN.md ASSUMPTIONS.md
+```
 
 ## Pytania na koniec pracy
 
