@@ -45,8 +45,34 @@ Każdą podjętą decyzję wpisz do dziennika niżej z godziną; C przeniesie j�
 
 Filtrów wykonalności, kosztów, rankingu, plików wynikowych.
 
+## Stan (11:35)
+
+| Zadanie | Stan |
+|---|---|
+| A1–A5 | zrobione: `data.py`, 12 testów przechodzi (`python3 -m unittest tests.test_a`) |
+| A3 | liczby kontrolne 38 / 2777 / 344952 potwierdzone niezależnie (`sort -u` + `awk`) |
+| A6 | gałąź `tor-a` wypchnięta |
+| A8 | zrobione z wyprzedzeniem: `fixtures/fresh_trips.csv` + generator `fixtures/make_fresh_trips.py` |
+| A7 | czeka na odpowiedzi Ewy |
+| A9 | czeka na `RERUN.md` od toru C |
+
+Samodzielne uruchomienie toru A:
+
+```
+python3 data.py --trips ../it-corner-hackathon-20260930/trips.csv --vans ../it-corner-hackathon-20260930/vans.csv --params params.csv
+```
+
+Oczekiwany wynik na `fixtures/fresh_trips.csv` (test ponownego uruchomienia): okres 2026-10-05 do 2026-11-14 (41 dni), 1310 kursów, 161957 km, trzy ostrzeżenia (nieznany van P-39, ujemny licznik P-13, brak dystansu P-21).
+
 ## Dziennik
 
 | Godzina | Decyzja / zdarzenie |
 |---|---|
-| | |
+| 11:25 | Decyzja 1: wiersz P-27 z 13.08 liczony z `gps_km` (90,3 km). Reguła ogólna: licznik ≤ 0 lub pusty → GPS, z ostrzeżeniem w raporcie |
+| 11:25 | Decyzja 2: kursy vana spoza rejestru (po aliasach) są wykluczane z liczb, z ostrzeżeniem wskazującym, co dopisać do rejestru lub `params.csv` |
+| 11:25 | Decyzja 3: wiersz bez użytecznego dystansu (zły licznik i brak GPS) jest odrzucany z ostrzeżeniem |
+| 11:25 | `vans_assessed` = liczba vanów z rejestru, które mają co najmniej jeden kurs; van bez kursów dostaje ostrzeżenie |
+| 11:30 | Wiersze z brakiem `gps_km`: 15 po deduplikacji (17 w surowych danych); bez wpływu, bo dystans jest z licznika |
+| 11:30 | Alias P-17 → P-17B dotyczy 30 wierszy po deduplikacji (33 w surowych) |
+| 11:33 | Pułapka przy niezależnym przeliczeniu: `awk` z polskimi ustawieniami regionalnymi obcina ułamki (wynik 343699 zamiast 344952). Trzeba uruchamiać z `LC_ALL=C`. Python nie ma tego problemu |
+| 11:35 | Raport i komunikaty narzędzia są po angielsku, bo czyta je analityk Ewy |
