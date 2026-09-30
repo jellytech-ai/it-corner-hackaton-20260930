@@ -17,24 +17,25 @@ Liczby: narzędzie uruchomione na `devel` 35d8e0b na oryginalnym eksporcie (30.0
 
 PDF ma teraz **16 slajdów**: doszedł slajd 12 o zmianie z 15:18, a dawne slajdy 12–15 to teraz 13–16. Tekst poniżej zastępuje odpowiednie akapity w dalszej części skryptu; slajdy 4, 6, 10, 11 i 13 czytamy bez zmian.
 
-**Układ końcowy (17 slajdów, decyzje zespołu z 15:45: proces przed wynikiem, SDLC połączony z osią czasu):**
+**Układ końcowy (17 slajdów, 15:57) — według wytycznych organizatorów (`PRESENTATION.md`): proces najpierw, demo na końcu.**
 
-| Slajd | Temat | Tekst do czytania |
-|---|---|---|
-| 1 | tytuł | bez zmian |
-| 2 | odpowiedź na początek | akapit „Slajd 2” poniżej |
-| 3 | SDLC na osi czasu | akapity „Slajd 10” i „Slajd 11” poniżej, razem |
-| 4 | zmiana z 15:18 | akapit „Slajd 12 (nowy)” |
-| 5 | tooling | akapit „Slajd 13” |
-| 6 | człowiek i AI | akapit „Slajd 14 — Człowiek i AI” |
-| 7 | co byśmy zmienili | akapit „Slajd 15” |
-| 8–11 | założenia | akapity „Slajd 3” i „Slajd 5” poniżej; slajdy o pieniądzach i o 60% bez zmian |
-| 12–14 | wynik | akapity „Slajd 7”, „Slajd 8”, „Slajd 9” |
-| 15 | demo | akapit „Slajd 14 — Demo” |
-| 16 | analityk | bez zmian |
-| 17 | podsumowanie | akapit „Slajd 16” |
+| Slajd | Punkt organizatorów | Temat | Tekst do czytania |
+|---|---|---|---|
+| 1 | — | tytuł | bez zmian |
+| 2 | — | odpowiedź na początek | akapit „Slajd 2” poniżej |
+| 3 | 1. Workflow | SDLC na osi czasu | akapity „Slajd 10” i „Slajd 11”, razem |
+| 4 | 1. Workflow | zmiana z 15:18 | akapit „Slajd 12 (nowy)” |
+| 5 | 2. Humans and agents | człowiek i AI | akapit „Slajd 14 — Człowiek i AI” |
+| 6 | 3. Tools | tooling | akapit „Slajd 13” |
+| 7 | 4. Usual way of working | gdzie zwykły sposób pracy nie pasował | czytać ze slajdu; puenta: wąskim gardłem była uwaga człowieka, nie pisanie kodu |
+| 8 | 5. Do differently | co zrobimy inaczej | dwa pola na górze: jedno jako zespół, jedno w dzisiejszej pracy; akapit „Slajd 15” |
+| 9–11 | — | założenia | akapity „Slajd 3” i „Slajd 5”; slajd o pieniądzach bez zmian |
+| 12–14 | — | wynik | akapity „Slajd 7”, „Slajd 8”, „Slajd 9” |
+| 15 | — | co dostaje analityk | bez zmian |
+| 16 | 6. Demo | uruchomienie na najnowszym eksporcie | akapit „Slajd 14 — Demo”; krok 2 to wymagane „rerun on the latest export” |
+| 17 | — | podsumowanie | akapit „Slajd 16” |
 
-Numery w nagłówkach akapitów poniżej pochodzą z wcześniejszych układów; obowiązuje tabela powyżej.
+Slajd „Skąd 60%?” wypadł z talii, żeby zmieścić punkt 4 organizatorów w 17 slajdach. Numery w nagłówkach akapitów poniżej pochodzą z wcześniejszych układów; obowiązuje tabela powyżej. Plik dla sędziów: `JellyTech.md` w katalogu głównym repo.
 
 **Slajd 10 — SDLC.** Pracowaliśmy w siedmiu fazach i każda ma swój artefakt i bramkę. Najważniejsze: najpierw rejestr założeń i kontrakt, dopiero potem kod. Dzięki temu obie zmiany wymagań od Ewy przeszły tę samą drogę — w południe w trzydzieści trzy minuty, po piętnastej w kwadrans.
 

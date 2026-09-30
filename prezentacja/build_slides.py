@@ -608,32 +608,59 @@ def sD_human_ai(c):
             "założeniach, nie zapadła bez człowieka — każda jest w rejestrze z godziną.", M, 116, 864, MID)
 
 
+def sF_usual_way(c):
+    frame(c, 0, "Gdzie nasz zwykły sposób pracy dziś nie pasował", "Proces")
+    table(c, [["Zwykle", "Dziś"],
+              ["Każdy PR zatwierdza druga osoba",
+               "oba wydania zatwierdziła jedna osoba — agenci produkowali zmiany szybciej, niż trzy osoby mogły je przejrzeć"],
+              ["Wymagania uzgadniamy przed kodowaniem",
+               "klientka odpowiadała dwa razy dziennie i dwa razy zmieniła reguły — kodowaliśmy na własnych, zapisanych "
+               "założeniach, a każdą odpowiedź traktowaliśmy jak zmianę parametru"],
+              ["Jedna osoba prowadzi zadanie od początku do końca",
+               "kilka sesji agentów na osobę: wyniki się rozjeżdżały (język komunikatów, kolumny poza kontraktem, "
+               "<font name='Mono'>.pyc</font> w repo), dopóki nie powstał kontrakt i konstytucja"],
+              ["Dziennikowi się ufa", "agent wpisywał godziny z własnego szacunku, nie z zegara — poprawialiśmy je z historii commitów"],
+              ["Akceptację robi ktoś, kto nie pisał kodu", "test ponownego uruchomienia robiły osoby i agenci, którzy znali kod"]],
+          M, 424, [300, 564])
+    para(c, "Wąskim gardłem nie było pisanie kodu, tylko uwaga człowieka potrzebna do przeglądu.", M, 122, 864, BODY)
+
+
 def sE_lessons(c):
-    frame(c, 0, "Co byśmy zmienili, robiąc to jeszcze raz", "Proces")
-    table(c, [["Co się stało", "Co zrobilibyśmy inaczej"],
-              ["Reguła Ewy o 12:00 zmieniła wszystko (3 → 8 vanów)",
-               "pytać najpierw o to, co najbardziej zmienia wynik; od rana czytać wątki innych zespołów"],
+    frame(c, 0, "Co zrobimy inaczej", "Proces")
+    boxes = [("Jako zespół, od teraz",
+              "Specyfikacja przed kodem w pracy z agentami: kontrakt, plik parametrów, pliki testowe, CI i celowo "
+              "zepsuty eksport istnieją przed pierwszą linią kodu. Nasze założenie „te same kolumny co kwartał” "
+              "upadło przy pierwszym nowym pliku."),
+             ("W dzisiejszej pracy",
+              "Pytać najpierw o to, co najbardziej zmienia wynik (reguła zasięgu, dotacja), i od rana czytać wątki "
+              "innych zespołów. Odpowiedź Ewy z południa zmieniła listę z 3 na 8 vanów.")]
+    for i, (head, text) in enumerate(boxes):
+        x = M + i * 438
+        c.setFillColor(BRAND_SOFT)
+        c.roundRect(x, 304, 426, 122, 12, stroke=0, fill=1)
+        c.setFillColor(BRAND)
+        c.roundRect(x, 304, 6, 122, 3, stroke=0, fill=1)
+        c.setFont("Sans-Bold", 15)
+        c.setFillColor(BRAND_DARK)
+        c.drawString(x + 20, 402, head)
+        para(c, text, x + 20, 392, 392, ParagraphStyle("box", parent=CELL, fontSize=11.5, leading=15))
+    table(c, [["Co jeszcze się stało", "Co zrobilibyśmy inaczej"],
               ["Kod wyprzedził kontrakt (cztery kolumny dopisane po fakcie)", "„najpierw kontrakt” od pierwszej minuty"],
               ["Pliki <font name='Mono'>.pyc</font> w repo, CI dopiero o 13:07",
                "<font name='Mono'>.gitignore</font>, CI i test na prawdziwych danych w kroku 0"],
-              ["Edytor nadpisał pliki nieaktualnym buforem — commit bez kodu",
-               "jedno narzędzie edytuje plik naraz; po commicie <font name='Mono'>git show --stat</font>"],
               ["Godziny w dzienniku wpisane z szacunku, nie z zegara", "godziny brać z commitów"],
               ["Scenariusz demo przestał działać po zmianie reguł", "test scenariusza demo w CI"],
-              ["Założenie „te same kolumny co kwartał” upadło przy pierwszym nowym eksporcie",
-               "aliasy kolumn i test na „zepsutym” eksporcie od początku"],
-              ["Ten sam fakt w kilku dokumentach", "jedno źródło, reszta tylko odsyła"],
-              ["Akceptację robiły osoby, które znają kod", "test przez kogoś spoza zespołu, choćby 10 minut"]],
-          M, 424, [420, 444])
+              ["Ten sam fakt w kilku dokumentach", "jedno źródło, reszta tylko odsyła"]],
+          M, 288, [420, 444])
 
 
 def s13_demo(c):
     frame(c, 14, "Demo: to samo narzędzie przed zmianą i po niej", "Demo")
     items = [
-        ("1", "Stan z południa: jeden eksport, reguła 95. percentyla",
+        ("1", "Przed zmianą: jeden eksport, reguła 95. percentyla",
          "ev_shortlist.py --trips trips.csv --vans vans.csv --params params_lunch.csv --out lunch/",
          "38 / 2777 / 344952 · WARNING o P-27 · 8 vanów · 95 637 PLN"),
-        ("2", "Po 15:18: drugi eksport, nowy rejestr, reguła najgorszego dnia",
+        ("2", "Najnowszy eksport: drugi plik, nowy rejestr, reguła najgorszego dnia",
          "ev_shortlist.py --trips trips.csv trips_latest.csv --vans vans_latest.csv --params params.csv --out new/",
          "40 / 3227 / 401186 · alias odo_km · WARNING: licznik P-13 1383 km · 7 vanów · 85 750 PLN"),
         ("3", "Co weszło, co wypadło i dlaczego",
@@ -691,11 +718,13 @@ def s15_close(c):
     c.drawString(M + 26, 106, "Pytania?")
 
 
+# Order follows the organisers' PRESENTATION.md: workflow, humans and agents, tools, where our usual way
+# did not fit, what we will do differently; then assumptions and result; demo last.
 SLIDES = [s01_title, s02_answer,
-          sAB_sdlc_timeline, s12_second_change, sC_tooling, sD_human_ai, sE_lessons,
-          s03_range, s04_money_assumptions, s05_data_assumptions, s06_winter,
+          sAB_sdlc_timeline, s12_second_change, sD_human_ai, sC_tooling, sF_usual_way, sE_lessons,
+          s03_range, s04_money_assumptions, s05_data_assumptions,
           s07_feasibility, s08_money, s09_sensitivity,
-          s13_demo, s14_analyst, s15_close]
+          s14_analyst, s13_demo, s15_close]
 
 
 def main():
