@@ -658,8 +658,8 @@ def sF_usual_way(c):
                "klientka odpowiadała dwa razy dziennie i dwa razy zmieniła reguły — kodowaliśmy na własnych, zapisanych "
                "założeniach, a każdą odpowiedź traktowaliśmy jak zmianę parametru"],
               ["Jedna osoba prowadzi zadanie od początku do końca",
-               "kilka sesji agentów na osobę: wyniki się rozjeżdżały (język komunikatów, kolumny poza kontraktem, "
-               "<font name='Mono'>.pyc</font> w repo), dopóki nie powstał kontrakt i konstytucja"],
+               "kilka sesji agentów na osobę: wyniki się rozjeżdżały (język komunikatów, kolumny poza kontraktem), "
+               "dopóki nie powstał kontrakt i konstytucja"],
               ["Dziennikowi się ufa", "agent wpisywał godziny z własnego szacunku, nie z zegara — poprawialiśmy je z historii commitów"],
               ["Akceptację robi ktoś, kto nie pisał kodu", "test ponownego uruchomienia robiły osoby i agenci, którzy znali kod"]],
           M, 424, [300, 564])
@@ -687,8 +687,6 @@ def sE_lessons(c):
         para(c, text, x + 20, 392, 392, ParagraphStyle("box", parent=CELL, fontSize=11.5, leading=15))
     table(c, [["Co jeszcze się stało", "Co zrobilibyśmy inaczej"],
               ["Kod wyprzedził kontrakt (cztery kolumny dopisane po fakcie)", "„najpierw kontrakt” od pierwszej minuty"],
-              ["Pliki <font name='Mono'>.pyc</font> w repo, CI dopiero o 13:07",
-               "<font name='Mono'>.gitignore</font>, CI i test na prawdziwych danych w kroku 0"],
               ["Godziny w dzienniku wpisane z szacunku, nie z zegara", "godziny brać z commitów"],
               ["Scenariusz demo przestał działać po zmianie reguł", "test scenariusza demo w CI"],
               ["Ten sam fakt w kilku dokumentach", "jedno źródło, reszta tylko odsyła"]],

@@ -34,7 +34,7 @@ Team 9: Wojtek, Rafał, Walerian. Final delivery: tag `v1.1`, 7 vans, 85750 PLN 
 
 - **Second-person review.** Normally a second person approves every PR. Today both releases were approved by one person; the agents produced changes faster than three people could review them.
 - **Requirements sign-off.** Normally we agree the requirements before coding. Today the client answered twice a day and changed the rules twice, so we coded against our own written assumptions and treated every answer as a parameter change.
-- **One owner per task.** Normally one developer carries a task end to end. With several agents per person, outputs collided (mixed languages in messages, columns added outside the contract, `.pyc` files committed) until we wrote the contract and a shared "constitution".
+- **One owner per task.** Normally one developer carries a task end to end. With several agents per person, outputs collided (mixed languages in messages, columns added outside the contract) until we wrote the contract and a shared "constitution".
 - **Hand-written logs.** We are used to trusting a log. An agent wrote times from its own estimate rather than the clock, and we had to correct them from the commit history.
 - **Acceptance by outsiders.** Normally someone who did not write the code accepts it. Today the rerun test was done by people and agents who knew it.
 
