@@ -146,6 +146,7 @@ Near miss przy 0,60: ładunek — P-02, P-06, P-18 (1 dzień), P-22, P-27 (2), P
 ```sh
 zip -j ev_shortlist_tool.zip ev_shortlist.py data.py feasibility.py economics.py params.csv RERUN.md ASSUMPTIONS.md
 ```
+| 12:30 | Scalony `devel` a4bc375: tor C rozstrzygnął Q14, Q15, Q17, Q20, Q22 (A23, A24, D15, D16) — wszystkie zgodne z tym, co już jest w kodzie B; bez zmian w kodzie. `RERUN.md` wymienia `RERUN.md` w spisie zipa i wyjaśnia `__pycache__`. Otwarte pytania B: Q1, Q2, Q10, Q11/Q18/Q21 (kontrakt — tor A), Q23 (demo — tor C) |
 
 ## Pytania na koniec pracy
 
@@ -153,24 +154,24 @@ zip -j ev_shortlist_tool.zip ev_shortlist.py data.py feasibility.py economics.py
 |---|---|---|
 | Q1 | Chłodnia: wpisywać `ev_model`, jeśli technicznie pasuje? Wpływa na to, czy C liczy dla niej ekonomię w `all_vans.csv` | puste — żaden oferowany EV nie ma agregatu |
 | Q2 | `reject_reason` przy braku modelu: braki najtańszego modelu (zgodne ze wzorem) czy braki każdego modelu osobno (np. P-04: „S: range; L: payload”)? | braki najtańszego |
-| Q3 | P-14 „na progu” (decyzja 1): opis ląduje w `reason` dopiero w B9, bo wzór ma puste `reject_reason` dla wykonalnych | B9 |
+| Q3 | P-14 „na progu” (decyzja 1): opis ląduje w `reason` dopiero w B9, bo wzór ma puste `reject_reason` dla wykonalnych | rozwiązane: `at threshold` w kolumnie `reason` (B9) |
 | Q4 | P-27 13.08 (licznik −208,6): GPS 90,3 (344952) czy wartość bezwzględna (345070)? Decyzja toru A; B potwierdził obie wersje | GPS |
-| Q5 | `day_tariff_share`: doładowanie w przerwie do pełna (P-08 0,484, P-12 0,476) czy tylko brakujące km (0,112 / 0,153)? Różnica ok. 0,34 PLN/kWh na ~1/3 energii — ważne dla C | do pełna (kierowca podłącza i ładuje; ostrożniej dla kosztu) |
-| Q6 | `range_check_km` przy doładowaniu: KONTRAKT 6 mówi „dłuższa z dwóch tras”, decyzja 2 w tym pliku mówi „suma km najgorszego dnia”. Wdrożone wg KONTRAKTU — C musi to opisać w `ASSUMPTIONS.md` | dłuższa trasa |
-| Q7 | A16: czy vany dwuzmianowe faktycznie wracają do bazy między trasami? Dane pokazują tylko godziny (HANDOFF 8) | zakładamy, że tak |
-| Q8 | Wrażliwość zmienia tylko `winter_range_factor`; zużycie zimowe w symulacji A16 (`winter_temp_factor` × `winter_payload_factor` = 0,63) zostaje stałe. Czy te dwa współczynniki mają być spójne (0,57 vs 0,63)? | zostawiamy osobno, jak w HANDOFF |
+| Q5 | `day_tariff_share`: doładowanie w przerwie do pełna (P-08 0,484, P-12 0,476) czy tylko brakujące km (0,112 / 0,153)? Różnica ok. 0,34 PLN/kWh na ~1/3 energii — ważne dla C | nieaktualne po A21 (bez doładowania) |
+| Q6 | `range_check_km` przy doładowaniu: KONTRAKT 6 mówi „dłuższa z dwóch tras”, decyzja 2 w tym pliku mówi „suma km najgorszego dnia”. Wdrożone wg KONTRAKTU — C musi to opisać w `ASSUMPTIONS.md` | nieaktualne po A21 (bez doładowania `range_check_km` = `range_day_km`) |
+| Q7 | A16: czy vany dwuzmianowe faktycznie wracają do bazy między trasami? Dane pokazują tylko godziny (HANDOFF 8) | rozwiązane przez Ewę: nie wracają na ładowanie (A21) |
+| Q8 | Wrażliwość zmienia tylko `winter_range_factor`; zużycie zimowe w symulacji A16 (`winter_temp_factor` × `winter_payload_factor` = 0,63) zostaje stałe. Czy te dwa współczynniki mają być spójne (0,57 vs 0,63)? | nieaktualne po A21 |
 | Q9 | `.gitignore` i usunięcie `.pyc` | rozwiązane w `devel` (1d43542) |
 | Q10 | Tor B dopisał do `params.csv` (plik toru A) `near_miss_range_pct,10`, `near_miss_days,3`, `at_threshold_pct,1` w osobnym commicie 4c4391c — tor A ma zaakceptować albo przenieść | czeka na A |
 | Q11 | Kolumna `reason` w `feasibility` wykracza poza KONTRAKT 6 — dopisać ją do kontraktu (C nie musi jej używać) | dopisać |
 | Q12 | Język opisów w `reason`/`reject_reason` | rozwiązane: KONSTYTUCJA 2 — angielski |
-| Q13 | P-25 (South) jest dokładnie na progu (148,2 = 148,2) — gdyby Ewa pozwoliła na EV z South w North, to kandydat najbardziej ryzykowny | pokazać w notatce |
-| Q14 | `annual_km` (tor C) = km z okresu ÷ 90 dni kalendarzowych × 365, niezależnie od liczby dni pracy (P-08: 11 670 km → 47 329 km/rok). Czy to zamierzone (vany jeżdżą też w weekendy/dni bez danych)? | pytanie do C |
-| Q15 | Raport A: „gps_km missing: 15” po deduplikacji vs 17 w HANDOFF sekcja 4 (surowe) — ujednolicić opis w `HANDOFF.md` | pytanie do C/A |
-| Q16 | Scalenie B5 do `devel` (dawniej `handoff-wstepna-analiza`) i push — wymaga zgody (gałąź wspólna) | czeka na 12:20 |
-| Q17 | KONSTYTUCJA 12 poz. 1–4, 6, 9: tor B zrobił swoją część — właściciel konstytucji ma zaktualizować status w tabeli | do C |
+| Q13 | P-25 (South) jest dokładnie na progu (148,2 = 148,2) — gdyby Ewa pozwoliła na EV z South w North, to kandydat najbardziej ryzykowny | nieaktualne po A19 (0,60, 95. percentyl) |
+| Q14 | `annual_km` (tor C) = km z okresu ÷ 90 dni kalendarzowych × 365, niezależnie od liczby dni pracy (P-08: 11 670 km → 47 329 km/rok). Czy to zamierzone (vany jeżdżą też w weekendy/dni bez danych)? | rozwiązane 12:29: A24 |
+| Q15 | Raport A: „gps_km missing: 15” po deduplikacji vs 17 w HANDOFF sekcja 4 (surowe) — ujednolicić opis w `HANDOFF.md` | rozwiązane 12:29: HANDOFF 4 poprawiony |
+| Q16 | Scalenie B5 do `devel` (dawniej `handoff-wstepna-analiza`) i push — wymaga zgody (gałąź wspólna) | rozwiązane 11:54: scalone i wypchnięte |
+| Q17 | KONSTYTUCJA 12 poz. 1–4, 6, 9: tor B zrobił swoją część — właściciel konstytucji ma zaktualizować status w tabeli | rozwiązane 12:29: KONSTYTUCJA 12 zaktualizowana przez C |
 | Q18 | Kolumna `reason` jest w `feasibility`, `all_vans.csv` i `shortlist.csv`, ale nie ma jej w KONTRAKT 6 (tabela `feasibility`) — KONSTYTUCJA 5 wymaga kolejności kolumn „dokładnie jak w KONTRAKT” | dopisać do KONTRAKT 6 (tor A) |
-| Q19 | ~~rozwiązane 12:19 przez D13~~ Tor C: `saving_pln` nadal roczny (D7) — po zmianie na 5 lat z ceną EV, dotacją i opłatą za leasing shortlista się zmieni (podgląd A: P-26 i P-14 na minus). `choose_models` i ranking działają bez zmian w B | czeka na C |
-| Q20 | Dotacja tylko przy zakupie: czy `saving_pln` liczy zakup dla wszystkich vanów z listy? Wtedy limit 10 z dotacji = limit listy; przy leasingu limit dotacji nie dotyczy | do C (podstawa `saving_basis`) |
+| Q19 | Tor C: `saving_pln` nadal roczny (D7) — po zmianie na 5 lat z ceną EV, dotacją i opłatą za leasing shortlista się zmieni (podgląd A: P-26 i P-14 na minus). `choose_models` i ranking działają bez zmian w B | rozwiązane 12:17: D13 |
+| Q20 | Dotacja tylko przy zakupie: czy `saving_pln` liczy zakup dla wszystkich vanów z listy? Wtedy limit 10 z dotacji = limit listy; przy leasingu limit dotacji nie dotyczy | rozwiązane 12:29: D16 — wszystkie EV kupione, limit dotacji = limit listy |
 | Q21 | Kolumny `fit_models`, `shortlisted`, `shortlist_note` i `range_day_km` w `all_vans.csv` — dopisać do KONTRAKT 6/7 | do A |
-| Q22 | Które vany z South trafiają do North: teraz trzy z najwyższym `saving_pln`. Alternatywa: najbliższe końca leasingu. Zapisać w założeniach | do C |
+| Q22 | Które vany z South trafiają do North: teraz trzy z najwyższym `saving_pln`. Alternatywa: najbliższe końca leasingu. Zapisać w założeniach | rozwiązane 12:29: A23 |
 | Q23 | Demo krok 2 (`PREZENTACJA.md`, plik toru C): zamienić 0,57 → 0,65 na `range_check_percentile` 95 → 100 („najgorszy dzień zamiast 95. percentyla: 10 → 8 vanów”) albo `winter_range_factor` 0,60 → 0,55. Po D13: percentyl 100 daje 8 → 6 vanów (95 637 → 59 482 PLN); 0,55 daje 8 → 3 | do C |
