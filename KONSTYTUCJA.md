@@ -1,6 +1,6 @@
 # KONSTYTUCJA — wspólne zasady dla wszystkich torów
 
-Stan: 30.09.2026, 13:15. Obowiązuje każdy tor i każdą sesję. `KONTRAKT.md` mówi, **co** sobie przekazujemy; ten dokument mówi, **jak** piszemy, żeby całość wyglądała jak dzieło jednego zespołu.
+Stan: 30.09.2026, 13:07. Obowiązuje każdy tor i każdą sesję. `KONTRAKT.md` mówi, **co** sobie przekazujemy; ten dokument mówi, **jak** piszemy, żeby całość wyglądała jak dzieło jednego zespołu.
 
 Przy sprzeczności: README Ewy > ta konstytucja > `KONTRAKT.md` > dokumenty torów.
 

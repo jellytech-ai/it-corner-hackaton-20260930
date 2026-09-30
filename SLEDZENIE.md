@@ -1,6 +1,6 @@
 # SLEDZENIE — od wymagania do testu i kolumny wyniku
 
-Stan: 30.09.2026, 13:15, na `devel` (`9a72ed6`). Właściciel: tor A. Każdy wiersz mówi, skąd wzięło się wymaganie, który parametr je niesie, który kod je liczy, który test go pilnuje i gdzie Ewa zobaczy skutek.
+Stan: 30.09.2026, 13:07, na `devel` (`9a72ed6`). Właściciel: tor A. Każdy wiersz mówi, skąd wzięło się wymaganie, który parametr je niesie, który kod je liczy, który test go pilnuje i gdzie Ewa zobaczy skutek.
 
 Nowa reguła albo parametr dostaje tu wiersz **razem z testem** (`KONSTYTUCJA.md`, sekcja 7). Wiersz bez testu trafia do sekcji 3.
 
@@ -42,7 +42,7 @@ Skróty: `a`, `b`, `c` = `tests/test_a.py`, `test_b.py`, `test_c.py`. Numery A i
 
 | # | Co | Skutek | Propozycja | Właściciel |
 |---|---|---|---|---|
-| L1 | `ev_lease_months`, `ev.Volta Cargo S.lease_pln_per_month`, `ev.Volta Cargo L.lease_pln_per_month` są w `params.csv`, ale nie czyta ich żaden plik `.py` | analityk mógł je zmienić i nie zobaczyć żadnej różnicy; po D16 wszystkie EV liczymy jako kupione | **zamknięte 13:20**: usunięte z `params.csv` (`KONTRAKT.md` 2.3); wynik na prawdziwym eksporcie identyczny przed i po. Porównanie „60 rat leasingu = 174 000 PLN” w `BOARD_NOTE.md` i `PREZENTACJA.md` ma odtąd źródło tylko w `ev_offers.md` | A |
+| L1 | `ev_lease_months`, `ev.Volta Cargo S.lease_pln_per_month`, `ev.Volta Cargo L.lease_pln_per_month` są w `params.csv`, ale nie czyta ich żaden plik `.py` | analityk mógł je zmienić i nie zobaczyć żadnej różnicy; po D16 wszystkie EV liczymy jako kupione | **zamknięte 13:09**: usunięte z `params.csv` (`KONTRAKT.md` 2.3); wynik na prawdziwym eksporcie identyczny przed i po. Porównanie „60 rat leasingu = 174 000 PLN” w `BOARD_NOTE.md` i `PREZENTACJA.md` ma odtąd źródło tylko w `ev_offers.md` | A |
 | L2 | Żaden test nie wymienia z nazwy: `electricity_night_pln_per_kwh`, `electricity_day_pln_per_kwh`, `maintenance_diesel_pln_per_km`, `maintenance_ev_pln_per_km`, `winter_energy_uplift` | zmianę tych stawek pilnują tylko testy z obliczeniem ręcznym (`test_fuel_saving_p14_matches_hand_calculation`, `test_params_drive_the_result`), nie test „parametr zmienia wynik” | jeden test w `test_c.py`: zmiana każdej stawki zmienia `saving_pln` w oczekiwaną stronę | C |
 | L3 | `winter_temp_factor`, `winter_payload_factor`, `charger_kw`, `midday_connect_minutes` działają tylko przy `midday_charging_allowed = yes`, czyli dziś nigdy | martwa ścieżka według reguły R4; nie wpływa na wynik | zostawić (przełącznik dla kolejnych kwartałów), dopisać zdanie w `RERUN.md` | B, C |
 | L4 | Reguła „dotacja tylko przy zakupie” (R5) nie ma parametru ani testu — jest decyzją D16 | gdyby Ewa dopuściła leasing EV, trzeba zmienić kod, nie parametr | wystarczy wpis w `ASSUMPTIONS.md`; nie ruszać kodu przed 14:45 | C |

@@ -1,6 +1,6 @@
 # SDLC — jak nasz proces pokrywa cały cykl
 
-Stan: 30.09.2026, 13:15. Właściciel: tor A. Ten dokument mówi, **w której fazie cyklu jest który artefakt**, jakie bramki dzielą fazy i co zostało do zrobienia przed 16:00. Nie powtarza treści innych plików, tylko do nich odsyła.
+Stan: 30.09.2026, 13:07. Właściciel: tor A. Ten dokument mówi, **w której fazie cyklu jest który artefakt**, jakie bramki dzielą fazy i co zostało do zrobienia przed 16:00. Nie powtarza treści innych plików, tylko do nich odsyła.
 
 Pracowaliśmy metodą „najpierw specyfikacja, potem kod” (SDD): konstytucja → specyfikacja → kontrakt → zadania → kod z testami. To pokrywa pierwsze trzy fazy. Poniżej domykamy pozostałe: weryfikację, wydanie i utrzymanie.
 
@@ -44,7 +44,7 @@ Godziny z `git log` i dziennika w `HANDOFF.md`.
 | 12:15 | projekt | `KONTRAKT.md` 2.0: 10 parametrów, jedna nowa kolumna, nowa formuła |
 | 12:33 | weryfikacja | `devel` po zmianie: 8 vanów, 95 637 PLN; dwa tory niezależnie, zgodne co do złotówki |
 | 12:55 | akceptacja | test ponownego uruchomienia z samego `RERUN.md` przechodzi |
-| 13:15 | weryfikacja | macierz śladowania, automat testów, kontrakt 2.2 |
+| 13:07 | weryfikacja | macierz śladowania, automat testów, kontrakt 2.2 |
 
 **Zdanie na slajd:** zmiana wymagań w połowie dnia przeszła drogą wymaganie → kontrakt → parametr → kod → test w 33 minuty (12:00–12:33), a wynik zmienił się z 3 na 8 vanów bez przepisywania narzędzia.
 
