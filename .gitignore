@@ -1,0 +1,18 @@
+## Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+## Tool output
+wyniki/
+out/
+
+## Local
+.DS_Store
+.local
+.claude/settings.local.json
+*.mcp.json
+*.mcp.*.json
+logs/
