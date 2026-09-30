@@ -42,10 +42,10 @@ Skróty: `a`, `b`, `c` = `tests/test_a.py`, `test_b.py`, `test_c.py`. Numery A i
 
 | # | Co | Skutek | Propozycja | Właściciel |
 |---|---|---|---|---|
-| L1 | `ev_lease_months`, `ev.Volta Cargo S.lease_pln_per_month`, `ev.Volta Cargo L.lease_pln_per_month` są w `params.csv`, ale nie czyta ich żaden plik `.py` | analityk może je zmienić i nie zobaczy żadnej różnicy; po D16 wszystkie EV liczymy jako kupione | usunąć z `params.csv` albo opisać w `RERUN.md` jako nieużywane | A (plik), C (opis) |
+| L1 | `ev_lease_months`, `ev.Volta Cargo S.lease_pln_per_month`, `ev.Volta Cargo L.lease_pln_per_month` są w `params.csv`, ale nie czyta ich żaden plik `.py` | analityk mógł je zmienić i nie zobaczyć żadnej różnicy; po D16 wszystkie EV liczymy jako kupione | **zamknięte 13:20**: usunięte z `params.csv` (`KONTRAKT.md` 2.3); wynik na prawdziwym eksporcie identyczny przed i po. Porównanie „60 rat leasingu = 174 000 PLN” w `BOARD_NOTE.md` i `PREZENTACJA.md` ma odtąd źródło tylko w `ev_offers.md` | A |
 | L2 | Żaden test nie wymienia z nazwy: `electricity_night_pln_per_kwh`, `electricity_day_pln_per_kwh`, `maintenance_diesel_pln_per_km`, `maintenance_ev_pln_per_km`, `winter_energy_uplift` | zmianę tych stawek pilnują tylko testy z obliczeniem ręcznym (`test_fuel_saving_p14_matches_hand_calculation`, `test_params_drive_the_result`), nie test „parametr zmienia wynik” | jeden test w `test_c.py`: zmiana każdej stawki zmienia `saving_pln` w oczekiwaną stronę | C |
 | L3 | `winter_temp_factor`, `winter_payload_factor`, `charger_kw`, `midday_connect_minutes` działają tylko przy `midday_charging_allowed = yes`, czyli dziś nigdy | martwa ścieżka według reguły R4; nie wpływa na wynik | zostawić (przełącznik dla kolejnych kwartałów), dopisać zdanie w `RERUN.md` | B, C |
 | L4 | Reguła „dotacja tylko przy zakupie” (R5) nie ma parametru ani testu — jest decyzją D16 | gdyby Ewa dopuściła leasing EV, trzeba zmienić kod, nie parametr | wystarczy wpis w `ASSUMPTIONS.md`; nie ruszać kodu przed 14:45 | C |
 | L5 | `fixtures/feasibility.csv` ma nagłówek bez `reason` i `fit_models` | wzór nie odpowiada `KONTRAKT.md`, sekcja 6 (kontrakt mówi o tym wprost: „wzór uproszczony”) | zostawić; służył tylko do startu toru C | A |
 
-Żadna z luk nie zmienia dzisiejszych liczb (8 vanów, 95 637 PLN w 5 lat).
+Żadna z luk (ani zamknięcie L1) nie zmienia dzisiejszych liczb (8 vanów, 95 637 PLN w 5 lat).

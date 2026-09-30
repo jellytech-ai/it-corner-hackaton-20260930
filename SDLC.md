@@ -9,12 +9,12 @@ Pracowaliśmy metodą „najpierw specyfikacja, potem kod” (SDD): konstytucja 
 | Faza | Pytanie, na które odpowiada | Artefakt | Stan |
 |---|---|---|---|
 | 1. Wymagania | co i dla kogo liczymy, czego nie wiemy | `HANDOFF.md` sekcje 1–7 (zadanie, dane, rejestr założeń A1–A24, pytania do Ewy), sekcja 10 (decyzje D1–D16, odpowiedzi Ewy) | gotowe |
-| 2. Projekt | jak dzielimy pracę i co sobie przekazujemy | `KONTRAKT.md` (wersja 2.2), `KONSTYTUCJA.md`, `params.csv`, `fixtures/`, `TOR-*.md` | gotowe |
+| 2. Projekt | jak dzielimy pracę i co sobie przekazujemy | `KONTRAKT.md` (wersja 2.3), `KONSTYTUCJA.md`, `params.csv`, `fixtures/`, `TOR-*.md` | gotowe |
 | 3. Implementacja | kod | `data.py`, `feasibility.py`, `economics.py`, `ev_shortlist.py` | gotowe, zamrożenie liczb 14:45 |
-| 4. Weryfikacja | czy kod robi to, czego chce Ewa | `tests/` (98 testów), `SLEDZENIE.md`, automat `.github/workflows/tests.yml`, kontrola krzyżowa dwóch torów (`KONTRAKT.md`, sekcja 11) | gotowe; luki L1–L5 w `SLEDZENIE.md` |
+| 4. Weryfikacja | czy kod robi to, czego chce Ewa | `tests/` (98 testów), `SLEDZENIE.md`, automat `.github/workflows/tests.yml`, kontrola krzyżowa dwóch torów (`KONTRAKT.md`, sekcja 11) | gotowe; luki L2–L5 w `SLEDZENIE.md` (L1 zamknięta) |
 | 5. Wydanie | co dokładnie dostaje Ewa i z której wersji | PR `devel` → `main`, tag `v1.0`, zip zbudowany z tagu | **do zrobienia po 15:15** — sekcja 4 |
 | 6. Akceptacja | czy analityk poradzi sobie bez nas | test ponownego uruchomienia z samego `RERUN.md` (tor A, 12:55; tor B, 12:20) | zrobione — sekcja 5 |
-| 7. Utrzymanie | co się dzieje w kolejnym kwartale | `RERUN.md` („Every quarter”, „If something goes wrong”), `ASSUMPTIONS.md`, `KONTRAKT.md` sekcja 12 | gotowe; dwie propozycje w sekcji 6 |
+| 7. Utrzymanie | co się dzieje w kolejnym kwartale | `RERUN.md` („Every quarter”, „If something goes wrong”), `ASSUMPTIONS.md`, `KONTRAKT.md` sekcja 12 | gotowe; propozycje w sekcji 6 |
 
 ## 2. Bramki między fazami
 
@@ -75,10 +75,9 @@ Szczegóły: `TOR-A-dane.md` i `TOR-B-wykonalnosc.md`, dzienniki. Oba testy robi
 
 ## 6. Utrzymanie — propozycje do plików toru C
 
-`RERUN.md` już mówi, co analityk zmienia co kwartał i co robić przy błędzie. Brakuje dwóch rzeczy; to plik toru C, więc zostawiam je jako propozycję:
+`RERUN.md` już mówi, co analityk zmienia co kwartał i co robić przy błędzie. Brakuje jednego wiersza; to plik toru C, więc zostawiam go jako propozycję, razem z propozycją do prezentacji:
 
 | Gdzie | Co dopisać |
 |---|---|
 | `RERUN.md`, tabela „If something goes wrong” | wiersz: liczby kontrolne na ekranie nie zgadzają się z eksportem → przeczytać `WARNING` w `data_report.txt`; różnica to odrzucone wiersze albo vany spoza rejestru |
-| `RERUN.md`, krok 2 | zdanie: `ev_lease_months` i `ev.<model>.lease_pln_per_month` nie wpływają na wynik (luka L1 w `SLEDZENIE.md`) — albo usunąć je z `params.csv` |
 | `PREZENTACJA.md`, punkt 7:00–8:30 | pokazać oś czasu z sekcji 3 i jeden wiersz z `SLEDZENIE.md` (R1) jako dowód drogi wymaganie → test |

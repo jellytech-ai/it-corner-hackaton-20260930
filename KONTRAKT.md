@@ -1,6 +1,6 @@
 # KONTRAKT — wspólne ustalenia dla torów A, B, C
 
-**Wersja 2.2** (30.09.2026, 13:15); historia wersji: sekcja 12. Ten plik czyta każdy tor przed startem.
+**Wersja 2.3** (30.09.2026, 13:20); historia wersji: sekcja 12. Ten plik czyta każdy tor przed startem.
 
 **Najpierw kontrakt, potem kod.** Zmiana kolumny, sygnatury albo parametru = wiadomość do pozostałych dwóch osób, edycja tutaj z nowym numerem wersji w sekcji 12, dopiero potem kod i test. Które wymaganie pilnuje który test: `SLEDZENIE.md`.
 
@@ -213,3 +213,4 @@ Nowa wersja = nowy wiersz tutaj **przed** zmianą w kodzie. Pierwsza cyfra rośn
 | 2.0 | 12:15 | reguły Ewy: 10 nowych lub zmienionych parametrów, kolumna `range_day_km`, `build_van_profile(…, params)`, nowa formuła `saving_pln`, wybór modelu po wyniku w 5 lat | odpowiedzi Ewy z ok. 12:00 | 4–6, 10 |
 | 2.1 | 12:35 | kolumny `reason`, `fit_models`, `shortlisted`, `shortlist_note`; parametry progu „blisko”; `saving_for_model` w interfejsach | pytania toru B Q10, Q11, Q18, Q21 — **kod wyprzedził kontrakt**, dopisane po fakcie | 5–7, 11 |
 | 2.2 | 13:15 | porządek: jedna sekcja 10, opis `range_check_km` zgodny z regułą Ewy, status zadań B i C, reguła „najpierw kontrakt”, ta tabela | przegląd procesu (`SDLC.md`) | nagłówek, 6, 10, 12 |
+| 2.3 | 13:20 | z `params.csv` usunięte `ev_lease_months`, `ev.Volta Cargo S.lease_pln_per_month`, `ev.Volta Cargo L.lease_pln_per_month` | nie czytał ich żaden plik `.py` (po D16 wszystkie EV liczymy jako kupione); wynik bez zmian — `SLEDZENIE.md`, luka L1 | 4 |
