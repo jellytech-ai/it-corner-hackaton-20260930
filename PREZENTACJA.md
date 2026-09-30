@@ -1,6 +1,6 @@
 # PREZENTACJA — plan (15 min)
 
-Stan: 30.09.2026, 12:35. Właściciel: tor C. Liczby pochodzą z uruchomienia na `devel` o 12:31 (reguły Ewy z lunchu); po zamrożeniu o 14:45 podmieniamy je na ostateczne.
+Stan: 30.09.2026, 14:05. Właściciel: tor C. Liczby sprawdzone uruchomieniem na `devel` (`7acba93`) o 14:00 — zgodne z tymi z 12:31; po zamrożeniu o 14:45 sprawdzamy jeszcze raz.
 
 Ewa: „The focus of today is your process, not the app” oraz „show me it rerunning”. Dlatego ok. 10 min proces, 3 min demo, 2 min zapasu.
 
@@ -17,9 +17,9 @@ Wojtek prowadził tor A (dane), Rafał tor B (wykonalność), Walerian tor C (ek
 | | | Selekcja pytań do Ewy | sekcja 7 | limit 5 pytań; P-17 i chłodnie rozstrzygnęliśmy z danych, zamiast pytać — Ewa potwierdziła oba wnioski |
 | 3:00–5:00 | Wojtek | **Dane i liczby kontrolne** | `data_report.txt`, `KONTRAKT.md` sekcja 8 | 2999 → 2777 kursów (222 duplikaty), 344 952 km, 38 vanów; policzone dwa razy dwiema metodami; pułapka `awk` z polskimi ustawieniami regionalnymi |
 | 5:00–7:00 | Rafał | **Wykonalność według reguł Ewy** | `all_vans.csv`, kolumny `range_check_km`, `reject_reason` | 95. percentyl dnia w 60% WLTP (156 / 228 km); ładowność jako twardy limit; vany dwuzmianowe bez ładowania w dzień; 15 z 38 przechodzi; model wybrany po wyniku w 5 lat |
-| 7:00–8:30 | Walerian | **Odpowiedzi Ewy o 12:00 — jak proces je wchłonął** | `KONTRAKT.md` sekcja 10, `params.csv`, dziennik w `HANDOFF.md` | rano: 3 vany i „bez dotacji się nie opłaca”; po odpowiedziach: nowe wartości w `params.csv` i jedna formuła `saving_pln` — w ok. 20 min 8 vanów, liczby sprawdzone niezależnie przez dwa tory co do złotówki; nasze 0,57 × WLTP ze źródłami potwierdziło, że 60% Ewy to rozsądna liczba |
+| 7:00–8:30 | Walerian | **Odpowiedzi Ewy o 12:00 — jak proces je wchłonął** | `SDLC.md` sekcja 3 (oś czasu), `SLEDZENIE.md` wiersz R1, `KONTRAKT.md` sekcje 10 i 12, `params.csv` | rano: 3 vany i „bez dotacji się nie opłaca”; po odpowiedziach: nowe wartości w `params.csv` i jedna formuła `saving_pln` — w ok. 20 min 8 vanów, liczby sprawdzone niezależnie przez dwa tory co do złotówki; nasze 0,57 × WLTP ze źródłami potwierdziło, że 60% Ewy to rozsądna liczba. Każda reguła Ewy ma w `SLEDZENIE.md` swój parametr, test i kolumnę wyniku |
 | 8:30–9:30 | Walerian | **Pieniądze i ryzyko** | `BOARD_NOTE.md` | skąd 95 637 PLN (ok. 1 007 600 oszczędności z eksploatacji − 903 000 za EV po dotacji − 8 940 opłaty za leasing P-25); dlaczego nie „te, co jeżdżą najwięcej”; P-30 i P-21 mają najdłuższe dni ponad 156 km — rezerwowe diesle |
-| 9:30–10:00 | Rafał | **Jak pracowaliśmy równolegle** | `KONTRAKT.md`, `KONSTYTUCJA.md`, `fixtures/` | trzy tory od 11:20, każdy na plikach testowych w formacie kontraktu; scalenia bez konfliktów; konstytucja jako wspólny styl |
+| 9:30–10:00 | Rafał | **Jak pracowaliśmy równolegle** | `KONTRAKT.md`, `KONSTYTUCJA.md`, `fixtures/`, zielony automat testów na GitHubie | trzy tory od 11:20, każdy na plikach testowych w formacie kontraktu; scalenia bez konfliktów; konstytucja jako wspólny styl; testy uruchamiają się same przy każdym wypchnięciu. Raz kod wyprzedził kontrakt (cztery kolumny) — wyłapały to pytania toru B, stąd reguła „najpierw kontrakt” |
 | 10:00–13:00 | Rafał (klawiatura), Wojtek (komentarz) | **Demo** | terminal | patrz niżej |
 | 13:00–15:00 | wszyscy | Zapas i pytania | — | patrz „Pytania, których się spodziewamy” |
 
@@ -47,7 +47,7 @@ Zasady demo:
 | 2 | raport, `WARNING` i liczby kontrolne na ekranie — to pokazujemy w krokach 1 i 3 | Rafał — gotowe |
 | 3 | brakujący plik: `ERROR: Trips file not found: …`, kod 1, bez śladu stosu | Rafał — gotowe |
 | 4 | `fresh_trips.csv` istnieje i działa | Wojtek — gotowe |
-| 5 | próba generalna demo z samego `RERUN.md` | Wojtek, po teście ponownego uruchomienia (14:45–15:15) |
+| 5 | próba generalna demo z samego `RERUN.md` | Wojtek — test ponownego uruchomienia zrobiony 12:55 (`SDLC.md` sekcja 5); próba generalna po zamrożeniu (14:45–15:15) |
 
 ## Pytania, których się spodziewamy
 
@@ -59,7 +59,7 @@ Zasady demo:
 | Co, jeśli P-30 albo P-21 nie da rady w styczniu? | Rafał | ich najdłuższe dni to 166 i 159 km przy 156 km — dlatego zalecamy zostawić dwa wymieniane diesle jako rezerwę; przy regule „najgorszy dzień” wypadają (krok 2 demo) |
 | Czy to się opłaca? | Walerian | tak, ale tylko z dotacją: najlepszy van zarabia w 5 lat 23 305 PLN, a dotacja na jeden Cargo S to 45 000 PLN |
 | Czemu zakup, a nie leasing? | Walerian | dotacja tylko przy zakupie; Cargo S po dotacji 105 000 PLN, 60 rat leasingu 174 000 PLN |
-| Czy analityk poradzi sobie bez was? | Wojtek | pokazaliśmy to w kroku 3 demo; test z samej instrukcji (14:45–15:15) robi osoba, która nie pisała skryptu — wpisać wynik |
+| Czy analityk poradzi sobie bez was? | Wojtek | pokazaliśmy to w kroku 3 demo; test z samej instrukcji zrobiliśmy dwa razy (12:20 i 12:55): zip w pustym katalogu, świeży eksport, kod 0, 7 vanów; typowe pomyłki (zła ścieżka, brak kolumny, brak parametru, plik ze średnikami) kończą się jedną linią `ERROR:`. Testowały osoby z zespołu — nikt z zewnątrz nie próbował |
 | Czemu nie pytaliście o X? | Walerian | limit 5 pytań; lista „co byśmy zapytali dalej” jest w `ASSUMPTIONS.md` |
 
 ## Czego nie mówimy
