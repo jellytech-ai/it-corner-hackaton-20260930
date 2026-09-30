@@ -228,7 +228,7 @@ Uwaga: pytanie 3 jest najsłabsze (Ewa w trasie raczej nie zapyta Witolda ani de
 4. Diesel leases: what does early termination cost, and when could the EVs realistically enter the fleet?
 5. Replaced diesels: are they sold (at what value) or kept as spares?
 
-Status: **niewysłane**. Po wysłaniu dopisać godzinę, a odpowiedzi wpisać do sekcji 10.
+Status: **wysłane 30.09 ok. 11:09**, czekamy na odpowiedzi. Odpowiedzi wpisać do sekcji 10.
 
 Jeśli Ewa nie odpowie na czas: działamy na założeniach z sekcji 6 i zapisujemy to wprost.
 
@@ -270,22 +270,45 @@ Wnioski wstępne:
 
 ---
 
-## 9. Plan
+## 9. Plan (3 deweloperów, praca równoległa)
 
-| # | Krok | Stan |
+Stan na 11:06. Kroki 1–3 z wersji 0.1 (repo, profil danych, założenia zimowe) są zrobione; pytania do Ewy gotowe do wysłania.
+
+### Krok 0 — wspólny kontrakt (wszyscy, 15 min)
+
+Bez tego tory nie są niezależne. Ustalamy i zapisujemy:
+
+- **`config`** — jeden plik z parametrami (ceny, spalanie, współczynnik zimowy, ładowność i zasięg EV, liczba punktów ładowania, mapowanie P-17 → P-17B).
+- **`van_profile`** — tabela pośrednia, jeden wiersz na van: `van_id, model, depot, refrigerated, ownership, lease_end, monthly_lease_pln, days, km_13w, worst_day_km, max_load_kg, two_shift`. Tor A ją produkuje, tory B i C ją czytają.
+- **`feasibility`** — wynik toru B: `van_id, feasible, ev_model, ev_depot, range_check_km, reject_reason`. Tor C ją czyta.
+- Do czasu, aż tor A odda prawdziwe dane, B i C pracują na tabeli z sekcji 5 jako danych testowych.
+- Język, struktura katalogów, jedno polecenie uruchamiające całość.
+
+### Trzy tory
+
+| Tor | Zakres | Wynik | Zależy od |
+|---|---|---|---|
+| **A — Dane** | wczytanie, czyszczenie (duplikaty, P-17, wiersz P-27, dystans z licznika), agregacja do dnia, raport z czyszczenia, trzy liczby kontrolne | `van_profile`, oczyszczone kursy, pierwsze trzy wiersze `summary.csv` | tylko kontrakt |
+| **B — Wykonalność** | filtry: zasięg zimowy na najgorszym dniu, ładowność, chłodnie, baza i limit punktów; symulacja doładowania między trasami (A16); dobór modelu S/L; analiza wrażliwości 0,50 / 0,57 / 0,65 | `feasibility`, tabela wrażliwości, lista „blisko progu” | kontrakt; dane testowe z sekcji 5 |
+| **C — Ekonomia i dokumenty** | roczne km, paliwo minus ładowanie (z +10% na zimę i taryfą dzienną dla doładowań), serwis, zakup/leasing, koszt wyjścia z leasingu, `saving_basis`; notatka dla zarządu, lista założeń i instrukcja (EN) | oszczędności per van, szkice dokumentów | kontrakt; dane testowe z sekcji 5 |
+
+Integracja (ranking i eksport `shortlist.csv` + `summary.csv`) należy do toru B, bo jest końcem potoku. Dokumenty należą do toru C.
+
+### Kamienie milowe
+
+| Kiedy | Co | Kto |
 |---|---|---|
-| 1 | Sklonować repo, przeczytać materiały | zrobione |
-| 2 | Profil danych i pułapki | zrobione (sekcja 4) |
-| 3 | Założenia zimowe ze źródłami | zrobione (sekcja 6) |
-| 4 | Ustalić ostateczną listę pytań i wysłać do Ewy | **do zrobienia teraz** |
-| 5 | Skrypt: wczytanie, czyszczenie (duplikaty, P-17, ujemny wiersz), liczby kontrolne | do zrobienia |
-| 6 | Skrypt: filtry wykonalności (zasięg, ładowność, baza, chłodnia) z parametrami w konfiguracji | do zrobienia |
-| 7 | Skrypt: ekonomia per van (paliwo − ładowanie, serwis, leasing/zakup, koszt wyjścia z leasingu) | do zrobienia; zależy od A15 |
-| 8 | Ranking i eksport `shortlist.csv`, `summary.csv` | do zrobienia — **wersja częściowa na lunch** |
-| 9 | Analiza wrażliwości (0,50 / 0,57 / 0,65; z degradacją i bez) | do zrobienia |
-| 10 | Notatka dla zarządu (1 strona, EN) | do zrobienia |
-| 11 | Instrukcja dla analityka + lista założeń (EN) | do zrobienia |
-| 12 | Prezentacja procesu (15 min) | do zrobienia |
+| M0, zaraz | kontrakt + wysłanie pytań do Ewy | wszyscy |
+| M1, przed lunchem | liczby kontrolne potwierdzone; częściowa shortlista i `summary.csv` do wątku | A liczby, B shortlista, C oszczędność na paliwie |
+| M2, po lunchu | odpowiedzi Ewy naniesione na `config` i założenia; ponowne uruchomienie | wszyscy |
+| M3, przed prezentacjami | komplet: oba CSV, notatka, instrukcja, założenia; test ponownego uruchomienia; prezentacja | wszyscy |
+
+### Zabezpieczenia
+
+- **Liczby kontrolne liczone dwa razy.** CFO sprawdza je najpierw, więc osoba spoza toru A przelicza je niezależnie, inną metodą.
+- **Test ponownego uruchomienia.** Przed M3 ktoś, kto nie pisał skryptu, uruchamia go z samej instrukcji na zmienionym eksporcie (np. obciętym do 6 tygodni, z nowym nieznanym `van_id`).
+- **Jeden właściciel rejestru założeń.** Tor C dopisuje każdą decyzję z godziną do sekcji 6 i 10; pozostali zgłaszają je od razu.
+- **Parametry tylko w `config`.** Odpowiedzi Ewy po lunchu mają się sprowadzać do zmiany wartości, nie kodu.
 
 ### Wymagania wobec narzędzia
 
@@ -333,3 +356,5 @@ Wnioski wstępne:
 | 10:42 | Przegląd pytań: P-17 → założenie A2, chłodnie → decyzja D1; lista pytań skrócona do 3 |
 | 10:50 | D3 (ładowność twarda), D4 i A12 (sezonowość jako założenie), A16 (doładowanie między trasami), pytanie o leasing dodane |
 | 10:53 | Propozycja pytań do Ewy spisana (PL + EN), dokument wypchnięty do repo zespołu |
+| 11:06 | Plan na 3 deweloperów (sekcja 9) |
+| 11:09 | Pytania wysłane do Ewy |
