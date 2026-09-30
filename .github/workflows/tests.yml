@@ -1,0 +1,33 @@
+# Bramka weryfikacji (SDLC.md, sekcja 2): testy na każdym wypchnięciu do devel/main i w każdym PR.
+name: tests
+
+on:
+  push:
+    branches: [devel, main]
+  pull_request:
+
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.9", "3.13"]   # 3.9 = minimum z KONTRAKT.md, sekcja 1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dane źródłowe organizatorów (tylko odczyt)
+        uses: actions/checkout@v4
+        with:
+          repository: handsonarchitects/it-corner-hackathon-20260930
+          path: source-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Testy
+        env:
+          EV_SOURCE_DIR: ${{ github.workspace }}/source-data
+        run: |
+          set -o pipefail
+          python -m unittest discover -s tests 2>&1 | tee wynik.txt
+          # Testy na prawdziwym eksporcie nie mogą zostać pominięte: liczby kontrolne są testem (KONSTYTUCJA 7).
+          ! grep -q "skipped" wynik.txt

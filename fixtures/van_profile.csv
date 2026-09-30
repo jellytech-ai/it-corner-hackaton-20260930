@@ -1,0 +1,39 @@
+van_id,model,year,depot,ownership,lease_end,monthly_lease_pln,refrigerated,payload_kg,days,trips,km_period,worst_day_km,range_day_km,max_load_kg,two_shift,two_shift_days
+P-01,Brona D35,2019,North,owned,,,no,1150,56,56,11682.0,271.4,248.0,1086,no,0
+P-02,Brona D35,2017,South,owned,,,no,1150,63,63,5210.9,124.3,103.2,1071,no,0
+P-03,Kestrel Cargo 3.5,2018,North,owned,,,yes,1300,69,69,7947.0,153.2,136.0,1262,no,0
+P-04,Brona D35,2022,North,leased,2027-05-31,2650.0,no,1150,72,72,9588.0,150.9,144.0,968,no,0
+P-05,Kestrel Cargo 3.5,2022,South,owned,,,no,1300,70,70,8535.9,143.6,138.4,1041,no,0
+P-06,Brona D35,2017,North,owned,,,no,1150,51,51,4280.1,116.5,103.0,1062,no,0
+P-07,Kestrel Cargo 3.5,2020,South,owned,,,yes,1300,68,68,8423.8,163.5,149.3,1247,no,0
+P-08,Kestrel Cargo 3.5,2023,North,owned,,,no,1300,75,138,11670.2,190.0,181.2,812,yes,63
+P-09,Brona D35,2021,North,owned,,,no,1150,71,131,15486.2,260.6,256.7,790,yes,60
+P-10,Brona D35 Long,2021,South,leased,2027-01-31,2470.0,no,1050,55,55,5358.5,144.0,118.1,936,no,0
+P-11,Brona D35,2016,North,owned,,,no,1150,63,63,5800.6,133.7,110.9,1118,no,0
+P-12,Kestrel Cargo 3.5,2023,South,owned,,,no,1300,75,138,12288.0,201.4,190.7,838,yes,63
+P-13,Brona D35,2022,North,owned,,,no,1150,72,72,9827.1,148.8,145.7,1031,no,0
+P-14,Brona D35 Long,2022,North,leased,2027-03-31,2780.0,no,1050,56,56,5623.2,148.0,131.2,1038,no,0
+P-15,Kestrel Cargo 3.5,2016,South,owned,,,no,1300,50,50,4827.3,131.0,115.5,1196,no,0
+P-16,Kestrel Cargo 3.5,2020,North,owned,,,no,1300,75,75,10653.0,173.7,169.5,1018,no,0
+P-17B,Brona D35,2023,South,owned,,,no,1150,62,62,6911.0,158.5,138.7,1104,no,0
+P-18,Brona D35,2019,South,owned,,,no,1150,55,55,5209.5,123.6,117.6,1057,no,0
+P-19,Kestrel Cargo 3.5,2022,North,owned,,,yes,1300,75,75,9804.5,150.2,142.8,996,no,0
+P-20,Brona D35 Long,2024,South,leased,2028-11-30,2940.0,no,1050,70,70,9013.9,142.5,138.6,924,no,0
+P-21,Brona D35 Long,2023,North,owned,,,no,1050,71,71,9670.2,158.6,149.1,941,no,0
+P-22,Brona D35,2018,North,owned,,,no,1150,67,67,7185.5,149.8,134.4,1097,no,0
+P-23,Kestrel Cargo 3.5,2017,South,owned,,,yes,1300,65,65,7779.2,148.4,138.1,1271,no,0
+P-24,Brona D35 Long,2020,North,owned,,,no,1050,68,130,17560.1,301.6,293.0,846,yes,62
+P-25,Brona D35 Long,2023,South,leased,2028-04-30,2980.0,no,1050,72,72,9686.2,148.2,144.0,1003,no,0
+P-26,Brona D35 Long,2024,North,leased,2028-06-30,2890.0,no,1050,72,72,8579.7,141.8,138.0,957,no,0
+P-27,Brona D35,2018,South,owned,,,no,1150,57,57,5874.1,157.1,123.3,1093,no,0
+P-28,Brona D35 Long,2021,North,leased,2026-11-30,2560.0,no,1050,49,49,5373.5,160.3,133.0,976,no,0
+P-29,Brona D35 Long,2024,South,leased,2029-06-30,3240.0,no,1050,57,57,12208.4,271.2,258.4,1019,no,0
+P-30,Kestrel Cargo 3.5,2021,North,owned,,,no,1300,71,71,9394.3,166.2,145.1,997,no,0
+P-31,Brona D35,2022,South,owned,,,no,1150,73,73,9625.8,150.4,143.2,977,no,0
+P-32,Brona D35 Long,2022,South,leased,2027-08-31,2390.0,no,1050,52,52,5861.7,148.8,136.8,1041,no,0
+P-33,Brona D35 Long,2023,North,leased,2028-09-30,3010.0,no,1050,76,76,14314.1,207.7,206.3,962,no,0
+P-34,Kestrel Cargo 3.5,2021,South,owned,,,yes,1300,66,66,7733.7,157.3,139.8,1258,no,0
+P-35,Kestrel Cargo 3.5,2019,North,owned,,,yes,1300,65,65,7295.5,144.2,136.2,1284,no,0
+P-36,Brona D35 Long,2023,South,leased,2028-02-29,2710.0,no,1050,68,129,14347.1,253.4,237.0,998,yes,61
+P-37,Brona D35 Long,2024,North,leased,2029-03-31,3180.0,no,1050,58,58,12259.3,263.8,236.8,1011,no,0
+P-38,Brona D35,2019,South,owned,,,no,1150,58,58,12062.5,285.1,241.6,1129,no,0
