@@ -1,6 +1,6 @@
 # Which vans go electric first
 
-## Update, 15:40: all the data and the worst-day rule
+## Update, 15:27: all the data and the worst-day rule
 
 **Recommendation now: buy 7 Volta Cargo EVs with the grant, all based at North. Together they save 85750 PLN over five years after paying for the EVs.** This uses both exports (15 Jun to 26 Sep 2026), the register of 40 vans and the new rule: a van qualifies only if its worst day fits within 60% of the EV's WLTP range.
 
