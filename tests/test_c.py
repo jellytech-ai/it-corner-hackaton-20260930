@@ -7,7 +7,7 @@ import unittest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from economics import economics  # noqa: E402
+from economics import economics, saving_basis  # noqa: E402
 
 
 def read_csv(name):
@@ -76,6 +76,24 @@ class EconomicsFixtureTest(unittest.TestCase):
             km * 10.9 / 100 * 1.00,
             places=6,
         )
+
+    def test_saving_pln_is_annual_fuel_plus_maintenance_saving(self):
+        # Decision C1 / D7: variant 1, operating costs only, per year
+        km = 5623.2 * 365 / 90
+        maintenance = km * (0.34 - 0.14)
+        row = self.rows["P-14"]
+        self.assertAlmostEqual(row["saving_pln"], row["annual_fuel_saving_pln"] + maintenance, places=6)
+        self.assertEqual(round(row["saving_pln"]), 13995)
+
+
+class SavingBasisTest(unittest.TestCase):
+    def test_saving_basis_is_one_english_sentence_naming_what_is_counted(self):
+        text = saving_basis(read_params())
+        self.assertTrue(text.endswith("."))
+        self.assertEqual(text.count(". "), 0)
+        for word in ("fuel", "maintenance", "per year", "lease"):
+            self.assertIn(word, text)
+        self.assertNotIn(",", text)  # stays one field in summary.csv
 
 
 if __name__ == "__main__":

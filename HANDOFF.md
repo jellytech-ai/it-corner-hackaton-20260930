@@ -173,7 +173,7 @@ Każde założenie ma godzinę przyjęcia; Ewa chce wiedzieć „co i mniej wię
 | A14 | — | Limit EV w North = 6 (liczba punktów), South = 0 | czeka na Ewę (pyt. 1) |
 | A16 | 10:50 | Vany dwuzmianowe (świt + popołudnie: P-08, P-09, P-12, P-24, P-36) doładowują się w bazie między trasami z punktu 22 kW. Zimą daje to ok. 58 km zasięgu na godzinę ładowania dla Cargo S i ok. 51 km dla Cargo L; odliczamy 15 min na podłączenie. Test: pierwsza trasa ≤ zasięg zimowy oraz stan po doładowaniu ≥ druga trasa, dla każdego dnia z danych. Wymaga: powrotu do bazy między trasami, wolnego punktu w dzień, energii w taryfie dziennej (0,92 PLN/kWh) | przyjęte; skutki w sekcji 8 |
 | A17 | 11:13 | Analityk Ewy jest osobą techniczną i ma Pythona 3; uruchamia skrypt z wiersza poleceń i edytuje `params.csv` | przyjęte (niepotwierdzone przez Ewę) |
-| A15 | — | Podstawa `saving_pln` (co wliczamy i na ile lat) | **do ustalenia** — zależy od pyt. 2 |
+| A15 | 11:26 | Podstawa `saving_pln` = **wariant 1, tylko eksploatacja, rocznie**: (koszt diesla − koszt ładowania) + (serwis diesla − serwis EV), z `params.csv`. Nie wliczamy raty leasingu ani ceny zakupu EV, rat diesla ani dotacji. Serwis: diesel 0,34 PLN/km (dane firmy, jedna stawka niezależnie od rocznika), EV 0,14 PLN/km (**szacunek dealera**); w `vans.csv` brak kosztów serwisu per van. `annual_fuel_saving_pln` zostaje czystą różnicą paliwo − ładowanie | przyjęte (decyzja D7) |
 
 ### Skąd 0,57 × WLTP (A6–A8)
 
@@ -397,12 +397,12 @@ Demo w trzech krokach:
 | D3 | 10:50 | Ładowność EV to twardy limit, sprawdzany na maksimum z danych; nie pytamy Ewy i nie proponujemy rozkładania ładunku na dwa auta | Ładowność znamionowa to granica prawna; Witold: EV „musi unieść to, co vany wożą dziś”; rozłożenie ładunku oznacza zmianę tras i dodatkowy kurs. Vany odpadające przez pojedyncze dni powyżej 1050 kg (P-06, P-02, P-18: 1 dzień; P-22: 2; P-11: 3) pokazujemy w notatce jako „blisko progu” |
 | D4 | 10:50 | Sezonowość przyjmujemy jako założenie A12, bez pytania Ewy | Ewa nie ma danych z zimy; narzędzie zweryfikuje to na eksporcie za IV kwartał |
 | D5 | 11:13 | Narzędzie to jeden plik `ev_shortlist.py` bez zależności, z parametrami w `params.csv`; roczne km liczone z długości okresu w danych | Ewa: „a script is enough”, materiały idą do wątku jako pliki, analityk uruchamia bez nas |
+| D7 | 11:26 | `saving_pln` liczymy jako roczną oszczędność eksploatacyjną: paliwo − ładowanie + różnica serwisu (wariant 1 z `TOR-C`); `saving_basis` opisuje to jednym zdaniem po angielsku | proste i sprawdzalne dla CFO z samych stawek w `params.csv`; nie wymaga założeń o dotacji, wyjściu z leasingu ani racie nowego diesla. Pełny koszt (leasing EV ok. 34 800 PLN/rok przy ok. 14 000 PLN oszczędności) opisujemy w notatce dla zarządu, żeby nie było wrażenia, że wymiana „zarabia” |
 | D6 | 11:20 | Korekta D5: narzędzie to jeden katalog i jedno polecenie, ale cztery pliki `.py` (`data.py`, `feasibility.py`, `economics.py`, `ev_shortlist.py`) | trzy osoby nie mogą równolegle edytować jednego pliku; do wątku trafia zip |
 
 ### Otwarte
 
 - Korekta wiersza P-27 (GPS 90,3 czy wartość bezwzględna 208,6).
-- Podstawa `saving_pln`: co wliczamy (paliwo, serwis, rata, dotacja) i na ile lat.
 - Czy ładowność sprawdzamy na maksimum, czy na wysokim percentylu.
 - Czy rekomendujemy mniej niż 6 aut, jeśli tyle wychodzi z ostrych filtrów, czy pokazujemy warianty.
 - Zakup czy leasing EV.

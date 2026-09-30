@@ -41,6 +41,8 @@ Przykład kontrolny, P-14 (Brona D35 Long → Cargo S, 5623 km w 90 dni):
 
 ## Decyzja C1 — podstawa `saving_pln` (najważniejsza w tym torze)
 
+> **Rozstrzygnięte 11:26: wariant 1** (tylko eksploatacja, rocznie) — decyzja D7 i założenie A15 w `HANDOFF.md`. Nowe parametry nie są potrzebne. Poniżej zostaje analiza, na podstawie której wybieraliśmy.
+
 Problem: oszczędność na paliwie i serwisie to ok. 14 000 PLN rocznie na van, a leasing Cargo S kosztuje 34 800 PLN rocznie. Liczona „wprost” wymiana jest na minusie dla każdego vana. Wynik zależy od tego, **z czym porównujemy**.
 
 | Wariant | Co wliczamy | Uwaga |
@@ -67,3 +69,4 @@ Czyszczenia danych, filtrów, rankingu, zapisu plików wynikowych.
 |---|---|
 | 11:25 | Start toru C na gałęzi `tor-c`. C2 i C3 gotowe: `economics()` zwraca `annual_km` i `annual_fuel_saving_pln`; test kontrolny P-14 = 9 434 PLN zgodny. P-26: 8579,7 km → 34 795 km (w tabeli zadań 34 797 z zaokrąglonych 8580 km) |
 | 11:25 | `economics()` zwraca wiersz dla każdego vana z `van_profile`; bez `ev_model` pola kwot są puste (`""`) — B łączy bez uzupełniania braków. `saving_pln` puste do decyzji C1 |
+| 11:26 | **C1: wariant 1** — `saving_pln` = paliwo − ładowanie + (0,34 − 0,14) PLN/km × `annual_km`; bez leasingu, zakupu i dotacji (D7, A15). P-14: 13 995 PLN/rok. `saving_basis()` gotowe. Nowych parametrów dla toru A brak |
