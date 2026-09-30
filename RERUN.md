@@ -21,16 +21,24 @@ This tool reads a telematics export and the van register and writes the EV short
 
    The export can cover any period; annual km are scaled from the number of days in the file.
 
-2. **Update `params.csv` if anything has changed.** Open it in Excel or a text editor and change only the `value` column. Typical changes:
+2. **Update `params.csv`.** Open it in Excel or a text editor and change only the `value` column.
+
+   **Every quarter:** set `lease_reference_date` to the date of the analysis (YYYY-MM-DD). It decides which diesel leases end within 12 months and so cost nothing to leave.
+
+   **When something has changed:**
 
    | What changed | Parameter(s) |
    |---|---|
    | fuel price | `diesel_price_pln_per_l` |
    | electricity tariff | `electricity_night_pln_per_kwh`, `electricity_day_pln_per_kwh` |
    | new charging points at a depot | `chargers.North`, `chargers.South` |
+   | how many South vans may be based at North | `max_south_vans_at_north` |
+   | EV prices or the grant | `ev.<model>.price_pln`, `grant_share_of_price` (0.30 = 30%) |
+   | years the board looks at | `saving_horizon_years` |
+   | cost of ending a diesel lease early | `lease_exit_fee_months`, `lease_free_exit_within_months` |
    | a new diesel model in the register | add `fuel_l_per_100km.<model>` |
    | a van renamed in telematics | add `van_alias.<old id>` with the new id as value |
-   | a different winter range assumption | `winter_range_factor` (0.57 = 57% of WLTP range) |
+   | the winter range rule | `winter_range_factor` (0.60 = 60% of WLTP range) and `range_check_percentile` (95 = the van's 95th-percentile day) |
 
    Keep the file as CSV with a comma separator and a dot as the decimal mark.
 
