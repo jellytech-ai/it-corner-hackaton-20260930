@@ -161,6 +161,7 @@ class RealExport(unittest.TestCase):
         self.assertEqual(data.control_figures(self.trips, self.profile),
                          {"vans_assessed": 38, "trips_counted": 2777, "total_km": 344952})
         self.assertEqual(data.period_days(self.trips), 90)
+        self.assertEqual(data.operating_days(self.trips), 77)
 
     def test_report_mentions_the_known_problems(self):
         text = "\n".join(self.report)

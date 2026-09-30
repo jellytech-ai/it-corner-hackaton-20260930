@@ -194,7 +194,8 @@ def load_and_clean(trips_path, vans_path, params):
         if van["van_id"] not in with_trips:
             report.append(f"WARNING: van {van['van_id']} is in the register but has no trips in this export")
     if trips:
-        report.append(f"Period: {trips[0]['date']} to {trips[-1]['date']} ({period_days(trips)} days)")
+        report.append(f"Period: {trips[0]['date']} to {trips[-1]['date']} ({period_days(trips)} days, "
+                      f"{operating_days(trips)} with trips)")
     else:
         report.append("WARNING: no usable trip rows")
     report.append(f"Trip rows kept: {len(trips)}")
@@ -218,6 +219,11 @@ def percentile(values, pct):
     low = int(math.floor(position))
     high = min(low + 1, len(ordered) - 1)
     return ordered[low] + (ordered[high] - ordered[low]) * (position - low)
+
+
+def operating_days(trips):
+    """Number of distinct dates with at least one trip by any van."""
+    return len({t["date"] for t in trips})
 
 
 def build_van_profile(trips, vans, params=None):

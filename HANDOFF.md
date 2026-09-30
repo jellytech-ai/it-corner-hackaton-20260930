@@ -240,7 +240,11 @@ Status: **wysłane 30.09 ok. 11:09**, czekamy na odpowiedzi. Odpowiedzi wpisać 
 
 Jeśli Ewa nie odpowie na czas: działamy na założeniach z sekcji 6 i zapisujemy to wprost.
 
-### Do wpisania w odpowiedzi dla Ewy (dopisane 12:12) — jeszcze niewysłane
+### Odpowiedź dla Ewy o analityku i podgląd dla CFO — **wysłane 30.09, 13:02**
+
+Wysłane jako komentarz w wątku „9”: https://github.com/handsonarchitects/it-corner-hackathon-20260930/discussions/4#discussioncomment-18677756
+
+Wysłana wersja zawiera tekst poniżej oraz, przed nim, podgląd dla CFO: rekomendację (8 EV, 95 637 PLN w 5 lat) i zawartość `summary.csv` i `shortlist.csv` z `devel` a767bdc. Wpis Ewy z 12:03 chwilowo zniknął (problem z jej kontem), więc odpowiedź poszła jako komentarz najwyższego poziomu.
 
 Ewa zapytała o 12:03: „my analyst will rerun this next quarter without you. What will they open, and what will they type?”. W odpowiedzi w naszym wątku muszą się znaleźć trzy rzeczy o analityku oraz (uzgodnione 12:52) decyzja o 8 vanach zamiast 10:
 
