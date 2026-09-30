@@ -4,7 +4,7 @@ Stan: 30.09.2026, 11:55. Właściciel: tor C. Liczby w tym planie pochodzą z ur
 
 Ewa: „The focus of today is your process, not the app” oraz „show me it rerunning”. Dlatego ok. 10 min proces, 3 min demo, 2 min zapasu.
 
-**Język prezentacji: do ustalenia** (materiały dla Ewy są po angielsku; jeśli mówimy po polsku, na ekranie i tak zostają angielskie pliki).
+**Język prezentacji: polski** (decyzja 11:52). Pliki na ekranie zostają po angielsku, bo takie dostaje Ewa; nazwy z plików (`shortlist.csv`, „check figures”) czytamy tak, jak są, i raz tłumaczymy (słownik: `KONSTYTUCJA.md` sekcja 10).
 
 ## Kto mówi co
 
@@ -36,13 +36,13 @@ Zasady demo:
 - Po kroku 2 przywracamy 0,57 (albo pracujemy na kopii `params_065.csv`).
 - Wyniki wszystkich trzech kroków zapisane wcześniej w `demo_backup/` — gdyby coś padło, pokazujemy pliki.
 
-### Warunki, żeby demo wyglądało dobrze (sprawdzone 11:53)
+### Warunki, żeby demo wyglądało dobrze (sprawdzone 11:53, ponownie 11:55 na `tor-b-wykonalnosc` + `devel`)
 
 | # | Stan | Kto |
 |---|---|---|
-| 1 | komunikat końcowy jest po polsku („Zapisano do … vanow na shortliscie”) — ma być po angielsku | B (KONSTYTUCJA 12, nr 1) |
-| 2 | na ekranie nie ma liczb kontrolnych ani ostrzeżeń — a właśnie je chcemy pokazać w krokach 1 i 3 | B (KONSTYTUCJA 12, nr 3) |
-| 3 | brakujący plik daje ślad stosu zamiast `ERROR:` | B (KONSTYTUCJA 12, nr 2) |
+| 1 | komunikat końcowy po angielsku (`Vans on the shortlist: 3`, `Output written to: …`) | B — gotowe na `tor-b-wykonalnosc` (64b3964), czeka na scalenie do `devel` |
+| 2 | raport, `WARNING` i liczby kontrolne na ekranie — to pokazujemy w krokach 1 i 3 | B — gotowe, jw. |
+| 3 | brakujący plik: `ERROR: Trips file not found: …`, kod 1, bez śladu stosu | B — gotowe, jw. |
 | 4 | `fresh_trips.csv` istnieje i działa | A — gotowe |
 | 5 | próba generalna demo z samego `RERUN.md` | A, po teście ponownego uruchomienia (14:45–15:15) |
 
