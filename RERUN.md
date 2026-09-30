@@ -60,6 +60,9 @@ A problem that stops the tool is printed as one line starting with `ERROR:`, nam
 | Message or symptom | What to do |
 |---|---|
 | `python3: command not found` | install Python 3 from python.org, or try `python` instead of `python3` |
-| missing column | the export has different column names; rename them to the ones in step 1 |
-| missing parameter, e.g. `fuel_l_per_100km.<model>` | a new model is in the register; add the line to `params.csv` |
+| `ERROR: … file not found: …` | check the path; run the command from the tool folder or give the full path |
+| `ERROR: … missing column(s) …` | the export has different column names; rename them to the ones in step 1 |
+| `ERROR: Trips file …: no usable trip rows; nothing written` | the file is not the telematics export, or every row was rejected; check the file you passed to `--trips` |
+| `ERROR: Missing parameter '<key>' in params.csv` | add the line to `params.csv`. Usual cause: a new diesel model in the register (`fuel_l_per_100km.<model>`) or a new depot (`chargers.<depot>`) |
+| `reject_reason` is `no trips in this export` | the van is in the register but did not drive in this period; `data_report.txt` has a matching `WARNING` |
 | shortlist is empty | check `all_vans.csv`, column `reject_reason`, to see which rule rejects the vans |
