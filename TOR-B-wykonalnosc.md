@@ -77,6 +77,8 @@ tail -n +2 trips.csv | sort -u | awk -F, '
 | **0,57** | 148,2 / 216,6 | **3: P-08, P-14, P-26** | 8: + P-05, P-10, P-12, P-20, P-25 |
 | 0,65 | 169,0 / 247,0 | 8: P-04, P-08, P-13, P-14, P-21, P-26, P-28, P-30 | 15: + P-05, P-10, P-12, P-20, P-25, P-31, P-32 |
 
+| 12:20 | Uwaga: commit B6 (`f52d8c4`) zawierał tylko dziennik — Cursor nadpisał `feasibility.py` i `tests/test_b.py` nieaktualnym buforem przed `git add`. Kod B6 odtworzony w `08808c7`. Od teraz po każdym commicie sprawdzam `git show --stat`. |
+| 12:25 | B9 gotowe: vany niewykonalne mają w `reject_reason` dopisek `near threshold: <model> …` (zasięg ≤ 10% ponad próg, 1–3 dni ponad ładowność albo 1–3 dni nieudane z doładowaniem). Nowa kolumna `reason` (poza KONTRAKT 6, trafia do `all_vans.csv` i `shortlist.csv`): zapas zasięgu, `at threshold` przy zapasie < 1% (P-14: 0,2 km; P-25: 0,0 km), albo „midday charging”. Blisko progu: North — P-13 (+0,4%), P-04 (+1,8%), P-21 (+7,0%), P-28 (+8,2%), P-06 i P-02 (1 dzień ładunku), P-22 (2 dni + 1,1%), P-11 (3 dni), P-09 (Cargo L, 2 dni nieudane); South — P-32, P-31, P-18, P-27. |
 
 ## Pytania na koniec pracy
 
@@ -91,3 +93,7 @@ tail -n +2 trips.csv | sort -u | awk -F, '
 | Q7 | A16: czy vany dwuzmianowe faktycznie wracają do bazy między trasami? Dane pokazują tylko godziny (HANDOFF 8) | zakładamy, że tak |
 | Q8 | Wrażliwość zmienia tylko `winter_range_factor`; zużycie zimowe w symulacji A16 (`winter_temp_factor` × `winter_payload_factor` = 0,63) zostaje stałe. Czy te dwa współczynniki mają być spójne (0,57 vs 0,63)? | zostawiamy osobno, jak w HANDOFF |
 | Q9 | `__pycache__/*.pyc` są śledzone w git (ktoś uruchomił pytest → zmiany w drzewie). Dodać `.gitignore`? Plik bez właściciela w KONTRAKT | do decyzji przy scaleniu |
+| Q10 | Tor A: dopisać do `params.csv` progi B9 — `near_range_pct,10`, `near_payload_days,3`, `at_threshold_pct,1` (teraz domyślne w kodzie, bo `params.csv` należy do A) | wiadomość do A przy scaleniu |
+| Q11 | Kolumna `reason` w `feasibility` wykracza poza KONTRAKT 6 — dopisać ją do kontraktu (C nie musi jej używać) | dopisać |
+| Q12 | Język opisów w `reason`/`reject_reason`: angielski jak we wzorze, czy polski dla Ewy („na progu”, decyzja 1)? | angielski |
+| Q13 | P-25 (South) jest dokładnie na progu (148,2 = 148,2) — gdyby Ewa pozwoliła na EV z South w North, to kandydat najbardziej ryzykowny | pokazać w notatce |
