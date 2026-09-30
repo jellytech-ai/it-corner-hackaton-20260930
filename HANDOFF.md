@@ -161,7 +161,7 @@ Każde założenie ma godzinę przyjęcia; Ewa chce wiedzieć „co i mniej wię
 | A2 | 10:42 | P-17 i P-17B to ten sam van; łączymy pod `P-17B`. Dowody: ta sama trasa (S-R06, nikt inny jej nie jeździ), ten sam kierowca, P-17 kończy się 31.07, P-17B zaczyna 03.08, średni dystans 112 i 111 km, rejestr ma 38 vanów jak w liście Ewy | przyjęte (nie pytamy Ewy) |
 | A3 | 10:15 | Dystans = `odometer_km`; GPS tylko pomocniczo | przyjęte |
 | A4 | 10:15 | Test zasięgu na **najgorszym dniu** (suma kursów dnia), nie na średniej | przyjęte (wymóg Witolda) |
-| A5 | 10:15 | Wiersz P-27 z 13.08 (−208,6 km) jest błędem i wymaga korekty | sposób korekty do decyzji |
+| A5 | 10:15 / 11:25 | Wiersz P-27 z 13.08 (−208,6 km) jest błędem; liczymy go z `gps_km` (90,3 km). Reguła ogólna: licznik ≤ 0 lub pusty → GPS, z ostrzeżeniem w raporcie | przyjęte (tor A, D8) |
 | A6 | 10:30 | Zasięg zimowy = **0,57 × WLTP** (Cargo S ok. 148 km, Cargo L ok. 217 km); warianty 0,50 i 0,65 | przyjęte jako bazowe; pyt. 3 |
 | A7 | 10:30 | Po 5 latach (koniec leasingu EV) dodatkowo × 0,87 → 0,49 × WLTP (S ok. 128 km, L ok. 187 km) | pokazujemy w notatce jako test odporności |
 | A8 | 10:30 | Zużycie energii: liczby dealera + 10% rocznie na zimę | przyjęte |
@@ -173,7 +173,7 @@ Każde założenie ma godzinę przyjęcia; Ewa chce wiedzieć „co i mniej wię
 | A14 | — | Limit EV w North = 6 (liczba punktów), South = 0 | czeka na Ewę (pyt. 1) |
 | A16 | 10:50 | Vany dwuzmianowe (świt + popołudnie: P-08, P-09, P-12, P-24, P-36) doładowują się w bazie między trasami z punktu 22 kW. Zimą daje to ok. 58 km zasięgu na godzinę ładowania dla Cargo S i ok. 51 km dla Cargo L; odliczamy 15 min na podłączenie. Test: pierwsza trasa ≤ zasięg zimowy oraz stan po doładowaniu ≥ druga trasa, dla każdego dnia z danych. Wymaga: powrotu do bazy między trasami, wolnego punktu w dzień, energii w taryfie dziennej (0,92 PLN/kWh) | przyjęte; skutki w sekcji 8 |
 | A17 | 11:13 | Analityk Ewy jest osobą techniczną i ma Pythona 3; uruchamia skrypt z wiersza poleceń i edytuje `params.csv` | przyjęte (niepotwierdzone przez Ewę) |
-| A15 | — | Podstawa `saving_pln` (co wliczamy i na ile lat) | **do ustalenia** — zależy od pyt. 2 |
+| A15 | 11:26 | Podstawa `saving_pln` = **wariant 1, tylko eksploatacja, rocznie**: (koszt diesla − koszt ładowania) + (serwis diesla − serwis EV), z `params.csv`. Nie wliczamy raty leasingu ani ceny zakupu EV, rat diesla ani dotacji. Serwis: diesel 0,34 PLN/km (dane firmy, jedna stawka niezależnie od rocznika), EV 0,14 PLN/km (**szacunek dealera**); w `vans.csv` brak kosztów serwisu per van. `annual_fuel_saving_pln` zostaje czystą różnicą paliwo − ładowanie | przyjęte (decyzja D7) |
 
 ### Skąd 0,57 × WLTP (A6–A8)
 
@@ -397,12 +397,15 @@ Demo w trzech krokach:
 | D3 | 10:50 | Ładowność EV to twardy limit, sprawdzany na maksimum z danych; nie pytamy Ewy i nie proponujemy rozkładania ładunku na dwa auta | Ładowność znamionowa to granica prawna; Witold: EV „musi unieść to, co vany wożą dziś”; rozłożenie ładunku oznacza zmianę tras i dodatkowy kurs. Vany odpadające przez pojedyncze dni powyżej 1050 kg (P-06, P-02, P-18: 1 dzień; P-22: 2; P-11: 3) pokazujemy w notatce jako „blisko progu” |
 | D4 | 10:50 | Sezonowość przyjmujemy jako założenie A12, bez pytania Ewy | Ewa nie ma danych z zimy; narzędzie zweryfikuje to na eksporcie za IV kwartał |
 | D5 | 11:13 | Narzędzie to jeden plik `ev_shortlist.py` bez zależności, z parametrami w `params.csv`; roczne km liczone z długości okresu w danych | Ewa: „a script is enough”, materiały idą do wątku jako pliki, analityk uruchamia bez nas |
+| D7 | 11:26 | `saving_pln` liczymy jako roczną oszczędność eksploatacyjną: paliwo − ładowanie + różnica serwisu (wariant 1 z `TOR-C`); `saving_basis` opisuje to jednym zdaniem po angielsku | proste i sprawdzalne dla CFO z samych stawek w `params.csv`; nie wymaga założeń o dotacji, wyjściu z leasingu ani racie nowego diesla. Pełny koszt (leasing EV ok. 34 800 PLN/rok przy ok. 14 000 PLN oszczędności) opisujemy w notatce dla zarządu, żeby nie było wrażenia, że wymiana „zarabia” |
+| D8 | 11:25 | Licznik ≤ 0 lub pusty → `gps_km` z ostrzeżeniem; brak obu → wiersz odrzucony z ostrzeżeniem | nie gubimy kursu po cichu; tak są policzone liczby kontrolne (344 952 km) |
+| D9 | 11:25 | Kursy vana spoza rejestru (po aliasach) nie wchodzą do liczb; ostrzeżenie mówi, co dopisać do `vans.csv` lub `van_alias` | następny eksport może mieć nowego vana; analityk ma to zobaczyć, a nie dostać cicho zmienione liczby |
+| D10 | 11:25 | `vans_assessed` = vany z rejestru z co najmniej jednym kursem; van bez kursów dostaje ostrzeżenie | liczba kontrolna musi odpowiadać temu, co naprawdę oceniliśmy |
+| D11 | 11:35 | Raport i komunikaty narzędzia są po angielsku | czyta je analityk Ewy |
 | D6 | 11:20 | Korekta D5: narzędzie to jeden katalog i jedno polecenie, ale cztery pliki `.py` (`data.py`, `feasibility.py`, `economics.py`, `ev_shortlist.py`) | trzy osoby nie mogą równolegle edytować jednego pliku; do wątku trafia zip |
 
 ### Otwarte
 
-- Korekta wiersza P-27 (GPS 90,3 czy wartość bezwzględna 208,6).
-- Podstawa `saving_pln`: co wliczamy (paliwo, serwis, rata, dotacja) i na ile lat.
 - Czy ładowność sprawdzamy na maksimum, czy na wysokim percentylu.
 - Czy rekomendujemy mniej niż 6 aut, jeśli tyle wychodzi z ostrych filtrów, czy pokazujemy warianty.
 - Zakup czy leasing EV.
@@ -418,6 +421,10 @@ Demo w trzech krokach:
 | Godzina | Co |
 |---|---|
 | 10:10 | Repo sklonowane, materiały przeczytane, pierwszy profil danych |
+| 11:31 | Tor C: `economics()` z `annual_km`, `annual_fuel_saving_pln`, `saving_pln` wypchnięte na `tor-c` |
+| 11:33 | Tor A: liczby kontrolne 2777 / 344952 / 38 potwierdzone przez `data.py` i niezależnie w powłoce. Pułapka: `awk` przy polskich ustawieniach regionalnych obcina ułamki (343 699) — trzeba `LC_ALL=C` |
+| 11:35 | Tor A: `data.py` wypchnięte na `tor-a` |
+| 11:55 | Tor C: szkice `RERUN.md` i `ASSUMPTIONS.md`; decyzje toru A przeniesione do rejestru |
 | 10:20 | Analiza wpływu braku danych zimowych |
 | 10:29 | Decyzja: nie pytamy o dane zimowe; pytanie o chłodnie wraca do piątki |
 | 10:30 | Współczynnik zimowy 0,57 × WLTP ze źródłami |
