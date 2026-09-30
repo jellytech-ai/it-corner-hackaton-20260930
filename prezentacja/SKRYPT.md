@@ -13,7 +13,7 @@ Liczby: narzędzie uruchomione na `devel` 35d8e0b na oryginalnym eksporcie (30.0
 
 ---
 
-## AKTUALIZACJA 15:40 — po zmianie Ewy z 15:18 (czytać to zamiast starych akapitów)
+## AKTUALIZACJA 15:36 — po zmianie Ewy z 15:18 (czytać to zamiast starych akapitów)
 
 PDF ma teraz **16 slajdów**: doszedł slajd 12 o zmianie z 15:18, a dawne slajdy 12–15 to teraz 13–16. Tekst poniżej zastępuje odpowiednie akapity w dalszej części skryptu; slajdy 4, 6, 10, 11 i 13 czytamy bez zmian.
 
