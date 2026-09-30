@@ -85,6 +85,16 @@ class EconomicsFixtureTest(unittest.TestCase):
         self.assertAlmostEqual(row["saving_pln"], row["annual_fuel_saving_pln"] + maintenance, places=6)
         self.assertEqual(round(row["saving_pln"]), 13995)
 
+    def test_unknown_diesel_model_names_the_missing_parameter(self):
+        profile = [dict(r) for r in self.profile]
+        for r in profile:
+            if r["van_id"] == "P-14":
+                r["model"] = "Brona D40"
+        with self.assertRaises(ValueError) as ctx:
+            economics(profile, self.feasibility, self.params, 90)
+        self.assertIn("fuel_l_per_100km.Brona D40", str(ctx.exception))
+        self.assertIn("params.csv", str(ctx.exception))
+
 
 class SavingBasisTest(unittest.TestCase):
     def test_saving_basis_is_one_english_sentence_naming_what_is_counted(self):

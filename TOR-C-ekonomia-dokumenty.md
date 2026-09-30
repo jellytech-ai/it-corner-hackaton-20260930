@@ -70,3 +70,5 @@ Czyszczenia danych, filtrów, rankingu, zapisu plików wynikowych.
 | 11:25 | Start toru C na gałęzi `tor-c`. C2 i C3 gotowe: `economics()` zwraca `annual_km` i `annual_fuel_saving_pln`; test kontrolny P-14 = 9 434 PLN zgodny. P-26: 8579,7 km → 34 795 km (w tabeli zadań 34 797 z zaokrąglonych 8580 km) |
 | 11:25 | `economics()` zwraca wiersz dla każdego vana z `van_profile`; bez `ev_model` pola kwot są puste (`""`) — B łączy bez uzupełniania braków. `saving_pln` puste do decyzji C1 |
 | 11:26 | **C1: wariant 1** — `saving_pln` = paliwo − ładowanie + (0,34 − 0,14) PLN/km × `annual_km`; bez leasingu, zakupu i dotacji (D7, A15). P-14: 13 995 PLN/rok. `saving_basis()` gotowe. Nowych parametrów dla toru A brak |
+| 11:31 | `tor-c` wypchnięte (C4 gotowe przed 12:20) |
+| 11:40 | C6: szkic `RERUN.md` (6 kroków + rozwiązywanie problemów). Do sprawdzenia po scaleniu: komunikaty „missing column” (A) i zawartość ekranu (B). `economics()` przy braku parametru rzuca `ValueError` z nazwą klucza i `params.csv` — **prośba do A i B o ten sam styl komunikatów** |
