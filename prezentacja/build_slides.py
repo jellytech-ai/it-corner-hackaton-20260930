@@ -58,7 +58,7 @@ CELL_B = ParagraphStyle("cellb", parent=CELL, fontName="Sans-Bold")
 
 LOGO = svg2rlg(os.path.join(ASSETS, "jellytech-logo.svg"))
 
-TOTAL = 18
+TOTAL = 17
 CURRENT = 0  # slide number, set in main() so slides can be reordered freely
 
 
@@ -487,6 +487,59 @@ def sB_timeline(c):
          M, 84, 864, MID)
 
 
+def sAB_sdlc_timeline(c):
+    frame(c, 0, "Nasz SDLC na osi czasu: najpierw specyfikacja, potem kod", "Proces")
+    x0, x1, y = M + 10, W - M - 10, 306
+    start, end = 10 * 60, 16 * 60
+    c.setStrokeColor(RULE)
+    c.setLineWidth(3)
+    c.line(x0, y, x1, y)
+    for hour in range(10, 17):
+        hx = x0 + (hour * 60 - start) / (end - start) * (x1 - x0)
+        c.setLineWidth(1)
+        c.line(hx, y - 5, hx, y + 5)
+    events = [("10:10", "start: profil danych", 1, False), ("11:09", "5 pytań do Ewy", -1, False),
+              ("11:19", "kontrakt, 3 tory", 2, False), ("11:55", "pierwsze scalenie: 3 vany", -2, False),
+              ("12:00", "odpowiedzi Ewy: nowe reguły", 3, True), ("12:33", "8 vanów, 95 637 PLN", -3, False),
+              ("12:55", "test ponownego uruchomienia", 1, False), ("13:07", "CI, macierz śladowania", -1, False),
+              ("14:45", "zamrożenie liczb", 2, False), ("15:18", "Ewa: nowe dane, nowa reguła", -2, True),
+              ("15:20", "wydanie v1.0", 3, False), ("15:33", "v1.1: 7 vanów, wpis w wątku", 1, False)]
+    label = ParagraphStyle("tl2", parent=SMALL, fontSize=10, leading=12.5, alignment=1, textColor=INK)
+    label_b = ParagraphStyle("tl2b", parent=label, fontName="Sans-Bold", textColor=BRAND)
+    step = 33
+    for hhmm, text, level, major in events:
+        h, m = hhmm.split(":")
+        ex = x0 + (int(h) * 60 + int(m) - start) / (end - start) * (x1 - x0)
+        ey = y + level * step
+        c.setStrokeColor(BRAND if major else RULE)
+        c.setLineWidth(1.4 if major else 0.8)
+        c.line(ex, y, ex, ey - (0 if level < 0 else 4))
+        c.setFillColor(BRAND if major else BRAND_LIGHT)
+        c.circle(ex, y, 7 if major else 4.5, stroke=0, fill=1)
+        pgh = Paragraph("<b>%s</b><br/>%s" % (hhmm, text), label_b if major else label)
+        _, hgt = pgh.wrap(104, 80)
+        lx = min(max(ex - 52, M - 6), W - M - 98)
+        pgh.drawOn(c, lx, ey if level > 0 else ey - hgt)
+    phases = [("1. Wymagania", "rejestr założeń, 5 pytań z planem B"), ("2. Projekt", "kontrakt, konstytucja, params.csv"),
+              ("3. Implementacja", "4 moduły, 3 tory równolegle"), ("4. Weryfikacja", "104 testy, CI, dwie metody"),
+              ("5. Wydanie", "PR do main, tag, zip z tagu"), ("6. Akceptacja", "zip w pustym katalogu"),
+              ("7. Utrzymanie", "RERUN.md dla analityka")]
+    gap = 8
+    cw = (W - 2 * M - gap * 6) / 7
+    chip = ParagraphStyle("chip", parent=SMALL, fontSize=9.5, leading=12, textColor=INK)
+    for i, (head, text) in enumerate(phases):
+        cx = M + i * (cw + gap)
+        c.setFillColor(BRAND_SOFT)
+        c.roundRect(cx, 84, cw, 62, 8, stroke=0, fill=1)
+        c.setFont("Sans-Bold", 11)
+        c.setFillColor(BRAND_DARK)
+        c.drawString(cx + 8, 130, head)
+        para(c, text, cx + 8, 124, cw - 14, chip)
+    para(c, "105 commitów · 23 scalenia · 3 osoby · 104 testy · 2 wydania. Dwie zmiany wymagań (wyróżnione) przeszły "
+            "tę samą drogę: wymaganie → kontrakt → parametr → kod → test, bez przepisywania narzędzia.",
+         M, 76, 864, ParagraphStyle("foot", parent=SMALL, fontSize=11, leading=14))
+
+
 def sC_tooling(c):
     frame(c, 0, "Tooling", "Proces")
     table(c, [["Obszar", "Narzędzie", "Do czego"],
@@ -531,14 +584,14 @@ def sD_human_ai(c):
         "każde scalenie do <font name='Mono'>devel</font> i każda wysyłka do Ewy",
         "rozstrzygnięcia biznesowe: na liście tylko vany, które się zwracają; po zamrożeniu zastrzeżenie "
         "zamiast zmiany formuły",
-        "zakres wydania: co idzie do Ewy, co do prezentacji",
+        "zakres wydania: co idzie do Ewy, co do prezentacji; język prezentacji",
         "zatrzymanie pracy AI",
     ], BRAND_DARK)
     _card(c, M + w + 12, top, w, h, "AI proponowało, człowiek zatwierdzał", [
         "zasięg zimowy 0,57 × WLTP ze źródłami — przyjęty rano jako założenie",
         "wybór pytań: P-17 i chłodnie rozstrzygnięte z danych zamiast pytać Ewę",
         "reguły rankingu (wynik ≤ 0 poza listą, 3 vany z South) — do rejestru",
-        "nowe parametry progu „blisko” — przyjęte przez właściciela <font name='Mono'>params.csv</font>",
+        "trzy warianty podstawy oszczędności — zespół wybrał; potem zastąpiła je reguła Ewy",
         "o 15:18, pod presją czasu: GPS dla licznika 1383 km i skalowanie nowych vanów — AI wybrało, "
         "zapisało w rejestrze i zgłosiło",
     ], BRAND)
@@ -548,6 +601,7 @@ def sD_human_ai(c):
         "odczyt odpowiedzi Ewy u źródła, także z wątków innych zespołów",
         "kontrola krzyżowa: liczby i shortlista policzone drugą metodą",
         "przegląd kodu pod kątem konstytucji — 2 realne błędy",
+        "notatka dla zarządu i założenia po angielsku; każda liczba sprawdzona uruchomieniem narzędzia",
         "demo, zip, wydanie, prezentacja",
     ], BRAND_LIGHT)
     para(c, "AI napisało większość kodu i sprawdzeń, ale żadna decyzja o tym, co Ewa dostaje i na jakich "
@@ -637,9 +691,10 @@ def s15_close(c):
     c.drawString(M + 26, 106, "Pytania?")
 
 
-SLIDES = [s01_title, s02_answer, s03_range, s04_money_assumptions, s05_data_assumptions, s06_winter,
+SLIDES = [s01_title, s02_answer,
+          sAB_sdlc_timeline, s12_second_change, sC_tooling, sD_human_ai, sE_lessons,
+          s03_range, s04_money_assumptions, s05_data_assumptions, s06_winter,
           s07_feasibility, s08_money, s09_sensitivity,
-          sA_sdlc, sB_timeline, s12_second_change, sC_tooling, sD_human_ai, sE_lessons,
           s13_demo, s14_analyst, s15_close]
 
 

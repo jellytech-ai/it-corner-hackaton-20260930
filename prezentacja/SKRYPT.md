@@ -17,7 +17,24 @@ Liczby: narzędzie uruchomione na `devel` 35d8e0b na oryginalnym eksporcie (30.0
 
 PDF ma teraz **16 slajdów**: doszedł slajd 12 o zmianie z 15:18, a dawne slajdy 12–15 to teraz 13–16. Tekst poniżej zastępuje odpowiednie akapity w dalszej części skryptu; slajdy 4, 6, 10, 11 i 13 czytamy bez zmian.
 
-**Układ po 15:45 (18 slajdów):** 1 tytuł, 2 odpowiedź, 3–6 założenia, 7–9 wynik, 10 SDLC, 11 oś czasu, 12 zmiana z 15:18, 13 tooling, 14 człowiek i AI, 15 co byśmy zmienili, 16 demo, 17 analityk, 18 podsumowanie. Dawne slajdy „dziennik założeń”, „odpowiedzi Ewy o 12:00” i „praca równoległa” zastąpiła sekcja procesu z `PROPOZYCJA-PROCES.md`. Numery slajdów w akapitach poniżej („Slajd 12”, „Slajd 14”, „Slajd 16”) odnoszą się do układu 16-slajdowego: zmiana z 15:18 to teraz slajd 12, demo 16, podsumowanie 18.
+**Układ końcowy (17 slajdów, decyzje zespołu z 15:45: proces przed wynikiem, SDLC połączony z osią czasu):**
+
+| Slajd | Temat | Tekst do czytania |
+|---|---|---|
+| 1 | tytuł | bez zmian |
+| 2 | odpowiedź na początek | akapit „Slajd 2” poniżej |
+| 3 | SDLC na osi czasu | akapity „Slajd 10” i „Slajd 11” poniżej, razem |
+| 4 | zmiana z 15:18 | akapit „Slajd 12 (nowy)” |
+| 5 | tooling | akapit „Slajd 13” |
+| 6 | człowiek i AI | akapit „Slajd 14 — Człowiek i AI” |
+| 7 | co byśmy zmienili | akapit „Slajd 15” |
+| 8–11 | założenia | akapity „Slajd 3” i „Slajd 5” poniżej; slajdy o pieniądzach i o 60% bez zmian |
+| 12–14 | wynik | akapity „Slajd 7”, „Slajd 8”, „Slajd 9” |
+| 15 | demo | akapit „Slajd 14 — Demo” |
+| 16 | analityk | bez zmian |
+| 17 | podsumowanie | akapit „Slajd 16” |
+
+Numery w nagłówkach akapitów poniżej pochodzą z wcześniejszych układów; obowiązuje tabela powyżej.
 
 **Slajd 10 — SDLC.** Pracowaliśmy w siedmiu fazach i każda ma swój artefakt i bramkę. Najważniejsze: najpierw rejestr założeń i kontrakt, dopiero potem kod. Dzięki temu obie zmiany wymagań od Ewy przeszły tę samą drogę — w południe w trzydzieści trzy minuty, po piętnastej w kwadrans.
 
