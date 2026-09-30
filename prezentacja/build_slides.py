@@ -570,7 +570,7 @@ def sH_humans_agents(c):
     bullets(c, [
         "<b>Kilka sesji agentów na osobę</b> (Claude Code): jedna na tor we własnym katalogu roboczym, plus sesja, "
         "która tylko obserwowała repo i dyskusje organizatorów i przekazywała odpowiedzi Ewy.",
-        "<b>Agenci:</b> profil danych, kod i testy, odczyt odpowiedzi Ewy u źródła (także z wątków innych zespołów), "
+        "<b>Agenci:</b> profil danych, kod i testy, odczyt odpowiedzi Ewy u źródła, "
         "kontrole krzyżowe, wydania, dokumenty, slajdy.",
         "<b>Ludzie:</b> co jest problemem Ewy, które pytania zadać, każde scalenie do wspólnej gałęzi, każda wiadomość "
         "do Ewy, decyzje biznesowe (na liście tylko vany, które się zwracają).",
@@ -639,7 +639,7 @@ def sD_human_ai(c):
     _card(c, M + 2 * (w + 12), top, w, h, "AI zrobiło samo", [
         "profil danych i pułapki: duplikaty, P-17, ujemny licznik, <font name='Mono'>odo_km</font>, 1383 km",
         "kod i testy z kryterium „gotowe, gdy”",
-        "odczyt odpowiedzi Ewy u źródła, także z wątków innych zespołów",
+        "odczyt odpowiedzi Ewy u źródła",
         "kontrola krzyżowa: liczby i shortlista policzone drugą metodą",
         "przegląd kodu pod kątem konstytucji — 2 realne błędy",
         "notatka dla zarządu i założenia po angielsku; każda liczba sprawdzona uruchomieniem narzędzia",
@@ -673,8 +673,8 @@ def sE_lessons(c):
               "zepsuty eksport istnieją przed pierwszą linią kodu. Nasze założenie „te same kolumny co kwartał” "
               "upadło przy pierwszym nowym pliku."),
              ("W dzisiejszej pracy",
-              "Pytać najpierw o to, co najbardziej zmienia wynik (reguła zasięgu, dotacja), i od rana czytać wątki "
-              "innych zespołów. Odpowiedź Ewy z południa zmieniła listę z 3 na 8 vanów.")]
+              "Pytać najpierw o to, co najbardziej zmienia wynik (reguła zasięgu, dotacja). Odpowiedź Ewy z "
+              "południa zmieniła listę z 3 na 8 vanów.")]
     for i, (head, text) in enumerate(boxes):
         x = M + i * 438
         c.setFillColor(BRAND_SOFT)
