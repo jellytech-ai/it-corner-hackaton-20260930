@@ -64,6 +64,41 @@ After the first run Python creates a `__pycache__` folder next to the scripts. T
    | `all_vans.csv` | every van with the reason it was accepted or rejected |
    | `data_report.txt` | what was cleaned and why |
 
+## Reading the reasons in the results
+
+`N`, `<model>` and `<depot>` below are filled in from the data and `params.csv`.
+
+**`reason`** (in `shortlist.csv` and `all_vans.csv`) says why a feasible van fits:
+
+| Text | Meaning |
+|---|---|
+| `range margin X km (Y%)` | the van's 95th-percentile day is X km shorter than the EV's winter range |
+| `at threshold: range margin …` | the van fits, but the margin is below `at_threshold_pct` (1%); a slightly longer route would push it out |
+| `…; South van based at North, routes unchanged` | a South van that would be based at North, because South has no charging points (`max_south_vans_at_north`) |
+| `midday charging between routes; 0 failed days` | appears only if `midday_charging_allowed` is `yes`: the van fits because it charges at the depot between its two routes |
+
+**`reject_reason`** (in `all_vans.csv`) says why a van is not feasible. Several reasons are separated by `; `:
+
+| Text | Meaning |
+|---|---|
+| `refrigerated` | refrigerated vans are out (`exclude_refrigerated`) |
+| `payload` | the heaviest load the van carried is more than the cheapest EV model can carry |
+| `range` | the van's 95th-percentile day is longer than the cheapest EV model's winter range |
+| `no chargers at depot` | the van's depot has no charging points and it cannot be based elsewhere |
+| `no trips in this export` | the van is in the register but did not drive in this period |
+| `near miss: <model> …` | the van is close to fitting that model: range at most `near_miss_range_pct` (10%) over, or load over the limit on at most `near_miss_days` (3) days. Worth a conversation, not a place on the list |
+
+**`fit_models`** (in `all_vans.csv`) lists every EV model that passes range and load; `ev_model` is the one with the higher `saving_pln`.
+
+**`shortlisted`** and **`shortlist_note`** (in `all_vans.csv`): a feasible van with `shortlisted` = `no` has one of these notes:
+
+| Text | Meaning |
+|---|---|
+| `saving over N years is not positive` | the EV costs more than it saves over `saving_horizon_years` |
+| `grant limit of N EVs reached` | the list is full (`max_evs_grant`) |
+| `all N charging points at <depot> taken` | no free charging point at that depot (`chargers.<depot>`) |
+| `limit of N vans based away from their depot reached` | no more South vans may be based at North (`max_south_vans_at_north`) |
+
 ## If something goes wrong
 
 A problem that stops the tool is printed as one line starting with `ERROR:`, naming the file and the column or parameter to fix. Problems in the data that do not stop it are lines starting with `WARNING:` in `data_report.txt`.
